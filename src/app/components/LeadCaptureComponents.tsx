@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router';
-import { MessageCircle, UploadCloud, X } from 'lucide-react';
+import { MessageCircle, Phone, UploadCloud, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export const serviceCategories = [
@@ -198,18 +198,129 @@ export function EnquiryPopup({
 
 export function WhatsAppFloatingButton() {
   return (
-    <motion.a
-      href="https://wa.me/919876543210?text=Hello%20Truvex%2C%20I%20want%20to%20submit%20a%20requirement"
-      target="_blank"
-      rel="noreferrer"
-      initial={{ scale: 0, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ delay: 1.2, type: 'spring' }}
-      className="fixed bottom-40 right-4 z-50 flex min-h-12 items-center gap-2 rounded-full bg-green-600 px-4 py-3 text-sm font-bold text-white shadow-2xl shadow-green-700/30 md:bottom-24 md:right-6"
-    >
-      <MessageCircle size={18} />
-      WhatsApp
-    </motion.a>
+    <div className="fixed bottom-44 right-4 z-50 h-14 w-14 md:bottom-28 md:right-8">
+      {/* Continuous Wave rings (3 Staggered Rings, duration 3s, delay 1s) */}
+      <motion.div
+        className="pointer-events-none absolute inset-0 rounded-full border-2 border-[#25D366]/60 shadow-[0_0_15px_rgba(37,211,102,0.4)]"
+        animate={{
+          scale: [1, 2.2],
+          opacity: [0.8, 0],
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          ease: [0.16, 1, 0.3, 1], // easeOutExpo
+        }}
+      />
+      <motion.div
+        className="pointer-events-none absolute inset-0 rounded-full border border-[#25D366]/40 shadow-[0_0_10px_rgba(37,211,102,0.2)]"
+        animate={{
+          scale: [1, 2.2],
+          opacity: [0.8, 0],
+        }}
+        transition={{
+          duration: 3,
+          delay: 1,
+          repeat: Infinity,
+          ease: [0.16, 1, 0.3, 1],
+        }}
+      />
+      <motion.div
+        className="pointer-events-none absolute inset-0 rounded-full border border-[#25D366]/20 shadow-[0_0_5px_rgba(37,211,102,0.1)]"
+        animate={{
+          scale: [1, 2.2],
+          opacity: [0.8, 0],
+        }}
+        transition={{
+          duration: 3,
+          delay: 2,
+          repeat: Infinity,
+          ease: [0.16, 1, 0.3, 1],
+        }}
+      />
+      
+      {/* Button */}
+      <motion.a
+        href="https://wa.me/919876543210?text=Hello%20Truvex%2C%20I%20want%20to%20submit%20a%20requirement"
+        target="_blank"
+        rel="noreferrer"
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 1.2, type: 'spring' }}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+        className="relative flex h-full w-full items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_8px_30px_rgba(37,211,102,0.4)] hover:bg-[#20ba5a] transition-colors duration-300"
+        aria-label="Contact us on WhatsApp"
+      >
+        <svg
+          className="h-7 w-7 fill-white"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.517 2.266 2.27 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.42 9.863-9.864.001-2.637-1.03-5.114-2.905-6.99C16.558 1.874 14.09 .842 11.458.842 6.022.842 1.6 5.263 1.597 10.7c-.001 1.702.443 3.366 1.293 4.837l-.999 3.649 3.753-.984zm11.085-7.514c-.302-.15-1.785-.882-2.062-.983-.277-.1-.478-.15-.679.15-.2.3-.777.983-.95 1.183-.175.2-.349.226-.651.075-1.204-.6-2.015-1.096-2.825-2.483-.215-.367.215-.341.616-1.139.075-.15.037-.282-.019-.383-.056-.1-.478-1.156-.656-1.58-.173-.418-.348-.362-.478-.369-.124-.007-.267-.009-.409-.009-.143 0-.376.053-.572.267-.197.214-.751.734-.751 1.79 0 1.057.77 2.079.877 2.223.107.144 1.516 2.314 3.67 3.244.513.222.914.355 1.226.454.514.163.982.14 1.352.085.412-.06 1.785-.73 2.037-1.436.252-.705.252-1.31.176-1.436-.076-.127-.277-.202-.579-.352z" />
+        </svg>
+      </motion.a>
+    </div>
+  );
+}
+
+export function CallFloatingButton() {
+  return (
+    <div className="fixed bottom-24 right-4 z-50 h-14 w-14 md:bottom-8 md:right-8">
+      {/* Continuous Wave rings (3 Staggered Rings, duration 3s, delay 1s) */}
+      <motion.div
+        className="pointer-events-none absolute inset-0 rounded-full border-2 border-blue-600/60 shadow-[0_0_15px_rgba(37,99,235,0.4)]"
+        animate={{
+          scale: [1, 2.2],
+          opacity: [0.8, 0],
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          ease: [0.16, 1, 0.3, 1], // easeOutExpo
+        }}
+      />
+      <motion.div
+        className="pointer-events-none absolute inset-0 rounded-full border border-blue-600/40 shadow-[0_0_10px_rgba(37,99,235,0.2)]"
+        animate={{
+          scale: [1, 2.2],
+          opacity: [0.8, 0],
+        }}
+        transition={{
+          duration: 3,
+          delay: 1,
+          repeat: Infinity,
+          ease: [0.16, 1, 0.3, 1],
+        }}
+      />
+      <motion.div
+        className="pointer-events-none absolute inset-0 rounded-full border border-blue-600/20 shadow-[0_0_5px_rgba(37,99,235,0.1)]"
+        animate={{
+          scale: [1, 2.2],
+          opacity: [0.8, 0],
+        }}
+        transition={{
+          duration: 3,
+          delay: 2,
+          repeat: Infinity,
+          ease: [0.16, 1, 0.3, 1],
+        }}
+      />
+      
+      {/* Button */}
+      <motion.a
+        href="tel:+919876543210"
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 1.4, type: 'spring' }}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+        className="relative flex h-full w-full items-center justify-center rounded-full bg-blue-600 text-white shadow-[0_8px_30px_rgba(37,99,235,0.4)] hover:bg-blue-500 transition-colors duration-300"
+        aria-label="Call us"
+      >
+        <Phone size={24} className="stroke-[2.5]" />
+      </motion.a>
+    </div>
   );
 }
 
