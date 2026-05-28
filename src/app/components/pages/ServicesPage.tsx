@@ -1,13 +1,6 @@
 import { Link } from 'react-router';
-import { ClipboardList, FileSpreadsheet, Handshake, UsersRound } from 'lucide-react';
 import { EnquiryTicker, MarketplacePageHeader, SectionHeader, TrustSignalsBar } from '../MarketplaceComponents';
-
-const services = [
-  { icon: ClipboardList, title: 'RFQ Capture', tag: 'Buyer tool', text: 'Collect product, quantity, city, timeline, and mobile details in a quote-ready format.' },
-  { icon: UsersRound, title: 'Supplier Matching', tag: 'Marketplace', text: 'Route requirements to verified suppliers by product category, city, and capability.' },
-  { icon: FileSpreadsheet, title: 'Proposal Support', tag: 'Managed service', text: 'Prepare structured commercial proposals, comparison sheets, and supplier shortlists.' },
-  { icon: Handshake, title: 'Closure Support', tag: 'Supplier model', text: 'Support follow-up between qualified buyers and suppliers through deal stages.' },
-];
+import { ServiceCard, serviceCategories } from '../LeadCaptureComponents';
 
 const revenueRows = [
   { stream: 'Supplier Commission', chargedTo: 'Supplier', basis: 'Percentage of closed order value', fit: 'Best for pay-on-success suppliers' },
@@ -34,15 +27,8 @@ export default function ServicesPage() {
             title="Functional sourcing services"
             subtext="Each service maps to a concrete marketplace workflow: capture, match, quote, and close."
           />
-          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-            {services.map((service) => (
-              <div key={service.title} className="border border-border border-t-2 border-t-accent bg-card p-4">
-                <service.icon className="mb-3 text-accent" />
-                <div className="mb-2 inline-flex bg-primary px-2 py-1 text-[11px] font-bold uppercase text-white">{service.tag}</div>
-                <h3 className="text-base font-bold text-primary">{service.title}</h3>
-                <p className="mt-2 text-[13px] leading-5 text-muted-foreground">{service.text}</p>
-              </div>
-            ))}
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {serviceCategories.map((service) => <ServiceCard key={service.title} service={service} />)}
           </div>
         </div>
       </section>
@@ -83,8 +69,8 @@ export default function ServicesPage() {
             <p className="mt-1 text-sm text-white/70">Choose buyer RFQ support or supplier onboarding based on your business role.</p>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row">
-            <Link to="/contact" className="bg-accent px-5 py-3 text-center text-sm font-bold text-white">Post Requirement</Link>
-            <Link to="/for-suppliers" className="border border-white/30 px-5 py-3 text-center text-sm font-bold text-white">For Suppliers</Link>
+            <Link to="/buyers" className="market-button bg-accent px-5 py-3 text-center text-sm font-bold text-white">Post Requirement</Link>
+            <Link to="/suppliers" className="market-button border border-white/30 px-5 py-3 text-center text-sm font-bold text-white">For Suppliers</Link>
           </div>
         </div>
       </section>

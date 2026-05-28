@@ -1,16 +1,16 @@
 import { Outlet, Link, useLocation } from 'react-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ChevronDown, MapPin, Menu, Phone, Search, X } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { EnquiryPopup, WhatsAppFloatingButton } from './LeadCaptureComponents';
 
 const navLinks = [
   { label: 'Home', path: '/' },
-  { label: 'Categories', path: '/categories' },
-  { label: 'For Buyers', path: '/for-buyers' },
-  { label: 'For Suppliers', path: '/for-suppliers' },
+  { label: 'Suppliers', path: '/suppliers' },
+  { label: 'Buyers', path: '/buyers' },
   { label: 'Services', path: '/services' },
-  { label: 'How It Works', path: '/how-it-works' },
-  { label: 'Contact', path: '/contact' },
+  { label: 'About', path: '/about' },
+  { label: 'Contact Us', path: '/contact' },
 ];
 
 const sitemap = [
@@ -31,11 +31,29 @@ const topCategories = [
 
 export default function Layout() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [enquiryOpen, setEnquiryOpen] = useState(false);
+  const [scrollTriggered, setScrollTriggered] = useState(false);
   const location = useLocation();
 
   const isActive = (path: string) =>
     path === '/' ? location.pathname === '/' : location.pathname.startsWith(path);
   const hideFloatingRfq = location.pathname.startsWith('/contact');
+
+  useEffect(() => {
+    const openHandler = () => setEnquiryOpen(true);
+    const scrollHandler = () => {
+      if (!scrollTriggered && window.scrollY > 700 && !location.pathname.startsWith('/contact')) {
+        setScrollTriggered(true);
+        setEnquiryOpen(true);
+      }
+    };
+    window.addEventListener('truvex:open-enquiry', openHandler);
+    window.addEventListener('scroll', scrollHandler, { passive: true });
+    return () => {
+      window.removeEventListener('truvex:open-enquiry', openHandler);
+      window.removeEventListener('scroll', scrollHandler);
+    };
+  }, [location.pathname, scrollTriggered]);
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-background font-sans text-foreground">
@@ -53,9 +71,9 @@ export default function Layout() {
             <button className="hidden items-center gap-1 border border-white/15 bg-white/5 px-2 py-1 text-white/90 md:flex">
               Mumbai <ChevronDown size={13} />
             </button>
-            <Link to="/contact" className="market-button hidden bg-accent px-3 py-1.5 font-bold text-white hover:bg-accent/90 sm:inline-flex">
+            <button type="button" onClick={() => setEnquiryOpen(true)} className="market-button hidden bg-accent px-3 py-1.5 font-bold text-white hover:bg-accent/90 sm:inline-flex">
               Post Buy Requirement
-            </Link>
+            </button>
           </div>
         </div>
       </div>
@@ -73,7 +91,7 @@ export default function Layout() {
                   className="min-w-0 flex-1 px-3 py-2 text-sm text-primary outline-none"
                   placeholder="Search products, categories, suppliers..."
                 />
-                <Link to="/categories" className="market-button flex items-center gap-2 bg-accent px-4 py-2 text-sm font-bold text-white">
+              <Link to="/supplier-listing" className="market-button flex items-center gap-2 bg-accent px-4 py-2 text-sm font-bold text-white">
                   <Search size={16} /> Search
                 </Link>
               </div>
@@ -108,7 +126,7 @@ export default function Layout() {
             <div className="px-4 py-3">
               <div className="mb-3 flex border border-border">
                 <input className="min-w-0 flex-1 px-3 py-2 text-sm outline-none" placeholder="Search suppliers..." />
-                <Link to="/categories" onClick={() => setMobileOpen(false)} className="market-button bg-accent px-3 py-2 text-sm font-bold text-white">
+                <Link to="/supplier-listing" onClick={() => setMobileOpen(false)} className="market-button bg-accent px-3 py-2 text-sm font-bold text-white">
                   Search
                 </Link>
               </div>
@@ -171,9 +189,9 @@ export default function Layout() {
           <div className="border border-white/15 border-t-2 border-t-accent bg-white/5 p-5">
             <h4 className="text-lg font-bold text-white">Post Your Requirement</h4>
             <p className="mt-2 text-sm text-white/70">Tell us the product, quantity, and delivery city. Get verified supplier callbacks.</p>
-            <Link to="/contact" className="market-button mt-4 inline-flex bg-accent px-4 py-2 text-sm font-bold text-white hover:bg-accent/90">
-              Start RFQ
-            </Link>
+              <button type="button" onClick={() => setEnquiryOpen(true)} className="market-button mt-4 inline-flex bg-accent px-4 py-2 text-sm font-bold text-white hover:bg-accent/90">
+                Start RFQ
+              </button>
           </div>
         </div>
         <section className="border-t border-white/10 bg-gradient-to-r from-primary to-secondary px-4 py-12">
@@ -201,9 +219,10 @@ export default function Layout() {
       </footer>
 
       <div className="fixed bottom-0 left-0 right-0 z-50 grid w-screen max-w-full grid-cols-2 border-t border-border bg-white p-2 shadow-2xl md:hidden">
-        <Link to="/contact" className="market-button min-h-12 bg-accent py-3 text-center text-sm font-bold text-white">Post Requirement</Link>
-        <Link to="/categories" className="market-button min-h-12 bg-primary py-3 text-center text-sm font-bold text-white">Find Supplier</Link>
+        <Link to="/buyers" className="market-button min-h-12 bg-accent py-3 text-center text-sm font-bold text-white">Post Requirement</Link>
+        <Link to="/supplier-listing" className="market-button min-h-12 bg-primary py-3 text-center text-sm font-bold text-white">Find Supplier</Link>
       </div>
+      <WhatsAppFloatingButton />
       {!hideFloatingRfq && (
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
@@ -211,15 +230,17 @@ export default function Layout() {
           transition={{ delay: 2, type: 'spring' }}
           className="fixed bottom-24 left-1/2 z-50 -translate-x-1/2 md:bottom-8 md:left-auto md:right-6 md:translate-x-0"
         >
-          <Link
-            to="/contact"
+          <button
+            type="button"
+            onClick={() => setEnquiryOpen(true)}
             className="rfq-pulse market-button flex min-h-12 items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-bold text-white shadow-2xl shadow-accent/40"
           >
             <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
             Post RFQ - Free
-          </Link>
+          </button>
         </motion.div>
       )}
+      <EnquiryPopup open={enquiryOpen} onClose={() => setEnquiryOpen(false)} />
     </div>
   );
 }

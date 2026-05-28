@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import type React from 'react';
-import { CheckCircle2, HelpCircle, PhoneCall } from 'lucide-react';
+import { CheckCircle2, HelpCircle, Mail, MapPin, MessageCircle, PhoneCall } from 'lucide-react';
 import { EnquiryTicker, MarketplacePageHeader, TrustSignalsBar } from '../MarketplaceComponents';
+import { openEnquiryPopup } from '../LeadCaptureComponents';
 
 const categories = [
   'Industrial Machinery',
@@ -156,6 +157,40 @@ export default function ContactPage() {
               </ol>
             </div>
           </aside>
+        </div>
+      </section>
+
+      <section className="px-4 py-8">
+        <div className="mx-auto grid max-w-7xl gap-4 lg:grid-cols-[1fr_1fr]">
+          <div className="market-card border-t-2 border-t-accent p-5">
+            <div className="text-[11px] font-bold uppercase tracking-[0.16em] text-accent">Contact details</div>
+            <h2 className="mt-2 font-serif text-2xl font-bold text-primary">Talk to Truvex sourcing desk</h2>
+            <div className="mt-5 grid gap-3 text-sm">
+              <a href="tel:+919876543210" className="flex min-h-12 items-center gap-3 rounded-xl border border-border px-4 py-3 text-primary">
+                <PhoneCall className="text-accent" size={18} /> +91 98765 43210
+              </a>
+              <a href="mailto:hello@truvex.in" className="flex min-h-12 items-center gap-3 rounded-xl border border-border px-4 py-3 text-primary">
+                <Mail className="text-accent" size={18} /> hello@truvex.in
+              </a>
+              <a href="https://wa.me/919876543210" target="_blank" rel="noreferrer" className="flex min-h-12 items-center gap-3 rounded-xl border border-green-200 bg-green-50 px-4 py-3 font-bold text-green-700">
+                <MessageCircle size={18} /> WhatsApp Truvex
+              </a>
+              <button type="button" onClick={openEnquiryPopup} className="market-button min-h-12 rounded-xl bg-accent px-4 py-3 text-sm font-bold text-white">
+                Open Enquiry Popup
+              </button>
+            </div>
+          </div>
+          <div className="market-card overflow-hidden border-t-2 border-t-accent">
+            <div className="flex min-h-[320px] items-center justify-center bg-[linear-gradient(135deg,#eef2ff,#f8fafc)] p-6 text-center">
+              <div>
+                <MapPin className="mx-auto mb-3 text-accent" size={36} />
+                <h3 className="font-serif text-2xl font-bold text-primary">Pan-India Supplier Network</h3>
+                <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">
+                  Map placeholder for Truvex coverage across Mumbai, Delhi, Pune, Bangalore, Chennai, Ahmedabad, Surat and Coimbatore.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </div>

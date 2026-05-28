@@ -14,6 +14,9 @@ import TestimonialsPage from './components/pages/TestimonialsPage';
 import FAQPage from './components/pages/FAQPage';
 import PricingPage from './components/pages/PricingPage';
 import BlogPage from './components/pages/BlogPage';
+import SupplierRegistrationPage from './components/pages/SupplierRegistrationPage';
+import BuyerFormPage from './components/pages/BuyerFormPage';
+import SupplierListingPage from './components/pages/SupplierListingPage';
 
 export const router = createBrowserRouter([
   {
@@ -24,6 +27,9 @@ export const router = createBrowserRouter([
       { path: 'about', Component: AboutPage },
       { path: 'how-it-works', Component: HowItWorksPage },
       { path: 'services', Component: ServicesPage },
+      { path: 'suppliers', Component: SupplierRegistrationPage },
+      { path: 'buyers', Component: BuyerFormPage },
+      { path: 'supplier-listing', Component: SupplierListingPage },
       { path: 'categories', Component: CategoriesPage },
       { path: 'for-buyers', Component: ForBuyersPage },
       { path: 'for-suppliers', Component: ForSuppliersPage },

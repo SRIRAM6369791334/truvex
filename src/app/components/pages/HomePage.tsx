@@ -11,6 +11,7 @@ import {
   suppliers,
 } from '../MarketplaceComponents';
 import { IndustryInsightsBlog, LiveMarketplaceStats, TestimonialCarousel, TrustedByBrands } from '../VisualSections';
+import { MiniFAQ, ServiceCard, SupplierBuyerCTA, openEnquiryPopup, serviceCategories } from '../LeadCaptureComponents';
 
 const metrics = [
   { label: 'Verified suppliers', value: '500+', icon: BadgeCheck },
@@ -71,11 +72,15 @@ export default function HomePage() {
               <ShieldCheck size={15} /> Verified B2B Supplier Network
             </div>
             <h1 className="max-w-full text-wrap font-serif text-2xl font-bold leading-tight text-white sm:text-[clamp(2.5rem,6vw,5rem)]">
-              Find Verified Suppliers in 4 Hours. Free for Buyers.
+              We Source Everything Your Business Needs
             </h1>
             <p className="mt-4 max-w-full text-sm leading-6 text-white/78 sm:text-base sm:leading-7">
-              Post a requirement, compare qualified suppliers, and get direct callbacks for industrial, construction, packaging, electronics, and business products across India.
+              Submit one requirement and Truvex connects it to verified suppliers across hotel supplies, kitchen equipment, furniture, safety, gym, and industrial products.
             </p>
+            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+              <Link to="/suppliers" className="market-button min-h-12 bg-accent px-5 py-3 text-center text-sm font-bold text-white">Become Supplier</Link>
+              <button type="button" onClick={openEnquiryPopup} className="market-button min-h-12 border border-white/30 bg-white/10 px-5 py-3 text-sm font-bold text-white">Submit Requirement</button>
+            </div>
             <div className="mt-6">
               <MiniRFQForm />
             </div>
@@ -100,6 +105,59 @@ export default function HomePage() {
       <EnquiryTicker />
       <LiveMarketplaceStats />
       <TrustSignalsBar />
+
+      <section className="px-4 py-8">
+        <div className="mx-auto grid max-w-7xl gap-5 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+          <div>
+            <div className="text-[11px] font-bold uppercase tracking-[0.16em] text-accent">Company intro</div>
+            <h2 className="mt-2 font-serif text-3xl font-bold text-primary">A B2B sourcing desk built for lead generation and trust</h2>
+          </div>
+          <p className="text-sm leading-7 text-muted-foreground">
+            Truvex helps buyers submit clear requirements and helps verified suppliers receive better-qualified enquiries. Contact details stay protected, RFQs stay structured, and every flow is designed to create business leads.
+          </p>
+        </div>
+      </section>
+
+      <section className="px-4 py-8">
+        <div className="mx-auto max-w-7xl">
+          <SectionHeader eyebrow="Services" title="Source products across business categories" subtext="Each service card opens an enquiry path so buyers can quickly generate a lead." viewAllTo="/services" />
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {serviceCategories.map((service) => <ServiceCard key={service.title} service={service} />)}
+          </div>
+        </div>
+      </section>
+
+      <section className="px-4 py-8">
+        <div className="mx-auto max-w-7xl">
+          <SectionHeader eyebrow="Why choose us" title="Trust-first sourcing for buyers and suppliers" />
+          <div className="grid gap-3 md:grid-cols-3">
+            {[
+              ['Verified Supplier Network', 'Supplier profiles are reviewed before leads are routed.'],
+              ['No Direct Contact Exposure', 'Listings do not reveal supplier phone or email publicly.'],
+              ['Lead Generation Focus', 'Every CTA points to requirement capture, supplier registration, or enquiry flow.'],
+            ].map(([title, text]) => (
+              <div key={title} className="market-card border-t-2 border-t-accent p-5">
+                <h3 className="text-base font-bold text-primary">{title}</h3>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">{text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="px-4 py-8">
+        <div className="mx-auto max-w-5xl">
+          <SectionHeader eyebrow="Process" title="How a requirement becomes a business lead" />
+          <div className="grid gap-3">
+            {['Buyer submits requirement', 'Admin reviews', 'Supplier contacted', 'Quotation shared', 'Deal finalized'].map((step, index) => (
+              <div key={step} className="market-card flex items-center gap-4 p-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary font-serif text-lg font-bold text-accent">{index + 1}</div>
+                <div className="font-bold text-primary">{step}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       <section className="px-4 py-8">
         <div className="mx-auto max-w-7xl">
@@ -135,8 +193,24 @@ export default function HomePage() {
       </section>
 
       <TestimonialCarousel />
+      <SupplierBuyerCTA />
       <IndustryInsightsBlog />
       <TrustedByBrands />
+      <MiniFAQ />
+
+      <section className="px-4 py-8">
+        <div className="mx-auto grid max-w-7xl gap-4 rounded-2xl bg-primary p-6 text-white md:grid-cols-[1fr_auto] md:items-center">
+          <div>
+            <div className="text-[11px] font-bold uppercase tracking-[0.16em] text-accent">Contact section</div>
+            <h2 className="font-serif text-2xl font-bold text-white">Need help choosing a supplier category?</h2>
+            <p className="mt-1 text-sm text-white/70">Call, WhatsApp, or submit an enquiry and Truvex will guide the next step.</p>
+          </div>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Link to="/contact" className="market-button min-h-12 bg-accent px-5 py-3 text-sm font-bold text-white">Contact Us</Link>
+            <button type="button" onClick={openEnquiryPopup} className="market-button min-h-12 border border-white/30 px-5 py-3 text-sm font-bold text-white">Open Enquiry</button>
+          </div>
+        </div>
+      </section>
 
       <section className="border-y border-accent/30 bg-card px-4 py-8">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 md:flex-row md:items-center md:justify-between">
