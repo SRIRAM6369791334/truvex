@@ -48,7 +48,7 @@ export default function Layout() {
             </span>
           </div>
           <div className="flex shrink-0 items-center gap-2">
-            <button className="hidden items-center gap-1 border border-white/15 bg-white/5 px-2 py-1 text-white/90 sm:flex">
+            <button className="hidden items-center gap-1 border border-white/15 bg-white/5 px-2 py-1 text-white/90 md:flex">
               Mumbai <ChevronDown size={13} />
             </button>
             <Link to="/contact" className="hidden bg-accent px-3 py-1.5 font-bold text-white hover:bg-accent/90 sm:inline-flex">
@@ -141,10 +141,10 @@ export default function Layout() {
               Verified supplier discovery, RFQ routing, and managed B2B sourcing for Indian businesses.
             </p>
             <div className="mt-4 grid grid-cols-2 gap-2 text-[12px] font-semibold text-white/80">
-              <span className="border border-white/10 px-2 py-1">GST Registered</span>
-              <span className="border border-white/10 px-2 py-1">Secure Platform</span>
-              <span className="border border-white/10 px-2 py-1">India-based Team</span>
-              <span className="border border-white/10 px-2 py-1">ISO Network</span>
+              <span className="border border-white/20 px-3 py-1.5 text-[11px]">GST Registered</span>
+              <span className="border border-white/20 px-3 py-1.5 text-[11px]">Secure Platform</span>
+              <span className="border border-white/20 px-3 py-1.5 text-[11px]">India-based Team</span>
+              <span className="border border-white/20 px-3 py-1.5 text-[11px]">ISO Network</span>
             </div>
           </div>
 
@@ -166,7 +166,7 @@ export default function Layout() {
             </div>
           </div>
 
-          <div className="border border-white/15 bg-white/5 p-5">
+          <div className="border border-white/15 border-t-2 border-t-accent bg-white/5 p-5">
             <h4 className="text-lg font-bold text-white">Post Your Requirement</h4>
             <p className="mt-2 text-sm text-white/70">Tell us the product, quantity, and delivery city. Get verified supplier callbacks.</p>
             <Link to="/contact" className="mt-4 inline-flex bg-accent px-4 py-2 text-sm font-bold text-white hover:bg-accent/90">

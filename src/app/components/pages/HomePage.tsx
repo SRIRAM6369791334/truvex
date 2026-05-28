@@ -36,7 +36,7 @@ function MiniRFQForm() {
         <h2 className="text-base font-bold text-primary">Post Buy Requirement</h2>
         <span className="hidden text-[11px] font-bold uppercase text-teal-700 sm:inline">Free for buyers</span>
       </div>
-      <div className="grid gap-3 sm:grid-cols-[1.4fr_0.75fr_1fr_auto]">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1.4fr_0.75fr_1fr_auto]">
         <div>
           <label htmlFor="product" className="mb-1 block text-[12px] font-bold">Product Name <span className="text-accent">*</span></label>
           <input id="product" required className="w-full border border-border px-3 py-2 text-sm outline-none focus:border-accent" placeholder="e.g. Steel pipes" />
@@ -52,10 +52,13 @@ function MiniRFQForm() {
           </label>
           <input id="mobile" required className="w-full border border-border px-3 py-2 text-sm outline-none focus:border-accent" placeholder="+91 mobile" />
         </div>
-        <button type="submit" className="self-end bg-accent px-5 py-2 text-sm font-bold text-white hover:bg-accent/90">
+        <button type="submit" className="hidden self-end bg-accent px-5 py-2 text-sm font-bold text-white hover:bg-accent/90 lg:block">
           Submit
         </button>
       </div>
+      <button type="submit" className="mt-3 w-full bg-accent px-5 py-2 text-sm font-bold text-white hover:bg-accent/90 lg:hidden">
+        Submit
+      </button>
     </form>
   );
 }
@@ -146,7 +149,7 @@ export default function HomePage() {
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             {transactions.map((item) => (
-              <div key={`${item.company}-${item.city}`} className="border border-white/15 bg-white/8 p-3">
+              <div key={`${item.company}-${item.city}`} className="border border-white/15 bg-white/10 p-3">
                 <div className="font-bold text-white">{item.company}</div>
                 <div className="mt-1 text-[12px] text-white/70">{item.category}</div>
                 <div className="mt-2 flex items-center gap-1 text-[12px] font-semibold text-accent">

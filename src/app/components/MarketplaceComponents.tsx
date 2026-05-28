@@ -4,8 +4,11 @@ import {
   BadgeCheck,
   Clock3,
   Factory,
+  FlaskConical,
   IndianRupee,
+  Leaf,
   MapPin,
+  Monitor,
   Phone,
   Search,
   ShieldCheck,
@@ -34,10 +37,10 @@ export const categories = [
   { name: 'Electrical & Electronics', count: '8,900+', subs: '182 sub-categories', icon: ShieldCheck },
   { name: 'Construction Materials', count: '15,100+', subs: '305 sub-categories', icon: Truck },
   { name: 'Packaging Materials', count: '4,800+', subs: '96 sub-categories', icon: BadgeCheck },
-  { name: 'Office & IT Supplies', count: '9,300+', subs: '141 sub-categories', icon: Search },
+  { name: 'Office & IT Supplies', count: '9,300+', subs: '141 sub-categories', icon: Monitor },
   { name: 'Automotive Parts', count: '6,700+', subs: '126 sub-categories', icon: Factory },
-  { name: 'Chemicals & Raw Materials', count: '5,600+', subs: '112 sub-categories', icon: ShieldCheck },
-  { name: 'Agricultural Products', count: '3,900+', subs: '84 sub-categories', icon: Truck },
+  { name: 'Chemicals & Raw Materials', count: '5,600+', subs: '112 sub-categories', icon: FlaskConical },
+  { name: 'Agricultural Products', count: '3,900+', subs: '84 sub-categories', icon: Leaf },
 ];
 
 export const popularSearches = [
@@ -74,7 +77,7 @@ export function SectionHeader({
   viewAllTo?: string;
 }) {
   return (
-    <div className="mb-5 flex flex-col gap-3 border-b border-border bg-card px-4 py-4 sm:flex-row sm:items-end sm:justify-between">
+    <div className="mb-5 flex flex-col gap-3 border-b border-border bg-white px-4 py-4 sm:flex-row sm:items-end sm:justify-between">
       <div>
         <div className="mb-1 text-[11px] font-bold uppercase tracking-[0.16em] text-accent">{eyebrow}</div>
         <h2 className="font-serif text-2xl font-bold leading-tight text-primary md:text-3xl">{title}</h2>

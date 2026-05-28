@@ -2,7 +2,7 @@
 
 :root {
   --font-size: 16px;
-  --background: #F5F4EF;
+  --background: #FFFFFF;
   --foreground: #0B1F3A;
   --card: #FFFFFF;
   --card-foreground: #0B1F3A;
@@ -12,14 +12,14 @@
   --primary-foreground: #FFFFFF;
   --secondary: #142848;
   --secondary-foreground: #FFFFFF;
-  --muted: #E5E3DC;
+  --muted: #F3F4F6;
   --muted-foreground: #6B7280;
   --accent: #C9973A; /* Vibrant Gold */
   --accent-foreground: #FFFFFF;
   --destructive: #EF4444;
   --destructive-foreground: #FFFFFF;
-  --border: #E5E3DC;
-  --input: #E5E3DC;
+  --border: #E5E7EB;
+  --input: #E5E7EB;
   --input-background: #FFFFFF;
   --switch-background: #CBD5E1;
   --ring: #E8B455;
@@ -123,7 +123,7 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --font-serif: 'Playfair Display', Georgia, serif;
-  --font-sans: 'Inter', Arial, sans-serif;
+  --font-sans: 'IBM Plex Sans', Arial, sans-serif;
 }
 
 @layer base {
