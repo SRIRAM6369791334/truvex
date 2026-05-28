@@ -1,8 +1,9 @@
-import { HeroSection } from '../HeroSection';
 import { Link } from 'react-router';
 import { Zap, Target, ShieldCheck, Globe, Handshake, Lightbulb, Check } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { FadeIn, StaggerContainer, StaggerItem } from '../AnimationUtils';
+import { MarketplacePageHeader, TrustSignalsBar } from '../MarketplaceComponents';
+import { ProcessComparisonSection } from '../VisualSections';
 
 const scores = [
   { label: 'Truvex', speed: 95, verification: 100, transparency: 90, effort: 95, color: 'bg-teal-500' },
@@ -77,12 +78,12 @@ const tableRowVariants = {
 export default function WhyTruvexPage() {
   return (
     <div className="w-full">
-      <HeroSection
-        badge="Competitive Edge"
-        headline="Why Choose Truvex"
-        subtext="Six distinct advantages that set Truvex apart from traditional brokers and open B2B platforms."
-        patternId="geo-why"
+      <MarketplacePageHeader
+        eyebrow="Competitive Edge"
+        title="Why Choose Truvex Over Alternatives"
+        subtext="Speed, verified suppliers, and transparent pricing - everything traditional sourcing lacks."
       />
+      <TrustSignalsBar />
 
       {/* Animated Score Card */}
       <section className="bg-muted py-24 px-4">
@@ -94,7 +95,7 @@ export default function WhyTruvexPage() {
 
           <div className="space-y-8">
             {scores.map((s, si) => (
-              <FadeIn key={s.label} delay={si * 0.1} className="bg-card border border-border rounded-2xl p-6">
+              <FadeIn key={s.label} delay={si * 0.1} className="market-card border border-border p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-bold text-foreground text-lg">{s.label}</h3>
                   {si === 0 && <span className="bg-teal-100 text-teal-700 text-xs font-bold px-3 py-1 rounded-full">Truvex ⭐</span>}
@@ -136,7 +137,7 @@ export default function WhyTruvexPage() {
               <motion.div
                 key={adv.title}
                 variants={cardVariants}
-                className="bg-card border border-border border-l-accent rounded-r-xl p-8 hover:shadow-xl hover:-translate-y-1 hover:translate-x-1 transition-all duration-300 group"
+                className="market-card border border-border border-l-4 border-l-accent p-5 hover:border-accent hover:shadow-md transition-all duration-200 group"
               >
                 <div className="mb-5 p-3 bg-accent/10 rounded-lg inline-flex group-hover:scale-110 transition-transform duration-300">
                   {adv.icon}
@@ -152,6 +153,8 @@ export default function WhyTruvexPage() {
           </motion.div>
         </div>
       </section>
+
+      <ProcessComparisonSection />
 
       {/* Comparison Table */}
       <section className="bg-card py-20 px-4">
@@ -176,7 +179,7 @@ export default function WhyTruvexPage() {
             <div className="grid grid-cols-4 bg-primary p-4 md:p-6 gap-2 md:gap-4 items-center">
               <span className="text-primary-foreground/70 text-xs font-semibold uppercase tracking-wider col-span-1">Feature</span>
               <div className="text-center col-span-1">
-                <span className="bg-secondary text-secondary-foreground px-3 py-1 md:px-4 md:py-1.5 rounded-md text-sm font-bold shadow-sm">Truvex</span>
+                <span className="bg-accent px-3 py-1 text-sm font-bold text-white">Truvex</span>
               </div>
               <span className="text-primary-foreground/70 text-xs font-semibold uppercase tracking-wider text-center col-span-1 hidden sm:block">Traditional Broker</span>
               <span className="text-primary-foreground/70 text-xs font-semibold uppercase tracking-wider text-center col-span-1 block sm:hidden">Broker</span>
@@ -216,34 +219,17 @@ export default function WhyTruvexPage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="bg-primary py-24 px-4 text-center relative overflow-hidden">
-        {/* Subtle background decoration */}
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.2)_0%,transparent_100%)] pointer-events-none" />
-        
-        <motion.div 
-          className="max-w-2xl mx-auto relative z-10"
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-        >
-          <h2 className="font-['Playfair_Display',_serif] text-primary-foreground text-3xl md:text-4xl font-bold mb-4">
-            Experience the Truvex Difference
-          </h2>
-          <p className="text-primary-foreground/70 text-base md:text-lg leading-relaxed mb-10 max-w-xl mx-auto">
-            Speed, transparency, and verified relationships — everything traditional sourcing lacks, all in one platform.
-          </p>
-          <Link
-            to="/contact"
-            className="bg-accent text-accent-foreground px-8 py-4 rounded-lg text-lg font-bold inline-flex items-center gap-2 hover:bg-accent/90 hover:scale-105 hover:shadow-[0_8px_25px_rgba(201,151,58,0.4)] transition-all duration-300"
-          >
-            Get Started Today 
-            <span className="text-xl">→</span>
+      <section className="bg-primary px-4 py-8 text-white">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <div className="text-[11px] font-bold uppercase tracking-[0.16em] text-accent">Get Started</div>
+            <h2 className="font-serif text-2xl font-bold text-white">Experience the Truvex Difference</h2>
+          </div>
+          <Link to="/contact" className="market-button bg-accent px-5 py-3 text-sm font-bold text-white">
+            Get Started Today →
           </Link>
-        </motion.div>
+        </div>
       </section>
     </div>
   );
 }
-

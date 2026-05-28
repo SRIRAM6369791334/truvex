@@ -19,6 +19,14 @@ export default function AboutPage() {
 
       {/* Two-Column Section */}
       <section className="bg-background py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <img
+          src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800"
+          alt="Business handshake"
+          width={800}
+          height={520}
+          loading="lazy"
+          className="absolute inset-0 h-full w-full object-cover opacity-[0.06]"
+        />
         <div className="max-w-6xl mx-auto relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
             
@@ -34,6 +42,14 @@ export default function AboutPage() {
 
             {/* Right column — OUR VISION */}
             <ScrollReveal delay={0.2} className="group">
+              <img
+                src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800"
+                alt="Truvex team meeting"
+                width={800}
+                height={520}
+                loading="lazy"
+                className="mb-6 h-56 w-full rounded-2xl border border-border object-cover shadow-sm"
+              />
               <div className="inline-block bg-accent/10 text-accent px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-6 transition-colors group-hover:bg-accent/20">
                 Our Vision
               </div>

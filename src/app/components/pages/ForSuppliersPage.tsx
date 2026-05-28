@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 import { BadgeCheck, BellRing, FileCheck2, MapPinned } from 'lucide-react';
 import { EnquiryTicker, MarketplacePageHeader, SectionHeader, TrustSignalsBar } from '../MarketplaceComponents';
+import { SupplierCitiesMap } from '../VisualSections';
 
 const leadTypes = [
   { type: 'Standard RFQ', buyer: 'Product, quantity, city', supplier: 'Quote-ready lead summary', cost: 'Commission on closure' },
@@ -22,6 +23,7 @@ export default function ForSuppliersPage() {
         eyebrow="For suppliers"
         title="Receive Qualified Buyer Requirements"
         subtext="Join the Truvex supplier network to receive product-specific RFQs from buyers who have shared quantity, city, and purchase timeline."
+        imageUrl="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1200"
       />
       <EnquiryTicker label="Buyer leads" />
       <TrustSignalsBar />
@@ -35,7 +37,7 @@ export default function ForSuppliersPage() {
           />
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
             {benefits.map((benefit) => (
-              <div key={benefit.title} className="border border-border border-t-2 border-t-accent bg-card p-4">
+              <div key={benefit.title} className="market-card border-t-2 border-t-accent p-4">
                 <benefit.icon className="mb-3 text-accent" />
                 <h3 className="text-sm font-bold text-primary">{benefit.title}</h3>
                 <p className="mt-2 text-[13px] leading-5 text-muted-foreground">{benefit.text}</p>
@@ -44,6 +46,7 @@ export default function ForSuppliersPage() {
           </div>
         </div>
       </section>
+      <SupplierCitiesMap />
 
       <section className="px-4 pb-8">
         <div className="mx-auto max-w-7xl">
@@ -80,7 +83,7 @@ export default function ForSuppliersPage() {
             <h2 className="font-serif text-2xl font-bold text-white">List your business as a verified supplier</h2>
             <p className="mt-1 text-sm text-white/70">Add city, category, supply capacity, certifications, and contact rules.</p>
           </div>
-          <Link to="/contact" className="bg-accent px-5 py-3 text-center text-sm font-bold text-white">Join Supplier Network</Link>
+          <Link to="/contact" className="market-button bg-accent px-5 py-3 text-center text-sm font-bold text-white">Join Supplier Network</Link>
         </div>
       </section>
     </div>

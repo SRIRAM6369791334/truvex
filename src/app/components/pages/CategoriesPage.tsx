@@ -12,6 +12,7 @@ import {
   categories,
   suppliers,
 } from '../MarketplaceComponents';
+import { SupplierCitiesMap } from '../VisualSections';
 
 const filters = ['All', 'Industrial', 'Construction', 'Electrical', 'Packaging', 'Automotive'];
 
@@ -24,6 +25,7 @@ export default function CategoriesPage() {
         eyebrow="Supplier directory"
         title="Product Categories and Verified Supplier Listings"
         subtext="Browse dense B2B categories, compare supplier availability, and post an RFQ when your product is not listed."
+        imageUrl="https://images.unsplash.com/photo-1565043666747-69f6646db940?w=1600"
       />
       <EnquiryTicker label="Live RFQs" />
       <TrustSignalsBar />
@@ -57,7 +59,7 @@ export default function CategoriesPage() {
             </div>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
             {categories.map((category) => <CategoryCard key={category.name} category={category} />)}
           </div>
           <div className="mt-4">
@@ -67,6 +69,7 @@ export default function CategoriesPage() {
       </section>
 
       <TrustSignalsBar compact />
+      <SupplierCitiesMap />
 
       <section className="px-4 py-8">
         <div className="mx-auto max-w-7xl">
@@ -88,7 +91,7 @@ export default function CategoriesPage() {
             <h2 className="font-serif text-2xl font-bold text-white">Request a supplier category</h2>
             <p className="mt-1 text-sm text-white/70">Tell us the product and city. Truvex will route the RFQ to relevant suppliers.</p>
           </div>
-          <Link to="/contact" className="bg-accent px-5 py-3 text-center text-sm font-bold text-white">Post New Requirement</Link>
+          <Link to="/contact" className="market-button bg-accent px-5 py-3 text-center text-sm font-bold text-white">Post New Requirement</Link>
         </div>
       </section>
     </div>

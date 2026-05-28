@@ -27,7 +27,7 @@ PLATFORM BADGES SECTION:
 - Two badges: Justdial + IndiaMart with short description
 
 COLOR: Navy #0B1F3A, Gold #C9973A, Teal #0D6E6E, Light #F5F4EF
-FONT: Playfair Display (headings) + DM Sans (body)
+FONT: Playfair Display (headings) + IBM Plex Sans (body)
 STYLE: Clean, professional, B2B corporate, India market
 
 📄 PAGE 2 — ABOUT US
@@ -401,7 +401,7 @@ COLORS:
 
 TYPOGRAPHY:
 - Headings: Playfair Display (600, 700)
-- Body: DM Sans (300, 400, 500, 600)
+- Body: IBM Plex Sans (400, 500, 600, 700)
 
 COMPONENTS:
 - Buttons: Gold primary, Navy outline

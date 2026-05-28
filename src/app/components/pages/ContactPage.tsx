@@ -48,6 +48,7 @@ export default function ContactPage() {
         eyebrow="RFQ desk"
         title="Post Your Buy Requirement"
         subtext="Share product, quantity, mobile number, and delivery city. Truvex will shortlist verified suppliers and respond within 4 hours."
+        imageUrl="https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=1200"
       />
       <EnquiryTicker />
       <TrustSignalsBar />
@@ -72,7 +73,7 @@ export default function ContactPage() {
                 <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">
                   Truvex will verify the product details and contact you with supplier options. Keep your phone available for faster callbacks.
                 </p>
-                <button onClick={() => setSubmitted(false)} className="mt-5 border border-primary px-4 py-2 text-sm font-bold text-primary">
+                <button onClick={() => setSubmitted(false)} className="market-button mt-5 border border-primary px-4 py-2 text-sm font-bold text-primary">
                   Submit Another Requirement
                 </button>
               </div>
@@ -121,12 +122,20 @@ export default function ContactPage() {
                 <Field label="Requirement Details" required>
                   <textarea required rows={5} className="w-full border border-border px-3 py-2 text-sm outline-none focus:border-accent" placeholder="Mention specs, brand preference, grade, size, delivery terms, or certifications." />
                 </Field>
-                <button className="bg-accent px-5 py-3 text-sm font-bold text-white hover:bg-accent/90">Submit Requirement</button>
+                <button className="market-button bg-accent px-5 py-3 text-sm font-bold text-white hover:bg-accent/90">Submit Requirement</button>
               </form>
             )}
           </div>
 
           <aside className="grid content-start gap-4">
+            <img
+              src="https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=600"
+              alt="Customer support"
+              width={600}
+              height={420}
+              loading="lazy"
+              className="h-64 w-full rounded-2xl border border-border object-cover shadow-sm"
+            />
             <div className="border border-border border-t-2 border-t-accent bg-card p-5">
               <h3 className="text-lg font-bold text-primary">Buyer Support</h3>
               <p className="mt-2 text-sm text-muted-foreground">Call the RFQ desk for urgent product requirements and supplier verification.</p>

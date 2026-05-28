@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { ArrowRight, BadgeCheck, Clock3, MapPin, PackageCheck, Search, ShieldCheck, Users } from 'lucide-react';
+import { BadgeCheck, Clock3, PackageCheck, ShieldCheck, Users } from 'lucide-react';
 import {
   CategoryCard,
   EnquiryTicker,
@@ -10,23 +10,13 @@ import {
   categories,
   suppliers,
 } from '../MarketplaceComponents';
+import { IndustryInsightsBlog, LiveMarketplaceStats, TestimonialCarousel, TrustedByBrands } from '../VisualSections';
 
 const metrics = [
   { label: 'Verified suppliers', value: '500+', icon: BadgeCheck },
   { label: 'Active buyers/month', value: '2,800+', icon: Users },
   { label: 'Product categories', value: '120+', icon: PackageCheck },
   { label: 'Avg. first response', value: '4 hrs', icon: Clock3 },
-];
-
-const transactions = [
-  { company: 'R.K. Fabricators', category: 'MS Pipes', city: 'Rajkot' },
-  { company: 'Bright Controls', category: 'Control Panels', city: 'Noida' },
-  { company: 'Sun Pack Industries', category: 'Stretch Film', city: 'Surat' },
-  { company: 'Delta Safety Supply', category: 'PPE Kits', city: 'Chennai' },
-  { company: 'Prime Auto Spares', category: 'CNC Parts', city: 'Pune' },
-  { company: 'Metro Build Mart', category: 'Fasteners', city: 'Delhi' },
-  { company: 'Coastal Pumps', category: 'Industrial Pumps', city: 'Kochi' },
-  { company: 'Western Tools', category: 'Machine Tools', city: 'Ahmedabad' },
 ];
 
 function MiniRFQForm() {
@@ -52,11 +42,11 @@ function MiniRFQForm() {
           </label>
           <input id="mobile" required className="w-full border border-border px-3 py-2 text-sm outline-none focus:border-accent" placeholder="+91 mobile" />
         </div>
-        <button type="submit" className="hidden self-end bg-accent px-5 py-2 text-sm font-bold text-white hover:bg-accent/90 lg:block">
+        <button type="submit" className="market-button hidden self-end bg-accent px-5 py-2 text-sm font-bold text-white hover:bg-accent/90 lg:block">
           Submit
         </button>
       </div>
-      <button type="submit" className="mt-3 w-full bg-accent px-5 py-2 text-sm font-bold text-white hover:bg-accent/90 lg:hidden">
+      <button type="submit" className="market-button mt-3 w-full bg-accent px-5 py-2 text-sm font-bold text-white hover:bg-accent/90 lg:hidden">
         Submit
       </button>
     </form>
@@ -66,13 +56,21 @@ function MiniRFQForm() {
 export default function HomePage() {
   return (
     <div className="bg-background">
-      <section className="overflow-hidden border-b border-accent/30 bg-primary px-4 py-10 text-white">
-        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+      <section className="relative overflow-hidden border-b border-accent/30 bg-primary px-4 py-10 text-white">
+        <img
+          src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1600"
+          alt="Industrial warehouse"
+          width={1600}
+          height={760}
+          className="absolute inset-0 h-full w-full object-cover opacity-25"
+        />
+        <div className="absolute inset-0 bg-primary/75" />
+        <div className="relative z-10 mx-auto grid max-w-screen-2xl gap-8 lg:grid-cols-[1fr_1fr] lg:items-center lg:px-8 xl:grid-cols-[1.15fr_0.85fr]">
           <div className="min-w-0">
             <div className="mb-3 inline-flex items-center gap-2 border border-accent/40 bg-white/5 px-3 py-1 text-[12px] font-bold uppercase tracking-[0.14em] text-accent">
               <ShieldCheck size={15} /> Verified B2B Supplier Network
             </div>
-            <h1 className="max-w-full text-wrap font-serif text-3xl font-bold leading-tight text-white sm:text-4xl md:text-6xl">
+            <h1 className="max-w-full text-wrap font-serif text-2xl font-bold leading-tight text-white sm:text-[clamp(2.5rem,6vw,5rem)]">
               Find Verified Suppliers in 4 Hours. Free for Buyers.
             </h1>
             <p className="mt-4 max-w-full text-sm leading-6 text-white/78 sm:text-base sm:leading-7">
@@ -100,6 +98,7 @@ export default function HomePage() {
       </section>
 
       <EnquiryTicker />
+      <LiveMarketplaceStats />
       <TrustSignalsBar />
 
       <section className="px-4 py-8">
@@ -110,7 +109,7 @@ export default function HomePage() {
             subtext="Dense supplier discovery across core Indian industrial and commercial product segments."
             viewAllTo="/categories"
           />
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
             {categories.map((category) => <CategoryCard key={category.name} category={category} />)}
           </div>
           <div className="mt-4">
@@ -135,31 +134,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="bg-primary px-4 py-8 text-white">
-        <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-          <div>
-            <div className="mb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-accent">Recent transactions</div>
-            <h2 className="font-serif text-3xl font-bold text-white">Business activity across Indian cities</h2>
-            <p className="mt-2 text-sm leading-6 text-white/70">
-              Replace passive testimonials with current marketplace signals: buyer requirements, supplier categories, and city-level activity.
-            </p>
-            <Link to="/contact" className="mt-5 inline-flex items-center gap-2 bg-accent px-5 py-2.5 text-sm font-bold text-white">
-              Post Requirement <ArrowRight size={16} />
-            </Link>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {transactions.map((item) => (
-              <div key={`${item.company}-${item.city}`} className="border border-white/15 bg-white/10 p-3">
-                <div className="font-bold text-white">{item.company}</div>
-                <div className="mt-1 text-[12px] text-white/70">{item.category}</div>
-                <div className="mt-2 flex items-center gap-1 text-[12px] font-semibold text-accent">
-                  <MapPin size={13} /> {item.city}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <TestimonialCarousel />
+      <IndustryInsightsBlog />
+      <TrustedByBrands />
 
       <section className="border-y border-accent/30 bg-card px-4 py-8">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -169,8 +146,8 @@ export default function HomePage() {
             <p className="mt-1 text-sm text-muted-foreground">Send your requirement and get matched with verified suppliers by phone or WhatsApp.</p>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row">
-            <Link to="/contact" className="bg-accent px-5 py-3 text-center text-sm font-bold text-white">Post Buy Requirement</Link>
-            <Link to="/categories" className="border border-primary px-5 py-3 text-center text-sm font-bold text-primary">Find Supplier</Link>
+            <Link to="/contact" className="market-button bg-accent px-5 py-3 text-center text-sm font-bold text-white">Post Buy Requirement</Link>
+            <Link to="/categories" className="market-button border border-primary px-5 py-3 text-center text-sm font-bold text-primary">Find Supplier</Link>
           </div>
         </div>
       </section>

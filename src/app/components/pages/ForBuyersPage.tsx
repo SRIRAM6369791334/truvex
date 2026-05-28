@@ -23,6 +23,7 @@ export default function ForBuyersPage() {
         eyebrow="For buyers"
         title="Post Requirements and Find Verified Suppliers Faster"
         subtext="Truvex helps purchase teams and business owners move from product requirement to supplier callback without browsing unverified listings."
+        imageUrl="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1200"
       />
       <EnquiryTicker />
       <TrustSignalsBar />
@@ -36,7 +37,7 @@ export default function ForBuyersPage() {
           />
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {stats.map((stat) => (
-              <div key={stat.label} className="border border-border border-t-2 border-t-accent bg-card p-4">
+              <div key={stat.label} className="market-card border-t-2 border-t-accent p-4">
                 <stat.icon className="mb-3 text-accent" />
                 <div className="text-3xl font-extrabold text-primary">{stat.value}</div>
                 <div className="mt-1 text-[12px] font-bold uppercase tracking-wide text-muted-foreground">{stat.label}</div>
@@ -79,7 +80,7 @@ export default function ForBuyersPage() {
             <h2 className="font-serif text-2xl font-bold text-white">Post one RFQ. Get supplier callbacks.</h2>
             <p className="mt-1 text-sm text-white/70">Best for industrial products, bulk orders, repeat procurement, and city-specific sourcing.</p>
           </div>
-          <Link to="/contact" className="bg-accent px-5 py-3 text-center text-sm font-bold text-white">Post Buy Requirement</Link>
+          <Link to="/contact" className="market-button bg-accent px-5 py-3 text-center text-sm font-bold text-white">Post Buy Requirement</Link>
         </div>
       </section>
     </div>

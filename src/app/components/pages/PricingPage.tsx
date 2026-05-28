@@ -1,92 +1,90 @@
+import { Link } from 'react-router';
 import { Check } from 'lucide-react';
-import { FadeIn, StaggerContainer, StaggerItem } from '../AnimationUtils';
+import { MarketplacePageHeader, TrustSignalsBar } from '../MarketplaceComponents';
+
+const tiers = [
+  {
+    name: 'Buyer Standard',
+    price: 'Free',
+    description: 'For SMEs posting product requirements.',
+    features: ['Unlimited buying requirements', 'Curated supplier proposals', 'Supplier verification tags', 'Basic email support'],
+    button: 'Post Requirement',
+    href: '/contact',
+    highlight: false,
+  },
+  {
+    name: 'Supplier Premium',
+    price: 'INR 4,999',
+    period: '/month',
+    description: 'For manufacturers and traders seeking verified B2B leads.',
+    features: ['Priority access to buyer leads', 'Featured placement in proposals', 'Buyer intent summaries', 'Dedicated account support'],
+    button: 'Join as Supplier',
+    href: '/for-suppliers',
+    highlight: true,
+  },
+  {
+    name: 'Enterprise Sourcing',
+    price: 'Custom',
+    description: 'Managed procurement for larger or complex sourcing requirements.',
+    features: ['Dedicated procurement support', 'Compliance checks', 'Multi-vendor negotiation', 'Supply chain mapping'],
+    button: 'Contact Sales',
+    href: '/contact',
+    highlight: false,
+  },
+];
 
 export default function PricingPage() {
-  const tiers = [
-    {
-      name: "Buyer Standard",
-      price: "Free",
-      description: "For SMEs looking to source products efficiently.",
-      features: [
-        "Unlimited buying requirements",
-        "Curated supplier proposals",
-        "Supplier verification tags",
-        "Basic email support"
-      ],
-      button: "Post Requirement",
-      highlight: false
-    },
-    {
-      name: "Supplier Premium",
-      price: "₹4,999",
-      period: "/month",
-      description: "For manufacturers looking for verified B2B leads.",
-      features: [
-        "Priority access to buyer leads",
-        "Featured placement in proposals",
-        "Detailed buyer intent analytics",
-        "Dedicated account manager",
-        "Automated proposal drafting"
-      ],
-      button: "Join as Supplier",
-      highlight: true
-    },
-    {
-      name: "Enterprise Sourcing",
-      price: "Custom",
-      description: "End-to-end procurement for large corporations.",
-      features: [
-        "Dedicated procurement team",
-        "Custom compliance audits",
-        "Multi-vendor negotiation",
-        "Supply chain mapping",
-        "API integrations"
-      ],
-      button: "Contact Sales",
-      highlight: false
-    }
-  ];
-
   return (
-    <div className="w-full bg-background min-h-screen py-24 px-4">
-      <div className="max-w-6xl mx-auto">
-        <FadeIn className="text-center mb-16">
-          <div className="inline-block bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-semibold mb-4">Transparent Pricing</div>
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">Simple, Aligned Pricing</h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">Free for buyers. Performance-based for suppliers. No hidden fees.</p>
-        </FadeIn>
+    <div className="bg-background">
+      <MarketplacePageHeader
+        eyebrow="Transparent Pricing"
+        title="Simple, Aligned Pricing"
+        subtext="Free for buyers. Commission-based for suppliers. No hidden fees."
+      />
+      <TrustSignalsBar />
 
-        <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
-          {tiers.map((tier, i) => (
-            <StaggerItem key={i} className={`rounded-2xl p-8 ${tier.highlight ? 'bg-primary text-primary-foreground shadow-2xl ring-4 ring-primary/20 scale-105' : 'bg-card text-foreground border border-border shadow-sm'}`}>
-              <h3 className={`text-xl font-bold mb-2 ${tier.highlight ? 'text-white' : 'text-primary'}`}>{tier.name}</h3>
-              <p className={tier.highlight ? 'text-primary-foreground/80' : 'text-muted-foreground'}>{tier.description}</p>
-              
+      <section className="px-4 py-8">
+        <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-3">
+          {tiers.map((tier) => (
+            <div
+              key={tier.name}
+              className={`rounded-2xl p-6 shadow-sm transition-all duration-200 hover:shadow-[0_8px_32px_rgba(11,31,58,0.12)] ${
+                tier.highlight
+                  ? 'border border-primary border-t-4 border-t-accent bg-primary text-white'
+                  : 'border border-border border-t-2 border-t-accent bg-white/80 backdrop-blur-xl text-primary'
+              }`}
+            >
+              <h3 className={`text-xl font-bold ${tier.highlight ? 'text-white' : 'text-primary'}`}>{tier.name}</h3>
+              <p className={`mt-2 text-sm ${tier.highlight ? 'text-white/70' : 'text-muted-foreground'}`}>{tier.description}</p>
               <div className="my-6">
-                <span className="text-4xl font-extrabold">{tier.price}</span>
-                {tier.period && <span className={tier.highlight ? 'text-primary-foreground/60' : 'text-muted-foreground'}>{tier.period}</span>}
+                <span className="font-serif text-4xl font-bold">{tier.price}</span>
+                {tier.period && <span className={tier.highlight ? 'text-white/60' : 'text-muted-foreground'}>{tier.period}</span>}
               </div>
-
-              <ul className="space-y-4 mb-8">
-                {tier.features.map((feature, j) => (
-                  <li key={j} className="flex items-start gap-3">
-                    <Check className={`w-5 h-5 shrink-0 ${tier.highlight ? 'text-accent' : 'text-teal-600'}`} />
-                    <span className={tier.highlight ? 'text-primary-foreground/90' : 'text-foreground/80'}>{feature}</span>
+              <ul className="mb-8 grid gap-3">
+                {tier.features.map((feature) => (
+                  <li key={feature} className="flex items-start gap-2 text-sm">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                    <span className={tier.highlight ? 'text-white/85' : 'text-primary/80'}>{feature}</span>
                   </li>
                 ))}
               </ul>
-
-              <button className={`w-full py-3 px-6 rounded-xl font-bold transition-all ${
-                tier.highlight 
-                  ? 'bg-accent text-accent-foreground hover:bg-accent/90 hover:shadow-lg hover:-translate-y-1' 
-                  : 'bg-primary/10 text-primary hover:bg-primary/20'
-              }`}>
+              <Link to={tier.href} className="market-button inline-flex bg-accent px-4 py-2 font-bold text-white">
                 {tier.button}
-              </button>
-            </StaggerItem>
+              </Link>
+            </div>
           ))}
-        </StaggerContainer>
-      </div>
+        </div>
+      </section>
+
+      <section className="bg-primary px-4 py-8 text-white">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <div className="text-[11px] font-bold uppercase tracking-[0.16em] text-accent">Get Started</div>
+            <h2 className="font-serif text-2xl font-bold text-white">Choose buyer RFQ or supplier onboarding</h2>
+          </div>
+          <Link to="/contact" className="market-button bg-accent px-5 py-3 text-sm font-bold text-white">Start Today</Link>
+        </div>
+      </section>
     </div>
   );
 }
