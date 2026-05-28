@@ -1,236 +1,188 @@
 import { Outlet, Link, useLocation } from 'react-router';
-import { useState, useEffect } from 'react';
-import { Menu, X, Sun, Moon } from 'lucide-react';
+import { useState } from 'react';
+import { ChevronDown, MapPin, Menu, Phone, Search, X } from 'lucide-react';
 
 const navLinks = [
   { label: 'Home', path: '/' },
-  { label: 'About', path: '/about' },
-  { label: 'How It Works', path: '/how-it-works' },
-  { label: 'Services', path: '/services' },
   { label: 'Categories', path: '/categories' },
   { label: 'For Buyers', path: '/for-buyers' },
   { label: 'For Suppliers', path: '/for-suppliers' },
-  { label: 'Why Truvex', path: '/why-truvex' },
-  { label: 'Roadmap', path: '/roadmap' },
+  { label: 'Services', path: '/services' },
+  { label: 'How It Works', path: '/how-it-works' },
+  { label: 'Contact', path: '/contact' },
 ];
 
-const footerCols = [
-  { label: 'Company', links: [{ label: 'About Us', path: '/about' }, { label: 'Why Truvex', path: '/why-truvex' }, { label: 'Roadmap', path: '/roadmap' }] },
-  { label: 'Solutions', links: [{ label: 'For Buyers', path: '/for-buyers' }, { label: 'For Suppliers', path: '/for-suppliers' }, { label: 'Services', path: '/services' }] },
-  { label: 'Resources', links: [{ label: 'How It Works', path: '/how-it-works' }, { label: 'Categories', path: '/categories' }, { label: 'Contact', path: '/contact' }] },
+const sitemap = [
+  { label: 'About Truvex', path: '/about' },
+  { label: 'Why Truvex', path: '/why-truvex' },
+  { label: 'Pricing', path: '/pricing' },
+  { label: 'FAQ', path: '/faq' },
+];
+
+const topCategories = [
+  'Industrial Machinery',
+  'Electrical Panels',
+  'Packaging Materials',
+  'Construction Supplies',
+  'Automotive Parts',
+  'Safety Products',
 ];
 
 export default function Layout() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
-  const [theme, setTheme] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('theme') || 'light';
-    }
-    return 'light';
-  });
-
-  useEffect(() => {
-    const root = window.document.documentElement;
-    if (theme === 'dark') {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
 
   const isActive = (path: string) =>
     path === '/' ? location.pathname === '/' : location.pathname.startsWith(path);
 
   return (
-    <div className="font-sans min-h-screen flex flex-col transition-colors duration-300">
-      {/* Navbar */}
-      <nav className="sticky top-0 z-50 bg-primary/95 dark:bg-card/85 backdrop-blur-xl border-b border-white/10 dark:border-border/30 shadow-sm transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <Link to="/" className="flex items-center gap-2 no-underline group">
-              <span className="font-serif text-accent text-2xl font-bold tracking-tight group-hover:opacity-90 transition-opacity">
-                Truvex
-              </span>
+    <div className="min-h-screen overflow-x-hidden bg-background font-sans text-foreground">
+      <div className="w-full max-w-full border-b border-primary/10 bg-primary text-white">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-2 text-[12px]">
+          <div className="min-w-0 flex items-center gap-3">
+            <span className="flex items-center gap-1.5 font-semibold">
+              <Phone size={14} className="text-accent" /> +91 98765 43210
+            </span>
+            <span className="hidden items-center gap-1.5 sm:flex">
+              <MapPin size={14} className="text-accent" /> Delivering supplier matches across India
+            </span>
+          </div>
+          <div className="flex shrink-0 items-center gap-2">
+            <button className="hidden items-center gap-1 border border-white/15 bg-white/5 px-2 py-1 text-white/90 sm:flex">
+              Mumbai <ChevronDown size={13} />
+            </button>
+            <Link to="/contact" className="hidden bg-accent px-3 py-1.5 font-bold text-white hover:bg-accent/90 sm:inline-flex">
+              Post Buy Requirement
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      <nav className="sticky top-0 z-50 w-full max-w-full border-b-2 border-accent bg-white shadow-sm">
+        <div className="mx-auto max-w-7xl px-4">
+          <div className="flex min-h-16 items-center gap-4">
+            <Link to="/" className="shrink-0 text-2xl font-bold text-primary">
+              <span className="font-serif text-accent">Truvex</span>
             </Link>
 
-            {/* Desktop Nav */}
-            <div className="hidden xl:flex items-center space-x-1">
+            <div className="hidden min-w-0 flex-1 items-center lg:flex">
+              <div className="flex w-full max-w-xl border border-primary/20 bg-white">
+                <input
+                  className="min-w-0 flex-1 px-3 py-2 text-sm text-primary outline-none"
+                  placeholder="Search products, categories, suppliers..."
+                />
+                <Link to="/categories" className="flex items-center gap-2 bg-accent px-4 py-2 text-sm font-bold text-white">
+                  <Search size={16} /> Search
+                </Link>
+              </div>
+            </div>
+
+            <div className="hidden items-center gap-1 xl:flex">
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`px-3 py-2 rounded-md text-[13px] whitespace-nowrap transition-all duration-200 ${
-                    isActive(link.path)
-                      ? 'text-accent font-semibold bg-white/5'
-                      : 'text-white/80 dark:text-foreground/80 font-normal hover:text-white dark:hover:text-foreground hover:bg-white/10 dark:hover:bg-foreground/5'
+                  className={`px-2.5 py-2 text-[13px] font-semibold ${
+                    isActive(link.path) ? 'bg-primary text-white' : 'text-primary hover:bg-muted hover:text-accent'
                   }`}
                 >
                   {link.label}
                 </Link>
               ))}
-              
-              <Link
-                to="/contact"
-                className="ml-2 bg-accent text-white px-5 py-2 rounded-md text-[13px] font-semibold whitespace-nowrap transition-all duration-300 hover:bg-accent/90 hover:shadow-lg hover:shadow-accent/20"
-              >
-                Get a Quote
-              </Link>
-
-              {/* Theme Toggle */}
-              <button
-                onClick={toggleTheme}
-                className="ml-3 p-2 rounded-full text-white/80 dark:text-foreground/80 hover:text-accent dark:hover:text-accent hover:bg-white/10 dark:hover:bg-foreground/5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-accent"
-                aria-label="Toggle Theme"
-              >
-                {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-              </button>
             </div>
 
-            {/* Mobile Hamburger & Theme Toggle */}
-            <div className="xl:hidden flex items-center gap-3">
-              <button
-                onClick={toggleTheme}
-                className="p-2 rounded-full text-white/80 dark:text-foreground/80 hover:text-accent dark:hover:text-accent hover:bg-white/10 dark:hover:bg-foreground/5 transition-all duration-200"
-                aria-label="Toggle Theme"
-              >
-                {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-              </button>
-
-              <button
-                className="p-1 text-white dark:text-foreground hover:text-accent transition-colors focus:outline-none"
-                onClick={() => setMobileOpen(!mobileOpen)}
-                aria-label="Toggle menu"
-              >
-                {mobileOpen ? <X size={24} /> : <Menu size={24} />}
-              </button>
-            </div>
+            <button
+              className="ml-auto flex shrink-0 p-2 text-primary xl:hidden"
+              onClick={() => setMobileOpen((open) => !open)}
+              aria-label="Toggle menu"
+            >
+              {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
           </div>
         </div>
 
-        {/* Mobile Menu */}
         {mobileOpen && (
-          <div className="xl:hidden bg-primary/95 dark:bg-card/95 backdrop-blur-xl border-t border-white/10 dark:border-border/30 absolute w-full shadow-xl">
-            <div className="px-4 py-3 space-y-1">
-              {[...navLinks, { label: 'Get a Quote', path: '/contact' }].map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  onClick={() => setMobileOpen(false)}
-                  className={`block px-3 py-3 rounded-md text-sm border-b border-white/5 dark:border-border/10 last:border-none transition-colors ${
-                    isActive(link.path)
-                      ? 'text-accent font-semibold bg-white/5'
-                      : 'text-white/85 dark:text-foreground/85 font-normal hover:text-accent dark:hover:text-accent hover:bg-white/5 dark:hover:bg-foreground/5'
-                  } ${link.path === '/contact' ? 'font-semibold mt-2' : ''}`}
-                >
-                  {link.label}
+          <div className="border-t border-border bg-white xl:hidden">
+            <div className="px-4 py-3">
+              <div className="mb-3 flex border border-border">
+                <input className="min-w-0 flex-1 px-3 py-2 text-sm outline-none" placeholder="Search suppliers..." />
+                <Link to="/categories" onClick={() => setMobileOpen(false)} className="bg-accent px-3 py-2 text-sm font-bold text-white">
+                  Search
                 </Link>
-              ))}
+              </div>
+              <div className="grid grid-cols-1 gap-1">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.path}
+                    to={link.path}
+                    onClick={() => setMobileOpen(false)}
+                    className={`px-3 py-2 text-sm font-semibold ${
+                      isActive(link.path) ? 'bg-primary text-white' : 'text-primary hover:bg-muted'
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         )}
       </nav>
 
-      {/* Page Content */}
-      <main className="flex-1 bg-background">
+      <main className="min-h-screen overflow-x-hidden pb-16 md:pb-0">
         <Outlet />
       </main>
 
-      {/* Footer */}
-      <footer className="bg-primary text-white border-t border-white/10 relative overflow-hidden">
-        {/* Subtle background glow effect for premium feel */}
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl pointer-events-none -translate-y-1/2"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-secondary/5 rounded-full blur-3xl pointer-events-none translate-y-1/2"></div>
-        
-        <div className="max-w-7xl mx-auto px-4 py-16 relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-8">
-            {/* Brand */}
-            <div className="md:col-span-12 lg:col-span-5">
-              <Link to="/" className="inline-block mb-4 group">
-                <span className="font-serif text-accent text-3xl font-bold tracking-tight group-hover:opacity-90 transition-opacity">
-                  Truvex
-                </span>
-              </Link>
-              <p className="text-white/70 text-sm font-medium mb-4 tracking-wide">
-                Smart Sourcing. Right Products. Right Leads.
-              </p>
-              <p className="text-white/50 text-sm leading-relaxed max-w-md">
-                Bridging buyers and verified suppliers across India — capturing real-time enquiries from Justdial & IndiaMart and turning them into tailored proposals.
-              </p>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <span className="bg-secondary/80 text-white px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-sm border border-secondary/50 shadow-sm">B2B Sourcing</span>
-                <span className="bg-accent/20 text-accent px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-sm border border-accent/20 shadow-sm">Pan-India</span>
-                <span className="bg-white/10 text-white/70 px-3 py-1 rounded-full text-xs font-medium backdrop-blur-sm border border-white/10 shadow-sm">Est. 2026</span>
-              </div>
-            </div>
-
-            {/* Link Columns */}
-            <div className="md:col-span-12 lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-8">
-              {footerCols.map((col) => (
-                <div key={col.label}>
-                  <h4 className="text-accent text-xs font-bold uppercase tracking-widest mb-6">
-                    {col.label}
-                  </h4>
-                  <ul className="space-y-4">
-                    {col.links.map((link) => (
-                      <li key={link.path}>
-                        <Link
-                          to={link.path}
-                          className="text-white/60 text-sm hover:text-white transition-all duration-300 flex items-center group"
-                        >
-                          <span className="w-0 h-[1px] bg-accent mr-0 group-hover:w-3 group-hover:mr-2 transition-all duration-300"></span>
-                          {link.label}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Find Us On */}
-          <div className="mt-16 p-6 sm:p-8 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm hover:bg-white/[0.07] transition-all duration-500 hover:shadow-xl hover:shadow-black/20">
-            <div className="flex flex-col lg:flex-row gap-6 lg:items-center justify-between">
-              <span className="text-accent text-sm font-bold uppercase tracking-widest shrink-0">
-                Also Find Us On
-              </span>
-              <div className="flex flex-col sm:flex-row gap-8 sm:gap-12 w-full lg:justify-end">
-                <div className="group cursor-pointer">
-                  <div className="flex items-center gap-2 mb-1 transform group-hover:-translate-y-0.5 transition-transform duration-300">
-                    <span className="text-white text-sm font-semibold group-hover:text-accent transition-colors duration-300">📞 Justdial</span>
-                  </div>
-                  <span className="text-white/50 text-xs block group-hover:text-white/70 transition-colors duration-300">Search "Truvex" in your city</span>
-                </div>
-                <div className="group cursor-pointer">
-                  <div className="flex items-center gap-2 mb-1 transform group-hover:-translate-y-0.5 transition-transform duration-300">
-                    <span className="text-white text-sm font-semibold group-hover:text-accent transition-colors duration-300">🏭 IndiaMart</span>
-                  </div>
-                  <span className="text-white/50 text-xs block group-hover:text-white/70 transition-colors duration-300">Post your buy lead & tag Truvex</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom Bar */}
-          <div className="border-t border-white/10 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-white/40 text-xs text-center md:text-left">
-              © 2026 Truvex. All rights reserved. | B2B Sourcing Platform, India
+      <footer className="border-t-2 border-accent bg-primary text-white">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 md:grid-cols-4">
+          <div>
+            <Link to="/" className="font-serif text-3xl font-bold text-accent">Truvex</Link>
+            <p className="mt-3 text-sm leading-6 text-white/70">
+              Verified supplier discovery, RFQ routing, and managed B2B sourcing for Indian businesses.
             </p>
-            <div className="flex gap-6">
-              {['Privacy Policy', 'Terms of Service'].map((t) => (
-                <Link key={t} to="#" className="text-white/40 text-xs hover:text-white transition-colors duration-300">
-                  {t}
-                </Link>
+            <div className="mt-4 grid grid-cols-2 gap-2 text-[12px] font-semibold text-white/80">
+              <span className="border border-white/10 px-2 py-1">GST Registered</span>
+              <span className="border border-white/10 px-2 py-1">Secure Platform</span>
+              <span className="border border-white/10 px-2 py-1">India-based Team</span>
+              <span className="border border-white/10 px-2 py-1">ISO Network</span>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="mb-4 text-[12px] font-bold uppercase tracking-[0.16em] text-accent">Sitemap</h4>
+            <div className="grid gap-2">
+              {[...navLinks, ...sitemap].map((link) => (
+                <Link key={link.path} to={link.path} className="text-sm text-white/70 hover:text-accent">{link.label}</Link>
               ))}
             </div>
+          </div>
+
+          <div>
+            <h4 className="mb-4 text-[12px] font-bold uppercase tracking-[0.16em] text-accent">Top Categories</h4>
+            <div className="grid gap-2">
+              {topCategories.map((category) => (
+                <Link key={category} to="/categories" className="text-sm text-white/70 hover:text-accent">{category}</Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="border border-white/15 bg-white/5 p-5">
+            <h4 className="text-lg font-bold text-white">Post Your Requirement</h4>
+            <p className="mt-2 text-sm text-white/70">Tell us the product, quantity, and delivery city. Get verified supplier callbacks.</p>
+            <Link to="/contact" className="mt-4 inline-flex bg-accent px-4 py-2 text-sm font-bold text-white hover:bg-accent/90">
+              Start RFQ
+            </Link>
           </div>
         </div>
+        <div className="border-t border-white/10 px-4 py-4 text-center text-[12px] text-white/50">
+          Copyright 2026 Truvex. B2B sourcing platform, India.
+        </div>
       </footer>
+
+      <div className="fixed bottom-0 left-0 right-0 z-50 grid w-screen max-w-full grid-cols-2 border-t border-border bg-white p-2 shadow-2xl md:hidden">
+        <Link to="/contact" className="bg-accent py-3 text-center text-sm font-bold text-white">Post Requirement</Link>
+        <Link to="/categories" className="bg-primary py-3 text-center text-sm font-bold text-white">Find Supplier</Link>
+      </div>
     </div>
   );
 }

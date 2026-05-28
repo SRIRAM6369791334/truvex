@@ -1,336 +1,176 @@
 import { Link } from 'react-router';
-import { ShieldCheck, Target, Zap, FileText, Handshake, TrendingUp, Search, Quote, Star, ArrowRight, UserCheck, BarChart3, CheckCircle2 } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { RFQModal } from '../RFQModal';
-import { ParticleBackground } from '../ParticleBackground';
-import { AnimatedCounter } from '../AnimatedCounter';
-import { ScrollReveal } from '../ScrollReveal';
-import { FadeIn, StaggerContainer, StaggerItem } from '../AnimationUtils';
+import { ArrowRight, BadgeCheck, Clock3, MapPin, PackageCheck, Search, ShieldCheck, Users } from 'lucide-react';
+import {
+  CategoryCard,
+  EnquiryTicker,
+  PopularSearchStrip,
+  SectionHeader,
+  SupplierCard,
+  TrustSignalsBar,
+  categories,
+  suppliers,
+} from '../MarketplaceComponents';
+
+const metrics = [
+  { label: 'Verified suppliers', value: '500+', icon: BadgeCheck },
+  { label: 'Active buyers/month', value: '2,800+', icon: Users },
+  { label: 'Product categories', value: '120+', icon: PackageCheck },
+  { label: 'Avg. first response', value: '4 hrs', icon: Clock3 },
+];
+
+const transactions = [
+  { company: 'R.K. Fabricators', category: 'MS Pipes', city: 'Rajkot' },
+  { company: 'Bright Controls', category: 'Control Panels', city: 'Noida' },
+  { company: 'Sun Pack Industries', category: 'Stretch Film', city: 'Surat' },
+  { company: 'Delta Safety Supply', category: 'PPE Kits', city: 'Chennai' },
+  { company: 'Prime Auto Spares', category: 'CNC Parts', city: 'Pune' },
+  { company: 'Metro Build Mart', category: 'Fasteners', city: 'Delhi' },
+  { company: 'Coastal Pumps', category: 'Industrial Pumps', city: 'Kochi' },
+  { company: 'Western Tools', category: 'Machine Tools', city: 'Ahmedabad' },
+];
+
+function MiniRFQForm() {
+  return (
+    <form className="border border-white/15 bg-white p-4 text-primary shadow-lg">
+      <div className="mb-3 flex items-center justify-between gap-3 border-b border-border pb-2">
+        <h2 className="text-base font-bold text-primary">Post Buy Requirement</h2>
+        <span className="hidden text-[11px] font-bold uppercase text-teal-700 sm:inline">Free for buyers</span>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-[1.4fr_0.75fr_1fr_auto]">
+        <div>
+          <label htmlFor="product" className="mb-1 block text-[12px] font-bold">Product Name <span className="text-accent">*</span></label>
+          <input id="product" required className="w-full border border-border px-3 py-2 text-sm outline-none focus:border-accent" placeholder="e.g. Steel pipes" />
+        </div>
+        <div>
+          <label htmlFor="quantity" className="mb-1 block text-[12px] font-bold">Quantity <span className="text-accent">*</span></label>
+          <input id="quantity" required className="w-full border border-border px-3 py-2 text-sm outline-none focus:border-accent" placeholder="500 pcs" />
+        </div>
+        <div>
+          <label htmlFor="mobile" className="mb-1 block text-[12px] font-bold">
+            Mobile <span className="text-accent">*</span>
+            <span className="ml-1 cursor-help text-muted-foreground" title="Why we need this: suppliers respond fastest by phone or WhatsApp.">?</span>
+          </label>
+          <input id="mobile" required className="w-full border border-border px-3 py-2 text-sm outline-none focus:border-accent" placeholder="+91 mobile" />
+        </div>
+        <button type="submit" className="self-end bg-accent px-5 py-2 text-sm font-bold text-white hover:bg-accent/90">
+          Submit
+        </button>
+      </div>
+    </form>
+  );
+}
+
 export default function HomePage() {
   return (
-    <div className="w-full bg-background min-h-screen transition-colors duration-300">
-      {/* Hero Section */}
-      <section className="bg-[#0B1F3A] text-white py-28 px-4 relative overflow-hidden">
-        {/* Subtle geometric circle pattern */}
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_2px_2px,#ffffff_1px,_transparent_0)] bg-[length:32px_32px]"></div>
-        <ParticleBackground />
-        
-        {/* Premium radial glowing gradients */}
-        <div className="absolute top-1/4 left-1/4 w-[500px] h-[300px] bg-accent/10 rounded-full blur-[120px] pointer-events-none"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[300px] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none"></div>
-        
-        <div className="relative z-10 max-w-4xl mx-auto text-center">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm font-medium mb-8 backdrop-blur-sm shadow-sm"
-          >
-            <ShieldCheck size={16} className="text-accent" />
-            Smart Sourcing. Right Products. Right Leads.
-          </motion.div>
-          
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 leading-tight"
-          >
-            Right Product. Right Supplier. <span className="text-accent">Fast.</span>
-          </motion.h1>
-          
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-lg md:text-xl text-white/80 max-w-3xl mx-auto mb-10 leading-relaxed font-light"
-          >
-            Truvex bridges buyers and verified suppliers across India — capturing real-time enquiries from Justdial & IndiaMart and turning them into tailored proposals.
-          </motion.p>
-
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
-          >
-            <RFQModal trigger={
-              <button className="bg-accent hover:bg-accent/90 text-accent-foreground px-8 py-4 rounded-full font-bold text-lg transition-all hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(201,151,58,0.3)] active:scale-95 w-full sm:w-auto shadow-lg shadow-accent/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2">
-                Get a Quote
-              </button>
-            } />
-            <Link to="/how-it-works" className="border-2 border-white/20 hover:border-white/50 hover:bg-white/5 text-white px-8 py-4 rounded-full font-bold text-lg transition-all w-full sm:w-auto text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2">
-              How It Works
-            </Link>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Live Stats */}
-      <section className="glass-panel py-12 px-4 border-b border-border/40 shadow-sm relative z-20 transition-colors duration-300">
-        <StaggerContainer className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center md:divide-x divide-border/30">
-          <StaggerItem className="flex flex-col items-center justify-center px-4 group">
-            <AnimatedCounter value={2} className="text-4xl font-extrabold text-foreground mb-1 group-hover:text-accent transition-colors duration-300" />
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-widest group-hover:text-foreground transition-colors duration-300">Lead Platforms</span>
-          </StaggerItem>
-          <StaggerItem className="flex flex-col items-center justify-center px-4 group">
-            <AnimatedCounter value={8} suffix="+" className="text-4xl font-extrabold text-foreground mb-1 group-hover:text-accent transition-colors duration-300" />
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-widest group-hover:text-foreground transition-colors duration-300">Categories</span>
-          </StaggerItem>
-          <StaggerItem className="flex flex-col items-center justify-center px-4 group">
-            <AnimatedCounter value={3} className="text-4xl font-extrabold text-foreground mb-1 group-hover:text-accent transition-colors duration-300" />
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-widest group-hover:text-foreground transition-colors duration-300">Simple Steps</span>
-          </StaggerItem>
-          <StaggerItem className="flex flex-col items-center justify-center px-4 group">
-            <AnimatedCounter value={100} suffix="%" className="text-4xl font-extrabold text-foreground mb-1 group-hover:text-accent transition-colors duration-300" />
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-widest group-hover:text-foreground transition-colors duration-300">B2B Focused</span>
-          </StaggerItem>
-        </StaggerContainer>
-      </section>
-
-      {/* 4-Feature Cards Row */}
-      <section className="py-24 px-4 bg-muted/20 border-b border-border/20 transition-colors duration-300">
-        <div className="max-w-6xl mx-auto">
-          <ScrollReveal>
-            <div className="text-center mb-20">
-              <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6">How Truvex Accelerates Your Sourcing</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed font-light">From raw leads to signed deals, our platform optimizes every step of the B2B matchmaking process.</p>
+    <div className="bg-background">
+      <section className="overflow-hidden border-b border-accent/30 bg-primary px-4 py-10 text-white">
+        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+          <div className="min-w-0">
+            <div className="mb-3 inline-flex items-center gap-2 border border-accent/40 bg-white/5 px-3 py-1 text-[12px] font-bold uppercase tracking-[0.14em] text-accent">
+              <ShieldCheck size={15} /> Verified B2B Supplier Network
             </div>
-          </ScrollReveal>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* Feature 1 */}
-            <ScrollReveal delay={0.1}>
-              <div className="glass-card p-8 group h-full gold-glow-hover">
-                <div className="w-12 h-12 bg-accent/10 text-accent rounded-xl flex items-center justify-center mb-6 group-hover:bg-accent group-hover:text-white transition-all duration-300 shadow-sm">
-                  <Target size={24} />
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-3 group-hover:text-accent transition-colors">Lead Capture</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed font-light">
-                  Automatically aggregate high-intent requirements from premium platforms.
-                </p>
-              </div>
-            </ScrollReveal>
-
-            {/* Feature 2 */}
-            <ScrollReveal delay={0.2}>
-              <div className="glass-card p-8 group h-full gold-glow-hover">
-                <div className="w-12 h-12 bg-accent/10 text-accent rounded-xl flex items-center justify-center mb-6 group-hover:bg-accent group-hover:text-white transition-all duration-300 shadow-sm">
-                  <Zap size={24} />
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-3 group-hover:text-accent transition-colors">Smart Analysis</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed font-light">
-                  Instantly match buyer needs with the right supplier capabilities and pricing.
-                </p>
-              </div>
-            </ScrollReveal>
-
-            {/* Feature 3 */}
-            <ScrollReveal delay={0.3}>
-              <div className="glass-card p-8 group h-full gold-glow-hover">
-                <div className="w-12 h-12 bg-accent/10 text-accent rounded-xl flex items-center justify-center mb-6 group-hover:bg-accent group-hover:text-white transition-all duration-300 shadow-sm">
-                  <FileText size={24} />
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-3 group-hover:text-accent transition-colors">Professional Proposals</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed font-light">
-                  Generate tailored, branded quotations that stand out to buyers.
-                </p>
-              </div>
-            </ScrollReveal>
-
-            {/* Feature 4 */}
-            <ScrollReveal delay={0.4}>
-              <div className="glass-card p-8 group h-full gold-glow-hover">
-                <div className="w-12 h-12 bg-accent/10 text-accent rounded-xl flex items-center justify-center mb-6 group-hover:bg-accent group-hover:text-white transition-all duration-300 shadow-sm">
-                  <Handshake size={24} />
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-3 group-hover:text-accent transition-colors">Deal Closure</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed font-light">
-                  Streamline communication and negotiation for faster conversions.
-                </p>
-              </div>
-            </ScrollReveal>
-          </div>
-        </div>
-      </section>
-
-      {/* Platform Badges Section */}
-      <section className="py-20 px-4 bg-background border-t border-border">
-        <div className="max-w-4xl mx-auto text-center">
-          <ScrollReveal>
-            <h2 className="text-2xl font-bold text-foreground mb-12 uppercase tracking-widest text-primary/80">Powered by India's Top Platforms</h2>
-          </ScrollReveal>
-          
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-8 md:gap-16">
-            <ScrollReveal delay={0.1} className="flex flex-col items-center group cursor-default">
-              <div className="w-24 h-24 bg-card shadow-sm border border-border rounded-full flex items-center justify-center mb-6 group-hover:scale-105 group-hover:border-accent/50 group-hover:shadow-lg transition-all duration-300">
-                <Search size={40} className="text-orange-500" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground mb-2">Justdial</h3>
-              <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">Direct API integration for localized B2B service and product enquiries.</p>
-            </ScrollReveal>
-
-            <ScrollReveal delay={0.2} className="hidden sm:block">
-              <div className="w-px h-32 bg-gradient-to-b from-transparent via-border to-transparent"></div>
-            </ScrollReveal>
-            
-            <ScrollReveal delay={0.3} className="flex flex-col items-center group cursor-default">
-              <div className="w-24 h-24 bg-card shadow-sm border border-border rounded-full flex items-center justify-center mb-6 group-hover:scale-105 group-hover:border-accent/50 group-hover:shadow-lg transition-all duration-300">
-                <TrendingUp size={40} className="text-emerald-600" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground mb-2">IndiaMart</h3>
-              <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">Real-time webhook sync for high-volume wholesale requirement leads.</p>
-            </ScrollReveal>
-          </div>
-        </div>
-      </section>
-
-      {/* Process Preview */}
-      <section className="py-24 px-4 bg-muted/20 relative overflow-hidden">
-        <div className="max-w-6xl mx-auto relative z-10">
-          <FadeIn>
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Process Preview</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto text-lg">Our streamlined workflow ensures you never miss a verified lead.</p>
-            </div>
-          </FadeIn>
-          
-          <StaggerContainer className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-4 lg:gap-8">
-            <StaggerItem className="flex-1 w-full max-w-xs">
-              <div className="glass-card p-8 text-center group gold-glow-hover">
-                <div className="w-20 h-20 mx-auto bg-accent/5 dark:bg-accent/10 rounded-full flex items-center justify-center mb-6 group-hover:bg-accent/20 transition-all duration-300">
-                  <UserCheck size={32} className="text-accent group-hover:scale-110 transition-transform duration-300" />
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-3">1. Connect</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed font-light">Integrate your Justdial & IndiaMart accounts seamlessly.</p>
-              </div>
-            </StaggerItem>
-
-            <motion.div 
-              initial={{ opacity: 0 }} 
-              whileInView={{ opacity: 1 }} 
-              className="hidden md:block text-muted-foreground/30"
-            >
-              <ArrowRight size={32} className="text-accent/50" />
-            </motion.div>
-
-            <StaggerItem className="flex-1 w-full max-w-xs">
-              <div className="glass-card p-8 text-center group gold-glow-hover">
-                <div className="w-20 h-20 mx-auto bg-accent/5 dark:bg-accent/10 rounded-full flex items-center justify-center mb-6 group-hover:bg-accent/20 transition-all duration-300">
-                  <BarChart3 size={32} className="text-accent group-hover:scale-110 transition-transform duration-300" />
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-3">2. Analyze</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed font-light">AI filters & matches the absolute best leads for your niche.</p>
-              </div>
-            </StaggerItem>
-
-            <motion.div 
-              initial={{ opacity: 0 }} 
-              whileInView={{ opacity: 1 }} 
-              className="hidden md:block text-muted-foreground/30"
-            >
-              <ArrowRight size={32} className="text-accent/50" />
-            </motion.div>
-
-            <StaggerItem className="flex-1 w-full max-w-xs">
-              <div className="glass-card p-8 text-center group gold-glow-hover">
-                <div className="w-20 h-20 mx-auto bg-accent/5 dark:bg-accent/10 rounded-full flex items-center justify-center mb-6 group-hover:bg-accent/20 transition-all duration-300">
-                  <CheckCircle2 size={32} className="text-accent group-hover:scale-110 transition-transform duration-300" />
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-3">3. Convert</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed font-light">Send auto-proposals and close deals significantly faster.</p>
-              </div>
-            </StaggerItem>
-          </StaggerContainer>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-24 px-4 bg-background border-t border-border/40 relative transition-colors duration-300">
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top,_rgba(201,151,58,0.04)_0%,_transparent_70%)] pointer-events-none"></div>
-        <div className="max-w-6xl mx-auto relative z-10">
-          <FadeIn>
-            <div className="text-center mb-20">
-              <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6">Trusted by Industry Leaders</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed font-light">See how businesses are scaling their B2B sales with Truvex.</p>
-            </div>
-          </FadeIn>
-
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <StaggerItem>
-              <div className="glass-card p-8 flex flex-col relative h-full group gold-glow-hover">
-                <Quote className="absolute top-6 right-6 text-accent/5 w-12 h-12 group-hover:text-accent/20 transition-colors duration-300" />
-                <div className="flex gap-1 mb-6">
-                  {[1, 2, 3, 4, 5].map(i => <Star key={i} size={16} className="fill-accent text-accent" />)}
-                </div>
-                <p className="text-foreground/90 italic mb-8 leading-relaxed font-light">"Truvex cut our lead response time by 80%. We're closing 3x more deals from IndiaMart now since we can send customized proposals instantly."</p>
-                <div className="flex items-center gap-4 mt-auto border-t border-border/40 pt-4">
-                  <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center text-accent font-bold shrink-0 shadow-inner">AS</div>
-                  <div>
-                    <h4 className="font-bold text-foreground">Amit Sharma</h4>
-                    <p className="text-xs text-muted-foreground uppercase tracking-widest mt-0.5 font-semibold">Director, TechNova Solutions</p>
-                  </div>
-                </div>
-              </div>
-            </StaggerItem>
-
-            <StaggerItem>
-              <div className="glass-card p-8 flex flex-col relative h-full group gold-glow-hover">
-                <Quote className="absolute top-6 right-6 text-accent/5 w-12 h-12 group-hover:text-accent/20 transition-colors duration-300" />
-                <div className="flex gap-1 mb-6">
-                  {[1, 2, 3, 4, 5].map(i => <Star key={i} size={16} className="fill-accent text-accent" />)}
-                </div>
-                <p className="text-foreground/90 italic mb-8 leading-relaxed font-light">"The unified dashboard is a game-changer. Tracking our Justdial enquiries in the same place with detailed buyer intents has scaled our wholesale operations seamlessly."</p>
-                <div className="flex items-center gap-4 mt-auto border-t border-border/40 pt-4">
-                  <div className="w-12 h-12 bg-emerald-500/10 rounded-full flex items-center justify-center text-emerald-600 font-bold shrink-0 shadow-inner">PR</div>
-                  <div>
-                    <h4 className="font-bold text-foreground">Priya Reddy</h4>
-                    <p className="text-xs text-muted-foreground uppercase tracking-widest mt-0.5 font-semibold">Operations Head, GlobalTrade</p>
-                  </div>
-                </div>
-              </div>
-            </StaggerItem>
-
-            <StaggerItem>
-              <div className="glass-card p-8 flex flex-col relative h-full group gold-glow-hover">
-                <Quote className="absolute top-6 right-6 text-accent/5 w-12 h-12 group-hover:text-accent/20 transition-colors duration-300" />
-                <div className="flex gap-1 mb-6">
-                  {[1, 2, 3, 4, 5].map(i => <Star key={i} size={16} className="fill-accent text-accent" />)}
-                </div>
-                <p className="text-foreground/90 italic mb-8 leading-relaxed font-light">"We love the seamless quotation builder. Being able to fire off a branded, accurate proposal in seconds from a raw lead gives us a massive edge over competitors."</p>
-                <div className="flex items-center gap-4 mt-auto border-t border-border/40 pt-4">
-                  <div className="w-12 h-12 bg-orange-500/10 rounded-full flex items-center justify-center text-orange-500 font-bold shrink-0 shadow-inner">MK</div>
-                  <div>
-                    <h4 className="font-bold text-foreground">Manish Kumar</h4>
-                    <p className="text-xs text-muted-foreground uppercase tracking-widest mt-0.5 font-semibold">CEO, Apex Industrial</p>
-                  </div>
-                </div>
-              </div>
-            </StaggerItem>
-          </StaggerContainer>
-        </div>
-      </section>
-      
-      {/* Footer CTA */}
-      <section className="py-24 px-4 bg-[#0B1F3A] text-white text-center relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_2px_2px,#ffffff_1px,_transparent_0)] bg-[length:32px_32px]"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(201,151,58,0.08)_0%,transparent_80%)] pointer-events-none"></div>
-        <div className="relative z-10 max-w-3xl mx-auto">
-          <ScrollReveal>
-            <h2 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight">Ready to streamline your sourcing?</h2>
-            <p className="text-white/80 text-lg mb-10 max-w-2xl mx-auto leading-relaxed font-light">
-              Stop chasing unqualified leads. Let Truvex bring verified buyers straight to your inbox.
+            <h1 className="max-w-full text-wrap font-serif text-3xl font-bold leading-tight text-white sm:text-4xl md:text-6xl">
+              Find Verified Suppliers in 4 Hours. Free for Buyers.
+            </h1>
+            <p className="mt-4 max-w-full text-sm leading-6 text-white/78 sm:text-base sm:leading-7">
+              Post a requirement, compare qualified suppliers, and get direct callbacks for industrial, construction, packaging, electronics, and business products across India.
             </p>
-            <RFQModal trigger={
-              <button className="bg-accent hover:bg-accent/90 text-accent-foreground px-10 py-4 rounded-full text-lg font-bold transition-all hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(201,151,58,0.4)] inline-block shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2">
-                Start Sourcing Today
-              </button>
-            } />
-          </ScrollReveal>
+            <div className="mt-6">
+              <MiniRFQForm />
+            </div>
+          </div>
+
+          <div className="grid min-w-0 grid-cols-2 gap-3">
+            {metrics.map((metric) => (
+              <div key={metric.label} className="min-w-0 border border-white/15 border-t-2 border-t-accent bg-white/8 p-4">
+                <metric.icon className="mb-3 text-accent" size={24} />
+                <div className="text-3xl font-extrabold text-white">{metric.value}</div>
+                <div className="mt-1 break-words text-[11px] font-semibold uppercase tracking-wide text-white/70 sm:text-[12px]">{metric.label}</div>
+              </div>
+            ))}
+              <div className="col-span-2 min-w-0 border border-teal-400/30 bg-teal-500/10 p-4 text-sm text-white/85">
+              <div className="mb-1 font-bold text-teal-100">Buyer support desk active today</div>
+              Product matching, supplier verification, and RFQ routing handled by Truvex.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <EnquiryTicker />
+      <TrustSignalsBar />
+
+      <section className="px-4 py-8">
+        <div className="mx-auto max-w-7xl">
+          <SectionHeader
+            eyebrow="Product categories"
+            title="Source from high-demand B2B categories"
+            subtext="Dense supplier discovery across core Indian industrial and commercial product segments."
+            viewAllTo="/categories"
+          />
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {categories.map((category) => <CategoryCard key={category.name} category={category} />)}
+          </div>
+          <div className="mt-4">
+            <PopularSearchStrip />
+          </div>
+        </div>
+      </section>
+
+      <TrustSignalsBar compact />
+
+      <section className="px-4 py-8">
+        <div className="mx-auto max-w-7xl">
+          <SectionHeader
+            eyebrow="Supplier network"
+            title="Verified supplier profiles accepting RFQs"
+            subtext="Sample supplier tiles show the operating model: location, category, verification, and quote action in one view."
+            viewAllTo="/categories"
+          />
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {suppliers.map((supplier) => <SupplierCard key={supplier.name} supplier={supplier} />)}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-primary px-4 py-8 text-white">
+        <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+          <div>
+            <div className="mb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-accent">Recent transactions</div>
+            <h2 className="font-serif text-3xl font-bold text-white">Business activity across Indian cities</h2>
+            <p className="mt-2 text-sm leading-6 text-white/70">
+              Replace passive testimonials with current marketplace signals: buyer requirements, supplier categories, and city-level activity.
+            </p>
+            <Link to="/contact" className="mt-5 inline-flex items-center gap-2 bg-accent px-5 py-2.5 text-sm font-bold text-white">
+              Post Requirement <ArrowRight size={16} />
+            </Link>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {transactions.map((item) => (
+              <div key={`${item.company}-${item.city}`} className="border border-white/15 bg-white/8 p-3">
+                <div className="font-bold text-white">{item.company}</div>
+                <div className="mt-1 text-[12px] text-white/70">{item.category}</div>
+                <div className="mt-2 flex items-center gap-1 text-[12px] font-semibold text-accent">
+                  <MapPin size={13} /> {item.city}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="border-y border-accent/30 bg-card px-4 py-8">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <div className="text-[11px] font-bold uppercase tracking-[0.16em] text-accent">Buyer helpdesk</div>
+            <h2 className="font-serif text-2xl font-bold text-primary">Need a supplier shortlist today?</h2>
+            <p className="mt-1 text-sm text-muted-foreground">Send your requirement and get matched with verified suppliers by phone or WhatsApp.</p>
+          </div>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Link to="/contact" className="bg-accent px-5 py-3 text-center text-sm font-bold text-white">Post Buy Requirement</Link>
+            <Link to="/categories" className="border border-primary px-5 py-3 text-center text-sm font-bold text-primary">Find Supplier</Link>
+          </div>
         </div>
       </section>
     </div>
   );
 }
-
-
