@@ -1,5 +1,9 @@
 import { Link } from 'react-router';
 import { BadgeCheck, Clock3, PackageCheck, ShieldCheck, Users } from 'lucide-react';
+import Lottie from 'lottie-react';
+import shieldAnimation from '../lottie/Shield.json';
+import privacyAnimation from '../lottie/Privacy.json';
+import targetAnimation from '../lottie/Target.json';
 import { motion } from 'framer-motion';
 import {
   CategoryCard,
@@ -12,7 +16,7 @@ import {
   suppliers,
 } from '../MarketplaceComponents';
 import { IndustryInsightsBlog, LiveMarketplaceStats, TestimonialCarousel, TrustedByBrands } from '../VisualSections';
-import { MiniFAQ, ServiceCard, SupplierBuyerCTA, openEnquiryPopup, serviceCategories } from '../LeadCaptureComponents';
+import { MiniFAQ, ServiceDynamicList, SupplierBuyerCTA, openEnquiryPopup, serviceCategories } from '../LeadCaptureComponents';
 
 const metrics = [
   { label: 'Verified suppliers', value: '500+', icon: BadgeCheck },
@@ -23,7 +27,7 @@ const metrics = [
 
 function MiniRFQForm() {
   return (
-    <form className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 text-white shadow-2xl">
+    <form className="rounded-2xl border p-5 text-white shadow-2xl border-accent/50 bg-gradient-to-br from-accent/15 via-white/[0.03] to-white/[0.01] shadow-accent/5 backdrop-blur-xl">
       <div className="mb-4 flex items-center justify-between gap-3 border-b border-white/10 pb-3">
         <div className="flex items-center gap-2">
           <span className="relative flex h-2 w-2">
@@ -65,7 +69,7 @@ export default function HomePage() {
   return (
     <div className="bg-background">
       {/* ─── Promo Banner ─── */}
-      <div className="bg-white px-4 py-3 border-b border-gray-100">
+      <div className="bg-white px-4 py-3 border-b border-gray-100" style={{ display: "none" }}>
         <div className="mx-auto max-w-screen-xl">
           <a
             href="#"
@@ -104,7 +108,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      <section className="relative overflow-hidden border-b border-accent/30 bg-[#0A192F] px-4 py-16 text-white md:py-24">
+      <section className="relative overflow-hidden border-b border-accent/30 bg-[#0A192F] px-4 pt-16 pb-32 text-white md:pt-24 md:pb-40">
         {/* Ambient decorative lighting */}
         <div className="pointer-events-none absolute -left-48 -top-48 h-[600px] w-[600px] rounded-full bg-accent/10 blur-[130px]" />
         <div className="pointer-events-none absolute -right-48 -bottom-48 h-[700px] w-[700px] rounded-full bg-blue-600/15 blur-[160px]" />
@@ -149,7 +153,7 @@ export default function HomePage() {
                 </button>
               </motion.div>
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto">
-                <Link to="/suppliers" className="market-button flex min-h-12 items-center justify-center rounded-xl border border-white/20 bg-white/5 px-6 py-3 text-sm font-bold text-white backdrop-blur-sm hover:bg-white/10 transition-all duration-300 w-full sm:w-auto">
+                <Link to="/suppliers" className="market-button flex min-h-12 items-center justify-center rounded-xl border px-6 py-3 text-sm font-bold text-white backdrop-blur-sm transition-all duration-300 w-full sm:w-auto border-accent/50 bg-gradient-to-br from-accent/15 via-white/[0.03] to-white/[0.01] shadow-accent/5 hover:border-accent hover:shadow-accent/20">
                   Become Supplier
                 </Link>
               </motion.div>
@@ -171,17 +175,13 @@ export default function HomePage() {
               return (
                 <motion.div 
                   key={metric.label} 
-                  whileHover={{ y: -6, borderColor: isHighlighted ? 'rgba(245,158,11,0.8)' : 'rgba(245,158,11,0.4)' }}
+                  whileHover={{ y: -6, borderColor: 'rgba(245,158,11,0.8)' }}
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className={`min-w-0 rounded-2xl border p-6 shadow-xl relative overflow-hidden transition-all duration-300 ${
-                    isHighlighted 
-                      ? 'border-accent/50 bg-gradient-to-br from-accent/15 via-white/[0.03] to-white/[0.01] shadow-accent/5' 
-                      : 'border-white/10 bg-white/[0.02] backdrop-blur-md'
-                  }`}
+                  className="min-w-0 rounded-2xl border p-6 shadow-xl relative overflow-hidden transition-all duration-300 border-accent/50 bg-gradient-to-br from-accent/15 via-white/[0.03] to-white/[0.01] shadow-accent/5"
                 >
                   <div className="flex items-start justify-between">
                     <metric.icon className={isHighlighted ? "text-accent animate-pulse" : "text-accent"} size={26} />
-                    <span className={`h-1.5 w-1.5 rounded-full absolute right-6 top-6 ${isHighlighted ? "bg-accent animate-ping" : "bg-white/20"}`} />
+                    {isHighlighted && <span className="h-1.5 w-1.5 rounded-full absolute right-6 top-6 bg-accent animate-ping" />}
                     <span className={`h-1.5 w-1.5 rounded-full absolute right-6 top-6 ${isHighlighted ? "bg-accent" : "bg-white/20"}`} />
                   </div>
                   <div className="mt-5 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">{metric.value}</div>
@@ -190,13 +190,13 @@ export default function HomePage() {
               );
             })}
             
-            <div className="col-span-2 min-w-0 rounded-2xl border border-teal-500/20 bg-teal-500/5 backdrop-blur-md p-5 text-sm text-white/85 shadow-lg flex items-center gap-4">
+            <div className="col-span-2 min-w-0 rounded-2xl border backdrop-blur-md p-5 text-sm text-white/85 shadow-lg flex items-center gap-4 border-accent/50 bg-gradient-to-br from-accent/15 via-white/[0.03] to-white/[0.01] shadow-accent/5">
               <div className="relative flex h-3 w-3 shrink-0">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-teal-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-accent"></span>
               </div>
               <div>
-                <div className="font-bold text-teal-300 text-xs uppercase tracking-wider mb-0.5">Buyer support desk active today</div>
+                <div className="font-bold text-accent text-xs uppercase tracking-wider mb-0.5">Buyer support desk active today</div>
                 <p className="text-white/70 text-xs sm:text-sm leading-relaxed">Product matching, supplier verification, and RFQ routing handled by Truvex.</p>
               </div>
             </div>
@@ -204,43 +204,85 @@ export default function HomePage() {
         </div>
       </section>
 
-      <EnquiryTicker />
       <LiveMarketplaceStats />
       <TrustSignalsBar />
 
-      <section className="px-4 py-8">
-        <div className="mx-auto grid max-w-7xl gap-5 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
-          <div>
-            <div className="text-[11px] font-bold uppercase tracking-[0.16em] text-accent">Company intro</div>
-            <h2 className="mt-2 font-serif text-3xl font-bold text-primary">A B2B sourcing desk built for lead generation and trust</h2>
-          </div>
-          <p className="text-sm leading-7 text-muted-foreground">
-            Truvex helps buyers submit clear requirements and helps verified suppliers receive better-qualified enquiries. Contact details stay protected, RFQs stay structured, and every flow is designed to create business leads.
-          </p>
-        </div>
-      </section>
-
-      <section className="px-4 py-8">
+      <section className="px-4 py-12">
         <div className="mx-auto max-w-7xl">
-          <SectionHeader eyebrow="Services" title="Source products across business categories" subtext="Each service card opens an enquiry path so buyers can quickly generate a lead." viewAllTo="/services" />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {serviceCategories.map((service) => <ServiceCard key={service.title} service={service} />)}
+          <div className="relative overflow-hidden rounded-3xl border border-accent/20 bg-gradient-to-br from-white via-white to-accent/5 p-8 shadow-xl shadow-accent/5 md:p-12">
+            <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-accent/10 blur-[80px]" />
+            <div className="relative z-10 grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+              <div>
+                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-accent">
+                  <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+                  Company Intro
+                </div>
+                <h2 className="font-serif text-3xl font-bold leading-tight text-primary md:text-4xl">
+                  A B2B sourcing desk built for <span className="text-accent">lead generation</span> and trust
+                </h2>
+              </div>
+              <div className="flex flex-col gap-6">
+                <p className="text-base leading-relaxed text-muted-foreground md:text-lg">
+                  Truvex helps buyers submit clear requirements and helps verified suppliers receive better-qualified enquiries. Contact details stay protected, RFQs stay structured, and every flow is designed to create business leads.
+                </p>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                  <div className="flex items-center gap-3 rounded-xl border border-border bg-white p-3 shadow-sm">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-teal-50 text-teal-600">
+                      <ShieldCheck size={20} />
+                    </div>
+                    <span className="text-xs font-bold text-primary">Data Protection</span>
+                  </div>
+                  <div className="flex items-center gap-3 rounded-xl border border-border bg-white p-3 shadow-sm">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                      <PackageCheck size={20} />
+                    </div>
+                    <span className="text-xs font-bold text-primary">Structured RFQs</span>
+                  </div>
+                  <div className="flex items-center gap-3 rounded-xl border border-border bg-white p-3 shadow-sm">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-accent">
+                      <BadgeCheck size={20} />
+                    </div>
+                    <span className="text-xs font-bold text-primary">Verified Leads</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="px-4 py-8">
+      <section className="px-4 py-12 lg:py-20">
+        <div className="mx-auto max-w-7xl">
+          <SectionHeader eyebrow="Services" title="Source products across business categories" subtext="Each category provides verified suppliers ready to fulfill bulk and retail orders." viewAllTo="/services" />
+          <ServiceDynamicList />
+        </div>
+      </section>
+
+      <section className="px-4 py-12 lg:py-16">
         <div className="mx-auto max-w-7xl">
           <SectionHeader eyebrow="Why choose us" title="Trust-first sourcing for buyers and suppliers" />
-          <div className="grid gap-3 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-3 mt-8">
             {[
-              ['Verified Supplier Network', 'Supplier profiles are reviewed before leads are routed.'],
-              ['No Direct Contact Exposure', 'Listings do not reveal supplier phone or email publicly.'],
-              ['Lead Generation Focus', 'Every CTA points to requirement capture, supplier registration, or enquiry flow.'],
-            ].map(([title, text]) => (
-              <div key={title} className="market-card border-t-2 border-t-accent p-5">
-                <h3 className="text-base font-bold text-primary">{title}</h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">{text}</p>
+              { title: 'Verified Supplier Network', text: 'Supplier profiles are reviewed before leads are routed.', animationData: shieldAnimation },
+              { title: 'No Direct Contact Exposure', text: 'Listings do not reveal supplier phone or email publicly.', animationData: privacyAnimation },
+              { title: 'Lead Generation Focus', text: 'Every CTA points to requirement capture, supplier registration, or enquiry flow.', animationData: targetAnimation },
+            ].map(({ title, text, animationData }) => (
+              <div key={title} className="group relative overflow-hidden rounded-3xl border border-border bg-white p-8 shadow-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-xl hover:shadow-accent/10 hover:border-accent/30">
+                
+                {/* Glowing Background Glow on Hover */}
+                <div className="absolute inset-0 bg-gradient-to-br from-accent/0 via-transparent to-accent/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+
+                <div className="relative z-10">
+                  {/* Floating Badge Lottie Icon */}
+                  <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f8f9fa] transition-all duration-500 group-hover:bg-accent/10 group-hover:scale-110 group-hover:shadow-md group-hover:shadow-accent/20">
+                    <div className="h-12 w-12">
+                      <Lottie animationData={animationData} loop={true} />
+                    </div>
+                  </div>
+                  
+                  <h3 className="font-serif text-xl font-bold text-primary transition-colors duration-300 group-hover:text-accent">{title}</h3>
+                  <p className="mt-3 text-[15px] leading-relaxed text-muted-foreground">{text}</p>
+                </div>
               </div>
             ))}
           </div>

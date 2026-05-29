@@ -77,15 +77,19 @@ export function SectionHeader({
   viewAllTo?: string;
 }) {
   return (
-    <div className="mb-5 flex flex-col gap-3 border-b border-border bg-white px-4 py-4 sm:flex-row sm:items-end sm:justify-between">
-      <div>
-        <div className="mb-1 text-[11px] font-bold uppercase tracking-[0.16em] text-accent">{eyebrow}</div>
-        <h2 className="font-serif text-2xl font-bold leading-tight text-primary md:text-3xl">{title}</h2>
-        {subtext && <p className="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground">{subtext}</p>}
+    <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="relative">
+        <div className="mb-2 flex items-center gap-2">
+          <span className="h-px w-6 bg-accent"></span>
+          <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent">{eyebrow}</span>
+        </div>
+        <h2 className="font-serif text-3xl font-bold tracking-tight text-primary md:text-4xl">{title}</h2>
+        {subtext && <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">{subtext}</p>}
       </div>
       {viewAllTo && (
-        <Link to={viewAllTo} className="inline-flex items-center gap-1 text-sm font-bold text-primary hover:text-accent">
-          View All <ArrowRight size={15} />
+        <Link to={viewAllTo} className="group inline-flex items-center gap-1.5 text-sm font-bold text-primary transition-colors hover:text-accent">
+          View All 
+          <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
         </Link>
       )}
     </div>
@@ -94,11 +98,11 @@ export function SectionHeader({
 
 export function TrustSignalsBar({ compact = false }: { compact?: boolean }) {
   return (
-    <div className="border-y border-accent/30 bg-gradient-to-r from-[#0B1F3A] to-[#142848] text-white">
-      <div className={`mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-5 gap-y-2 px-4 ${compact ? 'py-2' : 'py-3'}`}>
+    <div className="border-y border-accent/20 bg-gradient-to-r from-[#0B1F3A] via-[#112A4F] to-[#0B1F3A] text-white shadow-inner">
+      <div className={`mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-8 gap-y-3 px-4 ${compact ? 'py-3' : 'py-4'}`}>
         {trustSignals.map((item) => (
-          <div key={item.label} className="flex items-center gap-1.5 text-[12px] font-semibold text-white/90">
-            <item.icon size={15} className="text-accent" />
+          <div key={item.label} className="flex items-center gap-2 text-[13px] font-medium tracking-wide text-white/90">
+            <item.icon size={16} className="text-accent" />
             {item.label}
           </div>
         ))}
@@ -107,16 +111,23 @@ export function TrustSignalsBar({ compact = false }: { compact?: boolean }) {
   );
 }
 
-export function EnquiryTicker({ items = enquiries, label = 'New' }: { items?: string[]; label?: string }) {
+export function EnquiryTicker({ items = enquiries, label = 'Live Updates' }: { items?: string[]; label?: string }) {
   return (
-    <div className="overflow-hidden border-y border-border bg-card">
-      <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-2">
-        <span className="shrink-0 bg-accent px-2 py-1 text-[11px] font-bold uppercase text-white">{label}</span>
-        <div className="min-w-0 flex-1 overflow-hidden whitespace-nowrap text-sm text-primary">
+    <div className="overflow-hidden border-b border-border bg-[#F8FAFC]">
+      <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-2.5">
+        <div className="flex shrink-0 items-center gap-2 rounded-full bg-accent/10 px-3 py-1">
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75"></span>
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-accent"></span>
+          </span>
+          <span className="text-[11px] font-bold uppercase tracking-wider text-accent">{label}</span>
+        </div>
+        <div className="min-w-0 flex-1 overflow-hidden whitespace-nowrap text-sm font-medium text-primary/80">
           <div className="inline-block animate-market-ticker">
             {[...items, ...items].map((item, index) => (
-              <span key={`${item}-${index}`} className="mr-8">
+              <span key={`${item}-${index}`} className="mr-12 inline-flex items-center gap-2">
                 {item}
+                <span className="h-1 w-1 rounded-full bg-border"></span>
               </span>
             ))}
           </div>
@@ -128,54 +139,54 @@ export function EnquiryTicker({ items = enquiries, label = 'New' }: { items?: st
 
 export function CategoryCard({ category }: { category: (typeof categories)[number] }) {
   return (
-    <div className="market-card group overflow-hidden border-t-2 border-t-accent">
-      <div className="relative h-28 overflow-hidden border-b border-border">
+    <Link to="/categories" className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-accent/5">
+      <div className="relative h-32 overflow-hidden">
         <img
           src={category.image}
           alt={category.name}
           width={400}
           height={180}
           loading="lazy"
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
-        <div className="absolute inset-0 bg-primary/35" />
+        <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent opacity-60 transition-opacity group-hover:opacity-80" />
+        <div className="absolute bottom-3 left-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 text-white backdrop-blur-md ring-1 ring-white/30">
+          <category.icon size={20} />
+        </div>
       </div>
-      <div className="p-4">
-      <div className="mb-3 flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center border border-accent/30 bg-accent/10 text-accent">
-            <category.icon size={21} />
-          </div>
+      <div className="flex flex-1 flex-col p-4">
+        <div className="mb-3 flex items-start justify-between gap-3">
           <div>
-            <h3 className="text-sm font-bold leading-snug text-primary">{category.name}</h3>
-            <p className="text-[12px] text-muted-foreground">{category.subs}</p>
+            <h3 className="font-serif text-[15px] font-bold leading-snug text-primary transition-colors group-hover:text-accent">{category.name}</h3>
+            <p className="mt-0.5 text-[12px] text-muted-foreground">{category.subs}</p>
           </div>
         </div>
-        <span className="flex items-center gap-1 border border-teal-200 bg-teal-50 px-2 py-0.5 text-[11px] font-bold text-teal-700">
-          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-teal-600" />
-          Live
-        </span>
+        <div className="mt-auto flex items-center justify-between border-t border-border/50 pt-3">
+          <div className="flex items-center gap-1.5 text-[12px] font-medium text-muted-foreground">
+            <BadgeCheck size={14} className="text-teal-600" />
+            {category.count} suppliers
+          </div>
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-accent/10 text-accent transition-colors group-hover:bg-accent group-hover:text-white">
+            <ArrowRight size={12} />
+          </span>
+        </div>
       </div>
-      <div className="flex items-center justify-between border-t border-border pt-3">
-        <span className="text-[12px] font-semibold text-muted-foreground">{category.count} suppliers</span>
-        <Link to="/categories" className="inline-flex items-center gap-1 text-[12px] font-bold text-accent">
-          View Suppliers <ArrowRight size={13} />
-        </Link>
-      </div>
-      </div>
-    </div>
+    </Link>
   );
 }
 
 export function PopularSearchStrip() {
   return (
-    <div className="flex gap-2 overflow-x-auto border border-border bg-card p-3">
-      <span className="shrink-0 py-1 text-[12px] font-bold uppercase tracking-wide text-primary">Popular Searches:</span>
+    <div className="flex items-center gap-3 overflow-x-auto border-y border-border bg-card/50 px-4 py-3 backdrop-blur-sm">
+      <span className="shrink-0 flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wider text-primary">
+        <Search size={14} className="text-accent" />
+        Popular:
+      </span>
       {popularSearches.map((tag) => (
         <Link
           key={tag}
           to="/categories"
-          className="shrink-0 border border-border bg-muted/40 px-3 py-1 text-[12px] font-semibold text-primary hover:border-accent hover:text-accent"
+          className="shrink-0 rounded-full border border-border/60 bg-white px-3.5 py-1 text-[12px] font-medium text-muted-foreground transition-colors hover:border-accent hover:text-accent"
         >
           {tag}
         </Link>
@@ -186,36 +197,40 @@ export function PopularSearchStrip() {
 
 export function SupplierCard({ supplier }: { supplier: (typeof suppliers)[number] }) {
   return (
-    <div className="market-card group border-t-2 border-t-accent p-4">
-      <div className="mb-3 flex items-start gap-3">
-        <img
-          src={supplier.logo}
-          alt={`${supplier.name} logo`}
-          width={128}
-          height={128}
-          loading="lazy"
-          className="h-11 w-11 shrink-0 rounded-full border-2 border-accent object-cover"
-        />
-        <div className="min-w-0">
-          <div className="flex items-center gap-1.5">
-            <h3 className="truncate text-sm font-bold text-primary">{supplier.name}</h3>
-            <BadgeCheck size={15} className="shrink-0 text-teal-700" />
+    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md">
+      <div className="absolute right-0 top-0 h-16 w-16 overflow-hidden">
+        <div className="absolute -right-8 -top-8 h-16 w-16 rounded-full bg-accent/5 transition-transform group-hover:scale-150" />
+      </div>
+      <div className="relative mb-4 flex items-start gap-4">
+        <div className="relative">
+          <img
+            src={supplier.logo}
+            alt={`${supplier.name} logo`}
+            width={128}
+            height={128}
+            loading="lazy"
+            className="h-14 w-14 shrink-0 rounded-xl border border-border/50 object-cover shadow-sm"
+          />
+          <div className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-teal-500 text-white">
+            <BadgeCheck size={10} />
           </div>
-          <div className="mt-1 flex items-center gap-1 text-[12px] font-medium text-muted-foreground">
-            <MapPin size={13} />
-            {supplier.city}
+        </div>
+        <div className="min-w-0 flex-1 pt-1">
+          <h3 className="truncate text-[15px] font-bold text-primary transition-colors group-hover:text-accent">{supplier.name}</h3>
+          <div className="mt-1 flex flex-col gap-1 text-[12px] font-medium text-muted-foreground sm:flex-row sm:items-center sm:gap-3">
+            <span className="flex items-center gap-1"><MapPin size={12} /> {supplier.city}</span>
+            <span className="hidden h-1 w-1 rounded-full bg-border sm:block" />
+            <span className="flex items-center gap-1"><Factory size={12} className="shrink-0"/> <span className="truncate">{supplier.category}</span></span>
           </div>
         </div>
       </div>
-      <div className="mb-3 border-y border-border py-2 text-[12px]">
-        <span className="font-semibold text-primary">Category:</span> <span className="text-muted-foreground">{supplier.category}</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <Link to="/contact" className="market-button flex-1 bg-accent px-3 py-2 text-center text-[12px] font-bold text-white hover:bg-accent/90">
-          Get Quote
+      
+      <div className="mt-auto grid grid-cols-[1fr_auto] gap-2 border-t border-border/50 pt-4">
+        <Link to="/contact" className="flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-[13px] font-bold text-white transition-all hover:bg-accent hover:shadow-lg hover:shadow-accent/20">
+          Get Best Quote
         </Link>
-        <Link to="/contact" className="flex items-center justify-center border border-border px-3 py-2 text-primary hover:border-primary">
-          <Phone size={15} />
+        <Link to="/contact" className="flex items-center justify-center rounded-xl border border-border bg-white px-3 text-primary transition-colors hover:border-primary hover:bg-primary/5">
+          <Phone size={16} />
         </Link>
       </div>
     </div>
@@ -234,29 +249,64 @@ export function MarketplacePageHeader({
   imageUrl?: string;
 }) {
   return (
-    <section className="relative overflow-hidden border-b border-accent/30 bg-primary px-4 py-10 text-white">
+    <section className="relative overflow-hidden bg-[#0A1A30] px-4 py-16 text-white sm:py-24">
       {imageUrl && (
         <>
-          <img src={imageUrl} alt="" width={1200} height={520} loading="lazy" className="absolute inset-0 h-full w-full object-cover opacity-30" />
-          <div className="absolute inset-0 bg-primary/70" />
+          <img src={imageUrl} alt="" width={1200} height={600} loading="lazy" className="absolute inset-0 h-full w-full object-cover opacity-20 mix-blend-overlay" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0A1A30] via-[#0A1A30]/95 to-[#0A1A30]/70" />
         </>
       )}
-      <div className="relative z-10 mx-auto grid max-w-screen-2xl gap-6 px-0 lg:grid-cols-[1fr_420px] lg:items-center lg:px-4">
+      
+      {/* Decorative Blur */}
+      <div className="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-accent/20 blur-[100px]" />
+      
+      <div className="relative z-10 mx-auto grid max-w-screen-2xl gap-10 px-0 lg:grid-cols-[1.2fr_1fr] lg:items-center lg:px-4">
         <div>
-          <div className="mb-2 text-[11px] font-bold uppercase tracking-[0.18em] text-accent">{eyebrow}</div>
-          <h1 className="font-serif text-3xl font-bold leading-tight text-white md:text-5xl">{title}</h1>
-          <p className="mt-3 max-w-3xl text-sm leading-6 text-white/78 md:text-base">{subtext}</p>
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-accent backdrop-blur-md">
+            <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+            {eyebrow}
+          </div>
+          <h1 className="font-serif text-4xl font-bold leading-[1.1] tracking-tight text-white md:text-5xl lg:text-6xl">
+            {title}
+          </h1>
+          <p className="mt-6 max-w-xl text-base leading-relaxed text-slate-300 md:text-lg">
+            {subtext}
+          </p>
+          
+          <div className="mt-8 flex flex-wrap items-center gap-4 text-sm font-medium text-slate-400">
+            <span className="flex items-center gap-1.5"><BadgeCheck size={16} className="text-teal-400"/> Trusted by 50,000+ Buyers</span>
+            <span className="hidden sm:inline-block h-1 w-1 rounded-full bg-slate-600" />
+            <span className="flex items-center gap-1.5"><ShieldCheck size={16} className="text-teal-400"/> ISO Certified Sellers</span>
+          </div>
         </div>
-        <div className="rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur-xl">
-          <label className="mb-2 block text-[12px] font-bold uppercase tracking-wide text-accent">Search supplier categories</label>
-          <div className="flex">
-            <input
-              className="min-w-0 flex-1 border-0 bg-white px-3 py-2.5 text-sm text-primary outline-none"
-              placeholder="Enter product or service"
-            />
-            <Link to="/categories" className="market-button bg-accent px-4 py-2.5 text-sm font-bold text-white">
-              Search
-            </Link>
+        
+        <div className="relative w-full max-w-md lg:ml-auto">
+          {/* Glass Card */}
+          <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-xl sm:p-8">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent" />
+            
+            <div className="relative">
+              <label className="mb-3 block text-sm font-semibold text-white">Find Products & Suppliers</label>
+              <div className="flex flex-col gap-3">
+                <div className="relative">
+                  <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input
+                    className="w-full rounded-xl border border-white/10 bg-black/20 py-3.5 pl-11 pr-4 text-sm text-white placeholder-slate-400 outline-none transition-colors focus:border-accent focus:bg-black/40"
+                    placeholder="E.g. Industrial Valves, Steel Pipes..."
+                  />
+                </div>
+                <div className="relative">
+                  <MapPin size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input
+                    className="w-full rounded-xl border border-white/10 bg-black/20 py-3.5 pl-11 pr-4 text-sm text-white placeholder-slate-400 outline-none transition-colors focus:border-accent focus:bg-black/40"
+                    placeholder="Location (Optional)"
+                  />
+                </div>
+                <Link to="/categories" className="mt-2 flex items-center justify-center gap-2 rounded-xl bg-accent py-3.5 text-sm font-bold text-white transition-all hover:bg-accent/90 hover:shadow-lg hover:shadow-accent/25">
+                  Search Now <ArrowRight size={16} />
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </div>

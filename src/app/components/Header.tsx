@@ -2,12 +2,15 @@ import { Link, useLocation } from 'react-router';
 import { useState, useEffect } from 'react';
 import { ChevronDown, MapPin, Menu, Phone, Search, X, Factory, Cpu, Package, ShieldCheck, Layers, ChevronRight, Home, Truck, ShoppingBag, Briefcase, Info, Mail } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { EnquiryTicker } from './MarketplaceComponents';
 
 interface HeaderProps {
   onOpenEnquiry: () => void;
 }
 
 const MotionLink = motion(Link);
+
+
 
 const categoriesIconVariants = {
   normal: {
@@ -178,6 +181,9 @@ export default function Header({ onOpenEnquiry }: HeaderProps) {
 
   return (
     <>
+      {/* Enquiry Ticker at the very top */}
+      <EnquiryTicker />
+
       {/* Top Bar - hides on scroll to save space */}
       <div className={`relative z-[60] w-full max-w-full border-b border-primary/5 bg-primary text-white transition-all duration-300 ${
         isSticky ? 'h-0 overflow-hidden opacity-0 py-0' : 'py-2.5'
@@ -277,6 +283,27 @@ export default function Header({ onOpenEnquiry }: HeaderProps) {
 
             {/* Desktop Navigation Links */}
             <div className="hidden items-center gap-1.5 xl:flex">
+              {navLinks.slice(0, 1).map((link) => {
+                const Icon = link.icon;
+                return (
+                  <MotionLink
+                    key={link.path}
+                    to={link.path}
+                    whileHover="hover"
+                    className={`flex items-center gap-1.5 px-3.5 py-2.5 text-[13px] font-semibold transition-all rounded-none ${
+                      isActive(link.path)
+                        ? 'bg-primary text-white shadow-md'
+                        : 'text-primary hover:bg-muted hover:text-accent'
+                    }`}
+                  >
+                    <motion.span variants={link.iconVariants} className="flex items-center">
+                      <Icon size={14} />
+                    </motion.span>
+                    {link.label}
+                  </MotionLink>
+                );
+              })}
+
               {/* Mega Menu Categories Link */}
               <div
                 className="relative"
@@ -301,7 +328,7 @@ export default function Header({ onOpenEnquiry }: HeaderProps) {
                 </MotionLink>
               </div>
 
-              {navLinks.map((link) => {
+              {navLinks.slice(1).map((link) => {
                 const Icon = link.icon;
                 return (
                   <MotionLink

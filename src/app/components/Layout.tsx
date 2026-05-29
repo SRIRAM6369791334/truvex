@@ -30,7 +30,7 @@ export default function Layout() {
     <div className="min-h-screen overflow-x-clip bg-background font-sans text-foreground">
       <Header onOpenEnquiry={() => setEnquiryOpen(true)} />
 
-      <main className="min-h-screen pb-16 md:pb-0">
+      <main className="min-h-screen pb-16 md:pb-0" >
         <Outlet />
       </main>
 

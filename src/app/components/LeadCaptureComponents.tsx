@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router';
-import { MessageCircle, Phone, UploadCloud, X } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { MessageCircle, Phone, UploadCloud, X, ArrowRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export const serviceCategories = [
   {
@@ -149,6 +149,87 @@ export function ServiceCard({ service }: { service: (typeof serviceCategories)[n
         <button type="button" onClick={openEnquiryPopup} className="market-button mt-4 min-h-12 bg-accent px-4 py-2 text-sm font-bold text-white">
           Send Enquiry
         </button>
+      </div>
+    </div>
+  );
+}
+
+export function ServiceDynamicList() {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  return (
+    <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_1.2fr] lg:gap-16 items-start">
+      {/* Left: Sticky Image Container */}
+      <div className="hidden lg:block relative h-[480px] w-full overflow-hidden rounded-[2rem] sticky top-28 bg-gray-100 shadow-2xl shadow-primary/10 border border-border">
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={activeIndex}
+            src={serviceCategories[activeIndex].image}
+            alt={serviceCategories[activeIndex].title}
+            initial={{ opacity: 0, scale: 1.05 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        </AnimatePresence>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-80" />
+      </div>
+
+      {/* Right: Dynamic List */}
+      <div className="flex flex-col gap-3">
+        {serviceCategories.map((service, index) => {
+          const isActive = index === activeIndex;
+          return (
+            <div
+              key={service.title}
+              onMouseEnter={() => setActiveIndex(index)}
+              onClick={() => setActiveIndex(index)}
+              className={`group relative flex flex-col gap-3 rounded-2xl border p-5 transition-all duration-500 sm:flex-row sm:items-center sm:justify-between sm:p-6 cursor-pointer ${
+                isActive 
+                  ? 'border-white/60 bg-white/60 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.06),inset_0_0_20px_rgba(255,255,255,0.8)] ring-1 ring-accent/10 -translate-y-1' 
+                  : 'border-transparent bg-transparent hover:bg-white/30 hover:border-white/40 hover:backdrop-blur-md hover:-translate-y-0.5'
+              }`}
+            >
+              <div className="max-w-md flex-1">
+                <h3 className={`font-serif text-2xl font-bold transition-colors duration-300 ${isActive ? 'text-accent' : 'text-primary'}`}>
+                  {service.title}
+                </h3>
+                
+                {/* Description - expands on hover */}
+                <motion.div 
+                  initial={false}
+                  animate={{ height: isActive ? 'auto' : 0, opacity: isActive ? 1 : 0 }}
+                  className="overflow-hidden"
+                >
+                  <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground/90">
+                    {service.desc}
+                  </p>
+                </motion.div>
+                
+                {/* Mobile image - shows only on mobile when active */}
+                <motion.div 
+                  initial={false}
+                  animate={{ height: isActive ? '160px' : 0, opacity: isActive ? 1 : 0, marginTop: isActive ? '16px' : 0 }}
+                  className="lg:hidden w-full overflow-hidden rounded-xl border border-border/50 shadow-inner"
+                >
+                  <img src={service.image} alt={service.title} className="h-full w-full object-cover" />
+                </motion.div>
+              </div>
+
+              {/* Action Button */}
+              <div className={`mt-4 shrink-0 sm:mt-0 transition-all duration-500 overflow-hidden ${isActive ? 'opacity-100 translate-x-0 max-w-[200px]' : 'opacity-0 translate-x-4 max-w-0 sm:max-w-none sm:opacity-0 sm:block hidden'}`}>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); openEnquiryPopup(); }} 
+                  className="market-button flex h-12 w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-primary px-6 text-[13px] uppercase tracking-wider font-bold text-white transition-all hover:bg-accent hover:shadow-lg hover:shadow-accent/20"
+                >
+                  Send Enquiry
+                  <ArrowRight size={16} />
+                </button>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
