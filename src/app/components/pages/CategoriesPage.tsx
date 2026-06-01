@@ -1,36 +1,48 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { Filter, Search } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-  CategoryCard,
-  EnquiryTicker,
-  MarketplacePageHeader,
-  PopularSearchStrip,
+  ClassicIndiaMartCard,
   SectionHeader,
-  SupplierCard,
-  TrustSignalsBar,
   categories,
-  suppliers,
 } from '../MarketplaceComponents';
-import { SupplierCitiesMap } from '../VisualSections';
 
 const filters = ['All', 'Industrial', 'Construction', 'Electrical', 'Packaging', 'Automotive'];
 
 export default function CategoriesPage() {
   const [activeFilter, setActiveFilter] = useState('All');
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const handleFilterChange = (filter: string) => {
+    if (filter === activeFilter) return;
+    setActiveFilter(filter);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (newPage: number | ((p: number) => number)) => {
+    setCurrentPage(newPage);
+  };
+  
+  const itemsPerPage = 12; // 12 items per page
+
+  const filteredCategories = categories.filter(c => {
+    if (activeFilter === 'All') return true;
+    if (activeFilter === 'Industrial') return c.name.includes('Industrial') || c.name.includes('Machine') || c.name.includes('Tools') || c.name.includes('Hardware') || c.name.includes('Plastic');
+    if (activeFilter === 'Construction') return c.name.includes('Construction') || c.name.includes('Hardware');
+    if (activeFilter === 'Electrical') return c.name.includes('Electrical') || c.name.includes('Electronics') || c.name.includes('Medical');
+    if (activeFilter === 'Packaging') return c.name.includes('Packaging') || c.name.includes('Paper');
+    if (activeFilter === 'Automotive') return c.name.includes('Automotive');
+    return true;
+  });
+
+  const totalPages = Math.ceil(filteredCategories.length / itemsPerPage);
+  const currentCategories = filteredCategories.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
-    <div className="bg-background">
-      <MarketplacePageHeader
-        eyebrow="Supplier directory"
-        title="Product Categories and Verified Supplier Listings"
-        subtext="Browse dense B2B categories, compare supplier availability, and post an RFQ when your product is not listed."
-        imageUrl="https://images.unsplash.com/photo-1565043666747-69f6646db940?w=1600"
-      />
-      <EnquiryTicker label="Live RFQs" />
-      <TrustSignalsBar />
+    <div className="bg-[#f0f2f5]">
 
-      <section className="px-4 py-8">
+      <section className="px-4 py-8 md:py-12">
         <div className="mx-auto max-w-7xl">
           <SectionHeader
             eyebrow="Browse categories"
@@ -38,19 +50,19 @@ export default function CategoriesPage() {
             subtext="Use filters and popular searches to move quickly from category discovery to supplier quote requests."
           />
 
-          <div className="mb-4 grid gap-3 border border-border bg-card p-3 lg:grid-cols-[1fr_auto] lg:items-center">
-            <div className="flex border border-border">
+          <div className="mb-6 grid gap-3 border border-border bg-white p-3 shadow-sm rounded-none lg:grid-cols-[1fr_auto] lg:items-center">
+            <div className="flex border border-border rounded-none">
               <Search className="ml-3 mt-2.5 text-muted-foreground" size={17} />
               <input className="min-w-0 flex-1 px-3 py-2 text-sm outline-none" placeholder="Search categories, products, supplier types..." />
-              <button className="bg-accent px-4 py-2 text-sm font-bold text-white">Search</button>
+              <button className="bg-accent px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-primary">Search</button>
             </div>
             <div className="flex flex-wrap gap-2">
               {filters.map((filter) => (
                 <button
                   key={filter}
-                  onClick={() => setActiveFilter(filter)}
-                  className={`flex items-center gap-1 border px-3 py-2 text-[12px] font-bold ${
-                    activeFilter === filter ? 'border-primary bg-primary text-white' : 'border-border bg-white text-primary hover:border-accent'
+                  onClick={() => handleFilterChange(filter)}
+                  className={`flex items-center gap-1 border px-4 py-2 text-[12px] font-bold rounded-none transition-colors ${
+                    activeFilter === filter ? 'border-primary bg-primary text-white shadow-sm' : 'border-border bg-[#f8f9fa] text-primary hover:border-accent hover:bg-white'
                   }`}
                 >
                   <Filter size={13} /> {filter}
@@ -59,27 +71,95 @@ export default function CategoriesPage() {
             </div>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-            {categories.map((category) => <CategoryCard key={category.name} category={category} />)}
-          </div>
-          <div className="mt-4">
-            <PopularSearchStrip />
-          </div>
-        </div>
-      </section>
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* Left Sidebar (Optional classic IndiaMART style) */}
+            <div className="w-full lg:w-[240px] shrink-0">
+              <div className="bg-white border border-border shadow-sm rounded-none p-4 sticky top-[80px]">
+                <h3 className="font-bold text-[14px] text-primary mb-3 uppercase tracking-wider border-b border-border/50 pb-2">All Categories</h3>
+                <ul className="flex flex-col gap-1.5 text-[13px]">
+                  {categories.map(c => (
+                    <li key={c.name}>
+                      <a href="#" className="text-muted-foreground hover:text-accent transition-colors block py-1">{c.name}</a>
+                    </li>
+                  ))}
+                  <li><a href="#" className="text-muted-foreground hover:text-accent transition-colors block py-1">Chemicals & Dyes</a></li>
+                  <li><a href="#" className="text-muted-foreground hover:text-accent transition-colors block py-1">Packaging Materials</a></li>
+                  <li><a href="#" className="text-muted-foreground hover:text-accent transition-colors block py-1">Mechanical Parts</a></li>
+                  <li><a href="#" className="text-muted-foreground hover:text-accent transition-colors block py-1">Apparel & Fashion</a></li>
+                </ul>
+              </div>
+            </div>
+            
+            {/* Main Grid */}
+            <div className="flex-1 min-w-0">
+              {filteredCategories.length === 0 ? (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex items-center justify-center py-20 border border-dashed border-border/70"
+                >
+                  <p className="text-muted-foreground font-bold">No categories found for this filter.</p>
+                </motion.div>
+              ) : (
+                <div>
+                  <motion.div layout className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                    <AnimatePresence mode="popLayout">
+                      {currentCategories.map((category, index) => (
+                        <motion.div
+                          layout
+                          key={category.name}
+                          initial={{ opacity: 0, y: 15, scale: 0.98 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.15 } }}
+                          transition={{ duration: 0.3, delay: index * 0.04, ease: "easeOut" }}
+                        >
+                          <ClassicIndiaMartCard category={category} />
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </motion.div>
+                  
+                  {/* Pagination Controls */}
+                  {totalPages > 1 && (
+                    <motion.div layout className="mt-8 flex justify-center gap-2">
+                      <button 
+                        onClick={() => handlePageChange(p => Math.max(1, typeof p === 'number' ? p - 1 : p(currentPage) - 1))}
+                        disabled={currentPage === 1}
+                        className="px-4 py-2 border border-border bg-white text-sm font-bold text-primary disabled:opacity-50 disabled:cursor-not-allowed hover:border-primary transition-colors rounded-none"
+                      >
+                        Prev
+                      </button>
+                      
+                      {Array.from({ length: totalPages }).map((_, i) => (
+                        <button
+                          key={i}
+                          onClick={() => handlePageChange(i + 1)}
+                          className={`w-9 h-9 flex items-center justify-center border text-sm font-bold rounded-none transition-colors ${
+                            currentPage === i + 1 
+                            ? 'border-primary bg-primary text-white' 
+                            : 'border-border bg-white text-primary hover:border-primary'
+                          }`}
+                        >
+                          {i + 1}
+                        </button>
+                      ))}
+                      
+                      <button 
+                        onClick={() => handlePageChange(p => Math.min(totalPages, typeof p === 'number' ? p + 1 : p(currentPage) + 1))}
+                        disabled={currentPage === totalPages}
+                        className="px-4 py-2 border border-border bg-white text-sm font-bold text-primary disabled:opacity-50 disabled:cursor-not-allowed hover:border-primary transition-colors rounded-none"
+                      >
+                        Next
+                      </button>
+                    </motion.div>
+                  )}
+                </div>
+              )}
 
-      <TrustSignalsBar compact />
-      <SupplierCitiesMap />
-
-      <section className="px-4 py-8">
-        <div className="mx-auto max-w-7xl">
-          <SectionHeader
-            eyebrow="Supplier tiles"
-            title="Active suppliers by city and category"
-            subtext="Each card is designed for quick scanning: verification, location, category, and direct quote action."
-          />
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {suppliers.map((supplier) => <SupplierCard key={supplier.name} supplier={supplier} />)}
+              <div className="mt-8">
+                {/* <PopularSearchStrip /> */}
+              </div>
+            </div>
           </div>
         </div>
       </section>

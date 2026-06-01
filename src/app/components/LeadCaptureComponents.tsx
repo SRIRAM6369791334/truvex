@@ -1,7 +1,10 @@
 import { useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router';
-import { MessageCircle, Phone, UploadCloud, X, ArrowRight } from 'lucide-react';
+import { MessageCircle, Phone, UploadCloud, X, ArrowRight, BadgeCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Lottie from 'lottie-react';
+import shieldAnimation from './lottie/Shield.json';
+import targetAnimation from './lottie/Target.json';
 
 export const serviceCategories = [
   {
@@ -62,18 +65,18 @@ export function ImageUpload({
 
   return (
     <div>
-      <label className="mb-2 block text-[12px] font-bold text-primary">{label}</label>
+      <label className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-primary/80">{label}</label>
       <label
         onDrop={(event) => {
           event.preventDefault();
           addFiles(event.dataTransfer.files);
         }}
         onDragOver={(event) => event.preventDefault()}
-        className="flex min-h-36 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-accent/40 bg-accent/5 p-5 text-center transition hover:border-accent hover:bg-accent/10"
+        className="flex min-h-36 cursor-pointer flex-col items-center justify-center rounded-none border-2 border-dashed border-border bg-[#f8f9fa] p-5 text-center transition hover:border-accent hover:bg-accent/10"
       >
         <UploadCloud className="mb-2 text-accent" size={28} />
         <span className="text-sm font-bold text-primary">Drag/drop images or click to upload</span>
-        <span className="mt-1 text-xs text-muted-foreground">PNG, JPG, WebP supported. Preview before submit.</span>
+        <span className="mt-1 text-[11px] uppercase tracking-wider text-muted-foreground">PNG, JPG, WebP supported. Preview before submit.</span>
         <input type="file" accept="image/*" multiple={multiple} className="hidden" onChange={(event) => addFiles(event.target.files)} />
       </label>
       {files.length > 0 && (
@@ -160,7 +163,7 @@ export function ServiceDynamicList() {
   return (
     <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_1.2fr] lg:gap-16 items-start">
       {/* Left: Sticky Image Container */}
-      <div className="hidden lg:block relative h-[480px] w-full overflow-hidden rounded-[2rem] sticky top-28 bg-gray-100 shadow-2xl shadow-primary/10 border border-border">
+      <div className="hidden lg:block relative h-[480px] w-full overflow-hidden rounded-none sticky top-28 bg-gray-100 shadow-2xl shadow-primary/10 border border-border">
         <AnimatePresence mode="wait">
           <motion.img
             key={activeIndex}
@@ -185,33 +188,30 @@ export function ServiceDynamicList() {
               key={service.title}
               onMouseEnter={() => setActiveIndex(index)}
               onClick={() => setActiveIndex(index)}
-              className={`group relative flex flex-col gap-3 rounded-2xl border p-5 transition-all duration-500 sm:flex-row sm:items-center sm:justify-between sm:p-6 cursor-pointer ${
+              className={`group relative flex flex-col gap-3 rounded-none border p-5 transition-all duration-500 sm:flex-row sm:items-center sm:justify-between sm:p-6 cursor-pointer ${
                 isActive 
-                  ? 'border-white/60 bg-white/60 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.06),inset_0_0_20px_rgba(255,255,255,0.8)] ring-1 ring-accent/10 -translate-y-1' 
-                  : 'border-transparent bg-transparent hover:bg-white/30 hover:border-white/40 hover:backdrop-blur-md hover:-translate-y-0.5'
+                  ? 'border-accent/40 bg-white shadow-md ring-1 ring-accent/10 -translate-y-1' 
+                  : 'border-border/60 bg-white/40 shadow-sm hover:bg-white/80 hover:border-border hover:-translate-y-0.5'
               }`}
             >
               <div className="max-w-md flex-1">
-                <h3 className={`font-serif text-2xl font-bold transition-colors duration-300 ${isActive ? 'text-accent' : 'text-primary'}`}>
-                  {service.title}
-                </h3>
+                <div className="flex items-center gap-2">
+                  <h3 className={`font-serif text-2xl font-bold transition-colors duration-300 ${isActive ? 'text-accent' : 'text-primary'}`}>
+                    {service.title}
+                  </h3>
+                  {!isActive && <ArrowRight size={18} className="text-muted-foreground/40 opacity-0 group-hover:opacity-100 transition-opacity" />}
+                </div>
                 
-                {/* Description - expands on hover */}
-                <motion.div 
-                  initial={false}
-                  animate={{ height: isActive ? 'auto' : 0, opacity: isActive ? 1 : 0 }}
-                  className="overflow-hidden"
-                >
-                  <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground/90">
-                    {service.desc}
-                  </p>
-                </motion.div>
+                {/* Description - always visible now to avoid empty look */}
+                <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground/90">
+                  {service.desc}
+                </p>
                 
                 {/* Mobile image - shows only on mobile when active */}
                 <motion.div 
                   initial={false}
                   animate={{ height: isActive ? '160px' : 0, opacity: isActive ? 1 : 0, marginTop: isActive ? '16px' : 0 }}
-                  className="lg:hidden w-full overflow-hidden rounded-xl border border-border/50 shadow-inner"
+                  className="lg:hidden w-full overflow-hidden rounded-none border border-border/50 shadow-inner"
                 >
                   <img src={service.image} alt={service.title} className="h-full w-full object-cover" />
                 </motion.div>
@@ -221,7 +221,7 @@ export function ServiceDynamicList() {
               <div className={`mt-4 shrink-0 sm:mt-0 transition-all duration-500 overflow-hidden ${isActive ? 'opacity-100 translate-x-0 max-w-[200px]' : 'opacity-0 translate-x-4 max-w-0 sm:max-w-none sm:opacity-0 sm:block hidden'}`}>
                 <button 
                   onClick={(e) => { e.stopPropagation(); openEnquiryPopup(); }} 
-                  className="market-button flex h-12 w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-primary px-6 text-[13px] uppercase tracking-wider font-bold text-white transition-all hover:bg-accent hover:shadow-lg hover:shadow-accent/20"
+                  className="market-button flex h-12 w-full sm:w-auto items-center justify-center gap-2 rounded-none bg-primary px-6 text-[13px] uppercase tracking-wider font-bold text-white transition-all hover:bg-accent hover:shadow-lg hover:shadow-accent/20"
                 >
                   Send Enquiry
                   <ArrowRight size={16} />
@@ -407,21 +407,46 @@ export function CallFloatingButton() {
 
 export function SupplierBuyerCTA() {
   return (
-    <section className="px-4 py-8">
-      <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-2">
-        <div className="market-card border-t-2 border-t-accent p-6">
-          <h3 className="font-serif text-2xl font-bold text-primary">Become a Verified Supplier</h3>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">Register your company, upload products, verify mobile OTP, and wait for admin review.</p>
-          <Link to="/suppliers" className="market-button mt-5 inline-flex min-h-12 items-center bg-accent px-5 py-3 text-sm font-bold text-white">
-            Become Supplier
-          </Link>
-        </div>
-        <div className="market-card border-t-2 border-t-accent p-6">
-          <h3 className="font-serif text-2xl font-bold text-primary">Submit a Buyer Requirement</h3>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">Tell us what you need, upload a reference image, and generate a verified sourcing lead.</p>
-          <Link to="/buyers" className="market-button mt-5 inline-flex min-h-12 items-center bg-primary px-5 py-3 text-sm font-bold text-white">
-            Submit Requirement
-          </Link>
+    <section className="bg-gray-100 py-10 border-y border-gray-200">
+      <div className="mx-auto max-w-7xl px-4">
+        <div className="flex flex-col md:flex-row bg-white rounded-md shadow-sm border border-gray-200 overflow-hidden">
+          
+          {/* Post Requirement Side (Buyer) */}
+          <div className="flex-1 p-6 md:p-10 md:border-r border-gray-200">
+            <h3 className="text-[22px] font-bold text-gray-800 mb-2">Tell us what you need</h3>
+            <p className="text-gray-600 mb-6 text-[15px]">Get quick quotes from verified suppliers across India.</p>
+            
+            <div className="flex flex-col sm:flex-row gap-3">
+              <input 
+                type="text" 
+                placeholder="E.g. Steel Pipes, Safety Shoes, Hardware" 
+                className="flex-1 rounded border border-gray-300 px-4 py-3 text-[15px] text-gray-800 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-sm"
+              />
+              <button 
+                onClick={() => openEnquiryPopup()} 
+                className="bg-[#008cff] text-white px-8 py-3 rounded font-bold text-[15px] hover:bg-[#0070cc] transition-colors whitespace-nowrap shadow-sm"
+              >
+                Post Requirement
+              </button>
+            </div>
+            <div className="mt-4 flex items-center gap-4 text-xs text-gray-500 font-medium">
+               <span className="flex items-center gap-1"><BadgeCheck size={14} className="text-green-500"/> Verified Suppliers</span>
+               <span className="flex items-center gap-1"><BadgeCheck size={14} className="text-green-500"/> Multiple Quotes</span>
+            </div>
+          </div>
+
+          {/* Sell Side (Supplier) */}
+          <div className="md:w-[400px] bg-gray-50 p-6 md:p-10 flex flex-col justify-center items-start">
+            <h3 className="text-[20px] font-bold text-gray-800 mb-2">Are you a Supplier?</h3>
+            <p className="text-gray-600 mb-6 text-[14px] leading-relaxed">Grow your business by reaching thousands of active buyers every day. Register your catalog now.</p>
+            <Link 
+              to="/suppliers" 
+              className="border-2 border-[#008cff] text-[#008cff] px-6 py-2.5 rounded font-bold text-[15px] hover:bg-blue-50 transition-colors w-full sm:w-auto text-center"
+            >
+              Sell on Truvex
+            </Link>
+          </div>
+          
         </div>
       </div>
     </section>

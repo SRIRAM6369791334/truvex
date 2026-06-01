@@ -82,7 +82,7 @@ export default function Footer({ onOpenEnquiry }: FooterProps) {
           </button>
         </div>
       </div>
-      <section className="border-t border-white/10 bg-gradient-to-r from-primary to-secondary px-4 py-12">
+      {/* <section className="border-t border-white/10 bg-gradient-to-r from-primary to-secondary px-4 py-12">
         <div className="mx-auto max-w-2xl text-center">
           <img
             src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=60&h=60&fit=crop"
@@ -100,7 +100,7 @@ export default function Footer({ onOpenEnquiry }: FooterProps) {
           </div>
           <p className="mt-3 text-xs text-white/40">No spam. Unsubscribe anytime. 2,400+ subscribers.</p>
         </div>
-      </section>
+      </section> */}
       <div className="border-t border-white/10 px-4 py-4 text-center text-[12px] text-white/50">
         Copyright 2026 Truvex. B2B sourcing platform, India.
       </div>

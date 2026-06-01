@@ -1,9 +1,10 @@
 import { Link } from 'react-router';
-import { Zap, Target, ShieldCheck, Globe, Handshake, Lightbulb, Check } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { FadeIn, StaggerContainer, StaggerItem } from '../AnimationUtils';
 import { MarketplacePageHeader, TrustSignalsBar } from '../MarketplaceComponents';
 import { ProcessComparisonSection } from '../VisualSections';
+import AnimatedIcon from '../AnimatedIcon';
 
 const scores = [
   { label: 'Truvex', speed: 95, verification: 100, transparency: 90, effort: 95, color: 'bg-teal-500' },
@@ -13,12 +14,12 @@ const scores = [
 const scoreMetrics = ['Speed', 'Verification', 'Transparency', 'Ease'];
 
 const advantages = [
-  { icon: <Zap className="w-7 h-7 text-accent" />, title: 'Speed', desc: 'Truvex responds to buyer leads within hours. Traditional brokers take days. In sourcing, speed wins deals.' },
-  { icon: <Target className="w-7 h-7 text-accent" />, title: 'Personalisation', desc: "Every proposal is tailored to the buyer's exact requirement — specifications, budget, and delivery needs." },
-  { icon: <ShieldCheck className="w-7 h-7 text-accent" />, title: 'Trusted Network', desc: 'A curated network of verified and performance-rated suppliers ensures quality at every touchpoint.' },
-  { icon: <Globe className="w-7 h-7 text-accent" />, title: 'Multi-Platform Presence', desc: 'Active on both Justdial and IndiaMart — maximising lead volume, diversity, and geographic coverage.' },
-  { icon: <Handshake className="w-7 h-7 text-accent" />, title: 'Low Buyer Effort', desc: 'Buyers post a requirement once. Truvex handles analysis, outreach, proposal, and supplier coordination.' },
-  { icon: <Lightbulb className="w-7 h-7 text-accent" />, title: 'Transparent Pricing', desc: 'Proposals include itemised pricing so buyers make fully informed decisions with zero hidden surprises.' },
+  { iconName: 'clock', title: 'Speed', desc: 'Truvex responds to buyer leads within hours. Traditional brokers take days. In sourcing, speed wins deals.' },
+  { iconName: 'target', title: 'Personalisation', desc: "Every proposal is tailored to the buyer's exact requirement — specifications, budget, and delivery needs." },
+  { iconName: 'shield', title: 'Trusted Network', desc: 'A curated network of verified and performance-rated suppliers ensures quality at every touchpoint.' },
+  { iconName: 'users', title: 'Multi-Platform Presence', desc: 'Active on both Justdial and IndiaMart — maximising lead volume, diversity, and geographic coverage.' },
+  { iconName: 'handshake', title: 'Low Buyer Effort', desc: 'Buyers post a requirement once. Truvex handles analysis, outreach, proposal, and supplier coordination.' },
+  { iconName: 'rupee', title: 'Transparent Pricing', desc: 'Proposals include itemised pricing so buyers make fully informed decisions with zero hidden surprises.' },
 ];
 
 const comparisonRows = [
@@ -137,10 +138,11 @@ export default function WhyTruvexPage() {
               <motion.div
                 key={adv.title}
                 variants={cardVariants}
-                className="market-card border border-border border-l-4 border-l-accent p-5 hover:border-accent hover:shadow-md transition-all duration-200 group"
+                className="group market-card border border-border border-l-4 border-l-accent p-5 hover:border-accent hover:shadow-md transition-all duration-200"
               >
-                <div className="mb-5 p-3 bg-accent/10 rounded-lg inline-flex group-hover:scale-110 transition-transform duration-300">
-                  {adv.icon}
+                {/* Dark primary icon box — Home Page style */}
+                <div className="mb-5 w-16 h-16 bg-primary flex items-center justify-center border-b-4 border-accent group-hover:bg-accent/90 transition-colors duration-300">
+                  <AnimatedIcon icon={adv.iconName as any} size={38} />
                 </div>
                 <h3 className="font-['Playfair_Display',_serif] text-foreground text-xl font-bold mb-3">
                   {adv.title}

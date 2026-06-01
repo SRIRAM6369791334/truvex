@@ -1,199 +1,278 @@
-import { HeroSection } from '../HeroSection';
-import { ScrollReveal } from '../ScrollReveal';
 import { motion } from 'framer-motion';
-import { FadeIn, StaggerContainer, StaggerItem } from '../AnimationUtils';
-
-const tableRows = [
-  { attr: 'Business Type', detail: 'B2B Sourcing & Lead Conversion', badge: { variant: 'teal', text: 'Core Business' } },
-  { attr: 'Target Market', detail: 'SMEs, Traders, Manufacturers across India' },
-  { attr: 'Lead Sources', detail: 'Justdial & IndiaMart' },
-  { attr: 'Revenue Model', detail: 'Commission / Service Fee / Subscription' },
-  { attr: 'Stage', detail: 'Early-Stage / Concept 2026', badge: { variant: 'gold', text: 'Concept' } },
-  { attr: 'Geographic Focus', detail: 'Pan-India (starting Tier-2 & Tier-3)' },
-];
+import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router';
+import AnimatedIcon from '../AnimatedIcon';
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-background">
-      <HeroSection badge="Our Story" headline="About Truvex" patternId="geo-about" compact />
+    <div className="bg-[#f8f9fa] min-h-screen">
+      {/* 1. HERO SECTION */}
+      <section className="relative bg-[#0A1A30] pt-32 pb-24 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+           <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1600" className="w-full h-full object-cover opacity-20 mix-blend-luminosity" alt="" />
+           <div className="absolute inset-0 bg-gradient-to-t from-[#0A1A30] via-[#0A1A30]/80 to-transparent" />
+        </div>
+        <div className="mx-auto max-w-7xl px-4 relative z-10 text-center">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-none border border-accent/30 bg-accent/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em] text-accent">
+            <span className="h-1.5 w-1.5 bg-accent" />
+            Our Story
+          </div>
+          <h1 className="font-serif text-4xl md:text-5xl lg:text-7xl font-bold leading-tight mb-6 text-white drop-shadow-lg max-w-4xl mx-auto">
+            Empowering India's B2B Ecosystem.
+          </h1>
+          <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
+            Truvex is on a mission to make doing business easy. We connect buyers and sellers across the country, fostering a transparent digital economy.
+          </p>
+        </div>
+      </section>
 
-      {/* Two-Column Section */}
-      <section className="bg-background py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-        <img
-          src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800"
-          alt="Business handshake"
-          width={800}
-          height={520}
-          loading="lazy"
-          className="absolute inset-0 h-full w-full object-cover opacity-[0.06]"
-        />
-        <div className="max-w-6xl mx-auto relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
+      {/* 2. WHAT IS TRUVEX? (Overview) */}
+      <section className="py-24 bg-white border-b border-border">
+        <div className="mx-auto max-w-4xl px-4 text-center">
+           <h2 className="text-[11px] font-bold uppercase tracking-widest text-primary/60 mb-4 border-b-2 border-accent inline-block pb-1">About The Platform</h2>
+           <h3 className="text-3xl md:text-4xl font-serif font-bold text-primary mb-8">India's Fastest-Growing Online B2B Marketplace</h3>
+           <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
+             Truvex is designed to connect verified manufacturers with bulk buyers, wholesalers, and retailers across the country. We focus on providing a seamless platform to Small & Medium Enterprises (SMEs), Large Enterprises, as well as individual entrepreneurs. By leveraging technology, we bridge the gap between supply and demand, ensuring that finding the right product or partner is never hard.
+           </p>
+        </div>
+      </section>
+
+      {/* 3. MISSION & VISION (Split Layout) */}
+      <section className="py-24 bg-[#f4f6f8] border-b border-border">
+        <div className="mx-auto max-w-7xl px-4">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
             
-            {/* Left column — OUR MISSION */}
-            <ScrollReveal className="group">
-              <div className="inline-block bg-primary/10 text-primary px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-6 transition-colors group-hover:bg-primary/20">
-                Our Mission
-              </div>
-              <p className="text-muted-foreground text-lg leading-relaxed">
-                Truvex was founded on a simple belief: finding the right product for your business should never be hard. We saw businesses wasting hours searching directories, getting irrelevant leads, and dealing with unverified suppliers.
-              </p>
-            </ScrollReveal>
-
-            {/* Right column — OUR VISION */}
-            <ScrollReveal delay={0.2} className="group">
+            <div className="relative">
+              <div className="absolute -inset-4 bg-white z-0 transform -skew-y-2 border border-border shadow-sm"></div>
               <img
                 src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800"
-                alt="Truvex team meeting"
-                width={800}
-                height={520}
-                loading="lazy"
-                className="mb-6 h-56 w-full rounded-2xl border border-border object-cover shadow-sm"
+                alt="Truvex Team"
+                className="relative z-10 w-full h-[500px] object-cover rounded-none border-4 border-white shadow-2xl"
               />
-              <div className="inline-block bg-accent/10 text-accent px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-6 transition-colors group-hover:bg-accent/20">
-                Our Vision
-              </div>
-              <p className="text-muted-foreground text-lg leading-relaxed mb-8">
-                A future where any business in India — regardless of size or location — can source any product with confidence, speed, and full pricing transparency.
-              </p>
-
-              {/* Quote Box */}
-              <div className="bg-primary rounded-2xl p-8 relative overflow-hidden group-hover:shadow-xl group-hover:shadow-primary/20 transition-all duration-300">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-accent/10 rounded-full blur-2xl transform translate-x-1/2 -translate-y-1/2"></div>
-                <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full blur-xl transform -translate-x-1/2 translate-y-1/2"></div>
-                
-                <p className="relative text-accent text-xl italic font-serif leading-relaxed z-10">
-                  "Because finding the right product should never be hard."
+              <div className="absolute -bottom-8 -right-8 z-20 bg-accent p-8 text-white max-w-xs shadow-xl hidden sm:block">
+                <p className="font-serif text-2xl italic leading-snug">
+                  "Because doing business should be effortless and transparent."
                 </p>
               </div>
-            </ScrollReveal>
+            </div>
+
+            <div className="lg:pl-8">
+              <div className="mb-16">
+                <h2 className="text-[11px] font-bold uppercase tracking-widest text-primary/60 mb-2 border-b-2 border-accent inline-block pb-1">Our Mission</h2>
+                <h3 className="text-3xl font-serif font-bold text-primary mb-6 mt-4">To make doing business easy</h3>
+                <p className="text-lg text-muted-foreground leading-relaxed">
+                  We saw businesses wasting hours searching directories, getting irrelevant leads, and dealing with unverified suppliers. Our mission is to eliminate this friction by providing a highly vetted, transparent, and ultra-fast sourcing marketplace that empowers every Indian SME.
+                </p>
+              </div>
+
+              <div>
+                <h2 className="text-[11px] font-bold uppercase tracking-widest text-primary/60 mb-2 border-b-2 border-accent inline-block pb-1">Our Vision</h2>
+                <h3 className="text-3xl font-serif font-bold text-primary mb-6 mt-4">A Transparent Digital Economy</h3>
+                <p className="text-lg text-muted-foreground leading-relaxed">
+                  A future where any business in India — regardless of size or geographic location — can source any product with absolute confidence, speed, and complete pricing transparency.
+                </p>
+              </div>
+            </div>
 
           </div>
         </div>
       </section>
 
-      {/* Our Values Section */}
-      <section className="bg-muted/30 py-24 px-4 sm:px-6 lg:px-8 border-t border-border/50 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent pointer-events-none"></div>
-        <div className="max-w-6xl mx-auto relative z-10">
-          <FadeIn>
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">Our Values</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-                The core principles that drive everything we do.
-              </p>
-            </div>
-          </FadeIn>
+      {/* 4. MAKING BUSINESS EASY (Buyers vs Suppliers) */}
+      <section className="py-24 bg-primary text-white border-b border-primary-foreground/10 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent pointer-events-none"></div>
+        <div className="mx-auto max-w-7xl px-4 relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-white mb-4">How we create value</h2>
+            <p className="text-white/70 max-w-2xl mx-auto text-lg">We deliver distinct advantages for both sides of the marketplace.</p>
+          </div>
 
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                title: 'Transparency',
-                desc: 'Clear communication, open pricing, and honest feedback at every step.',
-                color: 'text-accent',
-                bg: 'bg-accent/10',
-                icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z',
-              },
-              {
-                title: 'Speed',
-                desc: 'Moving fast to keep your business ahead of the curve.',
-                color: 'text-primary',
-                bg: 'bg-primary/10',
-                icon: 'M13 10V3L4 14h7v7l9-11h-7z',
-              },
-              {
-                title: 'Trust',
-                desc: 'Building long-term relationships rooted in reliability and integrity.',
-                color: 'text-teal-600',
-                bg: 'bg-teal-500/10',
-                icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z',
-              }
-            ].map((value, idx) => (
-              <StaggerItem key={value.title}>
-                <motion.div 
-                  whileHover={{ y: -8 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className="group bg-white/60 backdrop-blur-md rounded-2xl p-8 border border-white shadow-sm hover:shadow-xl hover:shadow-primary/5 transition-all relative overflow-hidden h-full"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-6 ${value.bg} ${value.color} group-hover:scale-110 transition-transform duration-300`}>
-                    <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={value.icon} />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-bold text-primary mb-3 relative z-10">{value.title}</h3>
-                  <p className="text-muted-foreground leading-relaxed relative z-10">{value.desc}</p>
-                </motion.div>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+             <div className="bg-white/5 border border-white/10 p-10 hover:border-accent transition-colors">
+                <h3 className="text-2xl font-bold text-accent mb-6 flex items-center gap-3">
+                  <AnimatedIcon icon="target" size={32} /> For Buyers
+                </h3>
+                <ul className="space-y-4">
+                  <li className="flex items-start gap-3">
+                    <span className="text-accent text-xl mt-1">✓</span>
+                    <span className="text-white/80 leading-relaxed"><strong>Convenience:</strong> Connect with sellers anytime, anywhere.</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-accent text-xl mt-1">✓</span>
+                    <span className="text-white/80 leading-relaxed"><strong>Wider Marketplace:</strong> Access an extensive range of products and services.</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-accent text-xl mt-1">✓</span>
+                    <span className="text-white/80 leading-relaxed"><strong>Secure Sourcing:</strong> Deal only with 100% verified and authenticated suppliers.</span>
+                  </li>
+                </ul>
+             </div>
+
+             <div className="bg-white/5 border border-white/10 p-10 hover:border-accent transition-colors">
+                <h3 className="text-2xl font-bold text-accent mb-6 flex items-center gap-3">
+                  <AnimatedIcon icon="trending" size={32} /> For Suppliers
+                </h3>
+                <ul className="space-y-4">
+                  <li className="flex items-start gap-3">
+                    <span className="text-accent text-xl mt-1">✓</span>
+                    <span className="text-white/80 leading-relaxed"><strong>Enhanced Visibility:</strong> Reach thousands of bulk buyers daily.</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-accent text-xl mt-1">✓</span>
+                    <span className="text-white/80 leading-relaxed"><strong>Increased Credibility:</strong> Build trust through our strict verification process.</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-accent text-xl mt-1">✓</span>
+                    <span className="text-white/80 leading-relaxed"><strong>Lead Management:</strong> Manage RFQs and close deals effortlessly on the platform.</span>
+                  </li>
+                </ul>
+             </div>
+          </div>
         </div>
       </section>
 
-      {/* Milestones Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-primary text-primary-foreground relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-        <div className="max-w-6xl mx-auto relative z-10">
-          <StaggerContainer className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 text-center">
+      {/* 5. PLATFORM CAPABILITIES & REACH */}
+      <section className="py-24 bg-white border-b border-border">
+        <div className="mx-auto max-w-7xl px-4">
+           <div className="grid md:grid-cols-2 gap-16 items-center">
+              <div>
+                <h2 className="text-[11px] font-bold uppercase tracking-widest text-primary/60 mb-2 border-b-2 border-accent inline-block pb-1">Our Reach</h2>
+                <h3 className="text-3xl font-serif font-bold text-primary mb-6 mt-4">Connecting Tier-1 Hubs to Tier-3 Markets</h3>
+                <p className="text-lg text-muted-foreground leading-relaxed mb-6">
+                  Our robust technological infrastructure bridges the geographical gap in Indian commerce. We enable a manufacturer in a Tier-1 industrial hub to instantly receive and fulfill bulk requirements from a retailer in a remote Tier-3 city.
+                </p>
+                <div className="flex items-center gap-4 text-primary font-bold bg-[#f4f6f8] p-4 border border-border">
+                  <div className="w-12 h-12 bg-primary flex items-center justify-center border-b-2 border-accent flex-shrink-0">
+                    <AnimatedIcon icon="users" size={32} />
+                  </div>
+                  <span>Smart Matchmaking Algorithm routing leads in real-time.</span>
+                </div>
+              </div>
+              <div className="relative h-[400px]">
+                 <img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=800" className="w-full h-full object-cover rounded-none border border-border" alt="Logistics and Network" />
+                 <div className="absolute inset-0 border-8 border-white/20"></div>
+              </div>
+           </div>
+        </div>
+      </section>
+
+      {/* 6. CORE PILLARS (Why Choose Us) */}
+      <section className="py-24 bg-[#f4f6f8]">
+        <div className="mx-auto max-w-7xl px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-primary">The Truvex Standard</h2>
+            <div className="w-24 h-1 bg-accent mx-auto mt-6" />
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                title: '100% Verified Network',
+                desc: 'Every supplier undergoes a strict multi-point verification process ensuring you only deal with authentic businesses.',
+                iconName: 'shield',
+              },
+              {
+                title: 'End-to-End Transparency',
+                desc: 'Clear communication, open pricing models, and honest feedback at every step of your sourcing journey.',
+                iconName: 'handshake',
+              },
+              {
+                title: 'Unmatched Speed',
+                desc: 'Moving fast to keep your business ahead. Receive multiple quotes and close deals in record time.',
+                iconName: 'trending',
+              }
+            ].map((pillar, idx) => (
+              <div key={idx} className="group bg-white p-10 border border-border rounded-none hover:border-accent transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
+                {/* Dark bg icon box — Home Page style */}
+                <div className="w-16 h-16 bg-primary flex items-center justify-center mb-8 border-b-4 border-accent group-hover:bg-accent/90 transition-colors duration-300">
+                  <AnimatedIcon icon={pillar.iconName as any} size={38} />
+                </div>
+                <h3 className="text-xl font-bold text-primary mb-4">{pillar.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">{pillar.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 7. OUR SCALE (Metrics) */}
+      <section className="py-24 bg-[#0A1A30] text-white">
+        <div className="mx-auto max-w-7xl px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 text-center">
             {[
               { label: 'Founded', value: '2026' },
-              { label: 'Target SMEs', value: '10K+' },
-              { label: 'Categories', value: '50+' },
-              { label: 'Cities', value: '100+' },
+              { label: 'Verified SMEs', value: '10K+' },
+              { label: 'Product Categories', value: '50+' },
+              { label: 'Cities Covered', value: '100+' },
             ].map((stat) => (
-              <StaggerItem key={stat.label}>
-                <div className="flex flex-col items-center">
-                  <span className="text-4xl md:text-5xl font-bold text-accent mb-2 drop-shadow-md">{stat.value}</span>
-                  <span className="text-primary-foreground/80 font-medium uppercase tracking-wider text-sm">{stat.label}</span>
-                </div>
-              </StaggerItem>
+              <div key={stat.label} className="flex flex-col items-center justify-center p-6 border border-white/10 bg-white/5">
+                <span className="text-4xl md:text-5xl font-bold text-accent mb-3">{stat.value}</span>
+                <span className="text-white/70 font-bold uppercase tracking-widest text-[11px]">{stat.label}</span>
+              </div>
             ))}
-          </StaggerContainer>
+          </div>
         </div>
       </section>
 
-      {/* Business Table Section */}
-      <section className="bg-white py-20 px-4 sm:px-6 lg:px-8 border-t border-border/50">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-2xl border border-border overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
-            {/* Table Header */}
-            <div className="bg-muted/50 grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-4 p-5 md:px-8 border-b border-border">
-              <span className="text-muted-foreground text-xs font-bold uppercase tracking-widest">
-                Attribute
-              </span>
-              <span className="text-muted-foreground text-xs font-bold uppercase tracking-widest hidden md:block">
-                Details
-              </span>
-            </div>
+      {/* 8. LEADERSHIP TEAM */}
+      <section className="py-24 bg-white border-b border-border">
+        <div className="mx-auto max-w-7xl px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-primary">Meet Our Leadership</h2>
+            <div className="w-24 h-1 bg-accent mx-auto mt-6" />
+            <p className="mt-6 text-muted-foreground max-w-2xl mx-auto">The industry veterans and technical innovators driving the Truvex vision forward.</p>
+          </div>
 
-            {/* Table Rows */}
-            <div className="divide-y divide-border">
-              {tableRows.map((row) => (
-                <div
-                  key={row.attr}
-                  className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-2 md:gap-4 p-5 md:px-8 items-center transition-colors hover:bg-muted/30 bg-white"
-                >
-                  <span className="text-muted-foreground text-sm font-medium">{row.attr}</span>
-                  <div className="flex items-center gap-3 flex-wrap">
-                    <span className="text-primary text-sm font-medium">{row.detail}</span>
-                    {row.badge && (
-                      <span
-                        className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-wide uppercase ${
-                          row.badge.variant === 'gold' 
-                            ? 'bg-accent/10 text-accent border border-accent/20' 
-                            : 'bg-teal-500/10 text-teal-600 border border-teal-500/20'
-                        }`}
-                      >
-                        {row.badge.text}
-                      </span>
-                    )}
-                  </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {[
+              { name: 'Sriram', role: 'Founder & CEO', img: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400' },
+              { name: 'Aditi Sharma', role: 'Chief Operations Officer', img: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400' },
+              { name: 'Rahul Verma', role: 'Head of Product', img: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400' }
+            ].map((leader, i) => (
+              <div key={i} className="group relative overflow-hidden border border-border">
+                <div className="aspect-[4/5] bg-[#f0f2f5] overflow-hidden relative">
+                  <img src={leader.img} alt={leader.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 grayscale group-hover:grayscale-0" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A1A30]/90 via-transparent to-transparent opacity-0 group-hover:opacity-50 transition-opacity duration-300 pointer-events-none" />
                 </div>
-              ))}
+                <div className="p-6 bg-white group-hover:bg-[#0A1A30] transition-colors duration-300">
+                  <h3 className="text-lg font-bold text-primary group-hover:text-white transition-colors">{leader.name}</h3>
+                  <p className="text-sm text-muted-foreground group-hover:text-white/70 transition-colors">{leader.role}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 9. JOIN US (Dual CTA) */}
+      <section className="py-24 bg-[#f4f6f8]">
+        <div className="mx-auto max-w-5xl px-4">
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="bg-white p-12 border border-border rounded-none text-center hover:shadow-2xl transition-shadow duration-500">
+              <div className="w-20 h-20 bg-primary mx-auto flex items-center justify-center mb-8 border-b-4 border-accent">
+                <AnimatedIcon icon="users" size={44} />
+              </div>
+              <h3 className="text-2xl font-serif font-bold text-primary mb-4">Want to Sell?</h3>
+              <p className="text-muted-foreground mb-8">Join thousands of verified suppliers and start receiving authentic business enquiries today.</p>
+              <Link to="/suppliers" className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 font-bold text-sm uppercase tracking-wider hover:bg-accent transition-colors">
+                Register as Supplier <ArrowRight size={18} />
+              </Link>
+            </div>
+            
+            <div className="bg-[#0A1A30] p-12 border border-[#0A1A30] rounded-none text-center hover:shadow-2xl transition-shadow duration-500">
+              <div className="w-20 h-20 bg-white/10 mx-auto flex items-center justify-center mb-8 border-b-4 border-accent">
+                <AnimatedIcon icon="target" size={44} />
+              </div>
+              <h3 className="text-2xl font-serif font-bold text-white mb-4">Need to Buy?</h3>
+              <p className="text-white/70 mb-8">Post your requirements and get competitive quotes from top-rated manufacturers.</p>
+              <Link to="/buyers" className="inline-flex items-center gap-2 bg-accent text-white px-6 py-3 font-bold text-sm uppercase tracking-wider hover:bg-white hover:text-primary transition-colors">
+                Post Requirement <ArrowRight size={18} />
+              </Link>
             </div>
           </div>
         </div>
       </section>
+
     </div>
   );
 }

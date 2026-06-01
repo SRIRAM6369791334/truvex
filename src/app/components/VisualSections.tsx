@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router';
 import { AnimatePresence, motion } from 'framer-motion';
-import { MapPin, Play, Star } from 'lucide-react';
+import { MapPin, Play, Star, ChevronLeft, ChevronRight, BadgeCheck } from 'lucide-react';
 import Lottie from 'lottie-react';
 import boxLottie from './lottie/box.json';
 import documentLottie from './lottie/document.json';
@@ -98,54 +98,77 @@ export function LiveMarketplaceStats() {
 }
 
 export function TestimonialCarousel() {
-  const [index, setIndex] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const timer = window.setInterval(() => setIndex((current) => (current + 1) % testimonials.length), 4000);
-    return () => window.clearInterval(timer);
-  }, []);
-
-  const active = testimonials[index];
+  const scroll = (dir: 'left' | 'right') => {
+    if (scrollRef.current) {
+      const scrollAmount = 400;
+      scrollRef.current.scrollBy({ left: dir === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' });
+    }
+  };
 
   return (
-    <section className="px-4 py-8">
+    <section className="px-4 py-24 bg-[#fafbfc] overflow-hidden border-y border-border/50 relative">
       <div className="mx-auto max-w-7xl">
-        <SectionHeader eyebrow="Buyer proof" title="Verified sourcing outcomes" subtext="Auto-rotating buyer stories with the operating detail users expect from a B2B platform." />
-        <div className="grid gap-4 lg:grid-cols-[1fr_0.7fr] lg:items-center">
-          <div className="relative min-h-[310px] overflow-hidden">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={active.name}
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-                transition={{ duration: 0.35 }}
-                className="market-card relative overflow-hidden p-8 shadow-xl"
-              >
-                <img src={active.image} alt={active.name} width={100} height={100} loading="lazy" className="h-16 w-16 rounded-full border-4 border-accent object-cover" />
-                <blockquote className="mt-5 text-lg font-semibold leading-8 text-primary">"{active.quote}"</blockquote>
-                <div className="mt-4 flex items-center gap-1">
-                  {[1, 2, 3, 4, 5].map((star) => <Star key={star} className="h-4 w-4 fill-accent text-accent" />)}
-                </div>
-                <p className="mt-3 font-bold text-primary">{active.name}</p>
-                <p className="text-sm text-muted-foreground">{active.role}</p>
-              </motion.div>
-            </AnimatePresence>
+        {/* Header */}
+        <div className="mb-12 flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+          <div>
+            <div className="mb-3 flex items-center gap-2">
+              <span className="h-px w-6 bg-accent"></span>
+              <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent">Buyer proof</span>
+            </div>
+            <h2 className="font-serif text-3xl font-bold tracking-tight text-primary md:text-4xl">Verified sourcing outcomes</h2>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">Real stories from businesses who transformed their procurement process using our platform.</p>
           </div>
-          <div className="grid gap-2">
-            {testimonials.map((item, itemIndex) => (
-              <button
-                key={item.name}
-                onClick={() => setIndex(itemIndex)}
-                className={`min-h-12 border px-3 py-2 text-left text-sm transition ${
-                  itemIndex === index ? 'border-accent bg-accent/10 text-primary' : 'border-border bg-white/70 text-muted-foreground'
-                }`}
-              >
-                {item.name} - {item.role.split(',')[0]}
-              </button>
+          
+          {/* Navigation Arrows */}
+          <div className="hidden sm:flex items-center gap-3">
+            <button onClick={() => scroll('left')} className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-white text-primary transition-all hover:border-accent hover:text-accent hover:shadow-sm">
+              <ChevronLeft size={20} />
+            </button>
+            <button onClick={() => scroll('right')} className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-white text-primary transition-all hover:border-accent hover:text-accent hover:shadow-sm">
+              <ChevronRight size={20} />
+            </button>
+          </div>
+        </div>
+
+        {/* Carousel Track */}
+        <div className="relative -mx-4 px-4 sm:mx-0 sm:px-0">
+          <div ref={scrollRef} className="flex gap-5 overflow-x-auto pb-8 pt-2 snap-x snap-mandatory scroll-smooth" style={{ scrollbarWidth: 'none' }}>
+            {testimonials.map((item, index) => (
+              <div key={item.name} className="shrink-0 w-[300px] sm:w-[380px] lg:w-[400px] snap-start">
+                <div className="group flex h-full flex-col justify-between rounded-3xl border border-border bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-accent/5 hover:border-accent/30">
+                  
+                  <div>
+                    <div className="mb-6 flex items-center justify-between">
+                      <div className="flex items-center gap-1">
+                        {[1, 2, 3, 4, 5].map((star) => <Star key={star} className="h-4 w-4 fill-accent text-accent" />)}
+                      </div>
+                      <div className="flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-600 border border-emerald-100">
+                        <BadgeCheck size={12} />
+                        Verified
+                      </div>
+                    </div>
+                    
+                    <blockquote className="mb-8 font-serif text-[17px] leading-relaxed text-primary/90">
+                      "{item.quote}"
+                    </blockquote>
+                  </div>
+
+                  <div className="flex items-center gap-4 border-t border-border/50 pt-5">
+                    <img src={item.image} alt={item.name} className="h-12 w-12 rounded-full object-cover border border-border/50" />
+                    <div>
+                      <p className="font-bold text-primary text-[15px]">{item.name}</p>
+                      <p className="text-[13px] font-medium text-muted-foreground line-clamp-1">{item.role}</p>
+                    </div>
+                  </div>
+                  
+                </div>
+              </div>
             ))}
           </div>
         </div>
+        
       </div>
     </section>
   );
@@ -153,26 +176,59 @@ export function TestimonialCarousel() {
 
 export function TrustedByBrands() {
   const brands = [
-    ['Tata Group', 'https://logo.clearbit.com/tatasteel.com'],
-    ['Mahindra', 'https://logo.clearbit.com/mahindra.com'],
-    ['Godrej', 'https://logo.clearbit.com/godrej.com'],
-    ['Reliance', 'https://logo.clearbit.com/ril.com'],
-    ['L&T', 'https://logo.clearbit.com/larsentoubro.com'],
-    ['Bajaj', 'https://logo.clearbit.com/bajajauto.com'],
+    ['Tata Group', 'tatasteel.com'],
+    ['Mahindra', 'mahindra.com'],
+    ['Godrej', 'godrej.com'],
+    ['Reliance', 'ril.com'],
+    ['L&T', 'larsentoubro.com'],
+    ['Bajaj', 'bajajauto.com'],
+    ['Ashok Leyland', 'ashokleyland.com'],
+    ['Wipro', 'wipro.com'],
   ];
-  const items = [...brands, ...brands];
+  
+  // Double the items for seamless infinite scroll
+  const topRowItems = [...brands.slice(0, 4), ...brands.slice(0, 4), ...brands.slice(0, 4)];
+  const bottomRowItems = [...brands.slice(4, 8), ...brands.slice(4, 8), ...brands.slice(4, 8)];
 
   return (
-    <section className="overflow-hidden bg-white px-4 py-8">
-      <div className="mx-auto max-w-7xl">
-        <SectionHeader eyebrow="Trusted network" title="Suppliers & buyers from India's leading companies" />
-        <div className="overflow-hidden">
-          <div className="flex w-max animate-market-ticker gap-4">
-            {items.map(([name, logo], index) => (
-              <div key={`${name}-${index}`} className="flex h-24 w-44 shrink-0 items-center justify-center rounded-2xl border border-border bg-white p-5 grayscale transition hover:grayscale-0">
-                <img src={logo} alt={name} width={120} height={52} loading="lazy" className="max-h-12 max-w-28 object-contain" />
-              </div>
-            ))}
+    <section className="overflow-hidden bg-[#fafbfc] px-4 py-20 border-y border-border/50 relative">
+      {/* Left and Right Fade Overlays */}
+      <div className="pointer-events-none absolute bottom-0 left-0 top-0 z-10 w-16 bg-gradient-to-r from-[#fafbfc] to-transparent sm:w-32"></div>
+      <div className="pointer-events-none absolute bottom-0 right-0 top-0 z-10 w-16 bg-gradient-to-l from-[#fafbfc] to-transparent sm:w-32"></div>
+
+      <div className="mx-auto max-w-7xl text-center">
+        <div className="mb-10 flex flex-col items-center justify-center relative z-20">
+          <div className="mb-3 flex items-center gap-2">
+            <span className="h-px w-6 bg-accent"></span>
+            <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent">Trusted network</span>
+            <span className="h-px w-6 bg-accent"></span>
+          </div>
+          <h2 className="font-serif text-3xl font-bold tracking-tight text-primary md:text-[2.5rem]">Suppliers & buyers from India's leading companies</h2>
+        </div>
+        
+        <div className="relative mx-auto max-w-[1000px] overflow-hidden">
+          <div className="flex flex-col gap-4">
+            
+            {/* Top Row - Scrolling Left */}
+            <div className="flex w-max animate-market-ticker gap-4 hover:[animation-play-state:paused]">
+              {topRowItems.map(([name, domain], index) => (
+                <div key={`top-${name}-${index}`} className="group flex h-20 w-[240px] shrink-0 items-center justify-center gap-4 rounded-2xl border border-border/60 bg-white p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-accent/30">
+                  <img src={`https://www.google.com/s2/favicons?domain=${domain}&sz=128`} alt={name} width={36} height={36} loading="lazy" className="h-9 w-9 object-contain transition-all duration-300 group-hover:scale-110" />
+                  <span className="font-bold text-gray-800 text-[15px] transition-all duration-300 group-hover:text-primary">{name}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Bottom Row - Scrolling Right (Reverse) */}
+            <div className="flex w-max animate-market-ticker gap-4 hover:[animation-play-state:paused]" style={{ animationDirection: 'reverse' }}>
+              {bottomRowItems.map(([name, domain], index) => (
+                <div key={`bottom-${name}-${index}`} className="group flex h-20 w-[240px] shrink-0 items-center justify-center gap-4 rounded-2xl border border-border/60 bg-white p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-accent/30">
+                  <img src={`https://www.google.com/s2/favicons?domain=${domain}&sz=128`} alt={name} width={36} height={36} loading="lazy" className="h-9 w-9 object-contain transition-all duration-300 group-hover:scale-110" />
+                  <span className="font-bold text-gray-800 text-[15px] transition-all duration-300 group-hover:text-primary">{name}</span>
+                </div>
+              ))}
+            </div>
+
           </div>
         </div>
       </div>
