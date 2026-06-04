@@ -15,6 +15,10 @@ import successData from './lottie/success.json';
 import targetData from './lottie/Target.json';
 import trendingData from './lottie/trending.json';
 import usersData from './lottie/users.json';
+import diamondData from './lottie/diamond.json';
+import zapData from './lottie/zap.json';
+import clipboardData from './lottie/clipboard.json';
+import trendingDownData from './lottie/trending-down.json';
 
 // Map icon names to their respective animation data
 const animationMap: Record<string, any> = {
@@ -31,6 +35,10 @@ const animationMap: Record<string, any> = {
   target: targetData,
   trending: trendingData,
   users: usersData,
+  diamond: diamondData,
+  zap: zapData,
+  clipboard: clipboardData,
+  'trending-down': trendingDownData,
 };
 
 type AnimatedIconProps = {

@@ -157,7 +157,7 @@ export function EnquiryTicker({ items = enquiries, label = 'Live Updates' }: { i
 
 export function CategoryCard({ category }: { category: (typeof categories)[number] }) {
   return (
-    <Link to="/categories" className="group flex flex-col overflow-hidden rounded-none border border-border bg-white shadow-sm transition-all hover:shadow-lg hover:shadow-accent/5">
+    <Link to="/service/1" className="group flex flex-col overflow-hidden rounded-none border border-border bg-white shadow-sm transition-all hover:shadow-lg hover:shadow-accent/5">
       <div className="relative h-32 overflow-hidden">
         <img
           src={category.image}
@@ -199,7 +199,7 @@ export function ClassicIndiaMartCard({ category }: { category: (typeof categorie
       {/* Header */}
       <div className="bg-[#fbfcfd] border-b border-border p-3 px-4">
         <h3 className="font-bold text-[15px] text-primary hover:text-accent transition-colors cursor-pointer truncate">
-          <Link to="/categories">{category.name}</Link>
+          <Link to="/service/1">{category.name}</Link>
         </h3>
       </div>
       {/* Body */}
@@ -213,7 +213,7 @@ export function ClassicIndiaMartCard({ category }: { category: (typeof categorie
           <ul className="flex flex-col gap-1.5">
             {category.subList.slice(0, 4).map((sub) => (
               <li key={sub} className="truncate">
-                <Link to="/categories" className="text-[13px] text-muted-foreground hover:text-accent hover:underline transition-colors">
+                <Link to="/service/1" className="text-[13px] text-muted-foreground hover:text-accent hover:underline transition-colors">
                   {sub}
                 </Link>
               </li>
@@ -292,7 +292,7 @@ export function TabbedCategoryDirectory() {
 
               {/* Sub categories */}
               {activeCategory.subList.map((sub) => (
-                <Link to="/categories" key={sub} className="group flex items-center gap-3 p-3.5 rounded-none border border-border bg-white hover:border-accent/40 hover:bg-[#fdfcf9] hover:shadow-sm transition-all duration-300">
+                <Link to="/service/1" key={sub} className="group flex items-center gap-3 p-3.5 rounded-none border border-border bg-white hover:border-accent/40 hover:bg-[#fdfcf9] hover:shadow-sm transition-all duration-300">
                   <div className="h-10 w-10 shrink-0 rounded-none bg-black/5 flex items-center justify-center group-hover:bg-accent/10 transition-colors">
                     <activeCategory.icon size={18} className="text-primary/60 group-hover:text-accent" />
                   </div>

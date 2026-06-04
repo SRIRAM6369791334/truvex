@@ -67,9 +67,9 @@ export default function AboutPage() {
 
               <div>
                 <h2 className="text-[11px] font-bold uppercase tracking-widest text-primary/60 mb-2 border-b-2 border-accent inline-block pb-1">Our Vision</h2>
-                <h3 className="text-3xl font-serif font-bold text-primary mb-6 mt-4">A Transparent Digital Economy</h3>
+                <h3 className="text-3xl font-serif font-bold text-primary mb-6 mt-4">The Most Trusted Distribution Network</h3>
                 <p className="text-lg text-muted-foreground leading-relaxed">
-                  A future where any business in India — regardless of size or geographic location — can source any product with absolute confidence, speed, and complete pricing transparency.
+                  To become the most trusted distribution network in global markets — where every partner, supplier, and client feels the difference that quality sourcing makes. We don't just deliver products; we deliver certainty.
                 </p>
               </div>
             </div>

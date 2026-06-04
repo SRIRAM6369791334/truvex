@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { ShieldCheck, PackageCheck, BadgeCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -65,6 +66,110 @@ function MiniRFQForm() {
   );
 }
 
+
+function BannerAnimation() {
+  const [loopKey, setLoopKey] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLoopKey(prev => prev + 1);
+    }, 8500); // Loops the animation every 8.5 seconds
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div key={loopKey} className="z-10 text-center px-4 max-w-5xl mx-auto space-y-8">
+      <motion.h2 
+        className="text-3xl md:text-5xl lg:text-6xl font-serif font-bold text-primary leading-tight"
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: { opacity: 0 },
+          visible: {
+            opacity: 1,
+            transition: { staggerChildren: 0.06 }
+          }
+        }}
+      >
+        {"We don't just source. We deliver value.".split("").map((char, index) => (
+          <motion.span
+            key={index}
+            variants={{
+              hidden: { opacity: 0, textShadow: "0px 0px 0px rgba(198,140,62,0)", color: "#0A192F" },
+              visible: { 
+                opacity: 1, 
+                textShadow: [
+                  "0px 0px 0px rgba(198,140,62,0)", 
+                  "0px 5px 15px rgba(198,140,62,0.3)", 
+                  "0px 0px 0px rgba(198,140,62,0)"
+                ],
+                color: ["#0A192F", "#c68c3e", "#0A192F"],
+                transition: {
+                  opacity: { duration: 0.1 },
+                  textShadow: { duration: 2, repeat: Infinity, repeatType: "reverse", delay: index * 0.1 },
+                  color: { duration: 2, repeat: Infinity, repeatType: "reverse", delay: index * 0.1 }
+                }
+              }
+            }}
+          >
+            {char}
+          </motion.span>
+        ))}
+      </motion.h2>
+
+      <motion.h3 
+        className="text-xl md:text-3xl lg:text-4xl font-serif font-bold text-slate-700"
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: { opacity: 0 },
+          visible: {
+            opacity: 1,
+            transition: { staggerChildren: 0.05, delayChildren: 1.5 }
+          }
+        }}
+      >
+        {"We find it. We verify it. We deliver it.".split("").map((char, index) => (
+          <motion.span
+            key={index}
+            variants={{
+              hidden: { opacity: 0, textShadow: "0px 0px 0px rgba(198,140,62,0)" },
+              visible: { 
+                opacity: 1, 
+                textShadow: [
+                  "0px 0px 0px rgba(198,140,62,0)", 
+                  "0px 3px 10px rgba(198,140,62,0.2)", 
+                  "0px 0px 0px rgba(198,140,62,0)"
+                ],
+                transition: {
+                  opacity: { duration: 0.1 },
+                  textShadow: { duration: 2.5, repeat: Infinity, repeatType: "reverse", delay: index * 0.15 }
+                }
+              }
+            }}
+          >
+            {char}
+          </motion.span>
+        ))}
+      </motion.h3>
+
+      <motion.div 
+        className="pt-6 flex flex-col sm:flex-row items-center justify-center gap-4"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 3.5 }}
+      >
+        <Link to="/contact" className="market-button bg-accent px-8 py-3.5 text-sm font-bold text-white shadow-lg hover:bg-accent/90 hover:shadow-xl transition-all w-full sm:w-auto">
+          Post Your Requirement
+        </Link>
+        <Link to="/services" className="market-button border-2 border-primary text-primary px-8 py-3 text-sm font-bold hover:bg-primary/5 transition-all w-full sm:w-auto">
+          Explore Services
+        </Link>
+      </motion.div>
+    </div>
+  );
+}
+
 export default function HomePage() {
   return (
     <div className="bg-background">
@@ -108,6 +213,25 @@ export default function HomePage() {
         </div>
       </div>
 
+      <section className="w-full relative py-32 flex flex-col items-center justify-center min-h-[500px] overflow-hidden border-b border-border">
+        {/* Shipping Background Image */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="https://images.unsplash.com/photo-1494412651409-8963ce7935a7?w=1600&q=80" 
+            alt="Global Shipping Logistics" 
+            className="w-full h-full object-cover"
+          />
+        </div>
+        
+        {/* Frosted Glass Overlay (Glassmorphism) */}
+        <div className="absolute inset-0 z-10 bg-white/70 backdrop-blur-md" />
+        
+        {/* Subtle background accent glow to match theme */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[50%] bg-accent/5 blur-[120px] rounded-full pointer-events-none z-10" />
+        
+        <BannerAnimation />
+      </section>
+
       <section className="relative overflow-hidden border-b border-accent/30 bg-[#0A192F] px-4 pt-16 pb-32 text-white md:pt-24 md:pb-40">
         {/* Ambient decorative lighting */}
         <div className="pointer-events-none absolute -left-48 -top-48 h-[600px] w-[600px] rounded-full bg-accent/10 blur-[130px]" />
@@ -135,7 +259,7 @@ export default function HomePage() {
             </div>
             
             <h1 className="max-w-full text-wrap font-serif text-3xl font-bold leading-[1.15] text-white sm:text-[clamp(2.5rem,5.5vw,4.5rem)]">
-              We Source <span className="bg-gradient-to-r from-amber-400 via-yellow-200 to-amber-500 bg-clip-text text-transparent">Everything</span> Your Business Needs
+              We Source <span className="bg-gradient-to-r from-amber-400 via-yellow-200 to-amber-500 bg-clip-text text-transparent">Your Requirement</span> For Your  Business
             </h1>
             
             <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/80 sm:text-[18px] sm:leading-[1.7]">
@@ -262,12 +386,15 @@ export default function HomePage() {
 
       <section className="px-4 py-12 lg:py-16">
         <div className="mx-auto max-w-7xl">
-          <SectionHeader eyebrow="Why choose us" title="Trust-first sourcing for buyers and suppliers" />
+          <SectionHeader eyebrow="OUR EDGE" title="Why Businesses Choose Truvex" />
           <div className="grid gap-6 md:grid-cols-3 mt-8">
             {[
-              { title: 'Verified Supplier Network', text: 'Supplier profiles are reviewed before leads are routed.', iconName: 'shield' },
-              { title: 'No Direct Contact Exposure', text: 'Listings do not reveal supplier phone or email publicly.', iconName: 'privacy' },
-              { title: 'Lead Generation Focus', text: 'Every CTA points to requirement capture, supplier registration, or enquiry flow.', iconName: 'target' },
+              { title: 'Manufacturer Trust, Built Over Time', text: 'Our manufacturer relationships aren\'t transactional — they\'re deep partnerships. This gives us leverage to negotiate better pricing and priority fulfilment for our clients.', iconName: 'handshake' },
+              { title: 'Quality That Doesn\'t Compromise', text: 'We set clear quality benchmarks with every manufacturer we work with. What arrives at your door is exactly what was promised — no surprises, no shortcuts.', iconName: 'diamond' },
+              { title: 'Prices That Beat the Market', text: 'By sourcing directly from manufacturers, we remove unnecessary layers of cost. Your business benefits from prices that even bulk retail channels struggle to match.', iconName: 'trending-down' },
+              { title: 'Multi-Category, One Partner', text: 'From hospitality supplies to office products, we source across categories. One point of contact for all your procurement needs saves your team time and effort.', iconName: 'box' },
+              { title: 'Fully GST Compliant', text: 'Every order comes with proper GST-compliant invoicing and documentation. Clean, transparent transactions that keep your accounts hassle-free.', iconName: 'clipboard' },
+              { title: 'Reliable & Accountable', text: 'We commit to timelines and we keep them. When you place an order through Truvex, you have a partner who is accountable for delivery — not just a contact to chase.', iconName: 'zap' },
             ].map(({ title, text, iconName }) => (
               <div key={title} className="group relative overflow-hidden rounded-none border border-border bg-white p-8 shadow-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-xl hover:shadow-accent/10 hover:border-accent/30">
                 
@@ -351,7 +478,7 @@ export default function HomePage() {
           </div>
           <div className="flex flex-col gap-2 sm:flex-row">
             <Link to="/contact" className="market-button bg-accent px-5 py-3 text-center text-sm font-bold text-white">Post Buy Requirement</Link>
-            <Link to="/categories" className="market-button border border-primary px-5 py-3 text-center text-sm font-bold text-primary">Find Supplier</Link>
+            <Link to="/service/1" className="market-button border border-primary px-5 py-3 text-center text-sm font-bold text-primary">Find Supplier</Link>
           </div>
         </div>
       </section> */}

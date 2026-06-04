@@ -135,7 +135,7 @@ export default function HowItWorksPage() {
           </div>
           <div className="flex flex-col gap-2 sm:flex-row">
             <Link to="/contact" className="market-button bg-accent px-5 py-3 text-sm font-bold text-white">Post Requirement</Link>
-            <Link to="/categories" className="market-button border border-white/30 px-5 py-3 text-sm font-bold text-white">Find Supplier</Link>
+            <Link to="/service/1" className="market-button border border-white/30 px-5 py-3 text-sm font-bold text-white">Find Supplier</Link>
           </div>
         </div>
       </section>

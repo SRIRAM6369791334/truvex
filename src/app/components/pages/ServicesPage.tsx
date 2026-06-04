@@ -98,10 +98,16 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* <EnquiryTicker /> */}
 
-      {/* 2. MAIN LAYOUT: DIRECTORY GRID + RFQ BANNER */}
-      <section className="px-4 py-12">
+      {/* 3. MAIN LAYOUT: DIRECTORY GRID + RFQ BANNER */}
+      <section className="px-4 py-20 bg-white border-t border-slate-100">
+        <div className="mx-auto max-w-7xl text-center mb-16">
+           <h2 className="text-[12px] font-bold uppercase tracking-[0.2em] text-[#c68c3e] mb-4">What We Supply</h2>
+           <h3 className="text-4xl md:text-5xl font-serif font-bold text-[#0A1A30] mb-6">Our Sourcing Services</h3>
+           <p className="text-lg text-slate-500 max-w-3xl mx-auto">
+             We source across a wide range of product categories — always from trusted manufacturers, always at the best price.
+           </p>
+        </div>
         <div className="mx-auto max-w-7xl grid lg:grid-cols-4 gap-8">
            
            {/* LEFT COLUMN: Premium RFQ Lead Form */}
@@ -175,6 +181,57 @@ export default function ServicesPage() {
               </div>
            </div>
 
+        </div>
+      </section>
+
+      {/* 2. HOW IT WORKS SECTION */}
+      <section className="py-24 bg-[#FDFBF7]">
+        <div className="mx-auto max-w-7xl px-4 text-center">
+          <h2 className="text-[12px] font-bold uppercase tracking-[0.2em] text-[#c68c3e] mb-4">Simple Process</h2>
+          <h3 className="text-4xl md:text-5xl font-serif font-bold text-[#0A1A30] mb-6">How It Works</h3>
+          <p className="text-lg text-slate-500 max-w-2xl mx-auto mb-16">
+            Getting manufacturer-direct products for your business is simple when you work with Truvex.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 relative mt-8">
+            {/* Horizontal Connecting line (hidden on mobile) */}
+            <div className="absolute top-[45px] left-[12.5%] right-[12.5%] h-[2px] bg-[#c68c3e]/30 hidden lg:block -z-0"></div>
+            
+            {[
+              {
+                id: 1,
+                title: 'Share Your Requirement',
+                desc: 'Tell us what products you need — category, quantity, quality standards, and delivery location. A quick call or WhatsApp is enough to get started.'
+              },
+              {
+                id: 2,
+                title: 'We Source & Quote',
+                desc: 'We tap our manufacturer network, finalise the right source, and send you a competitive quote — usually within 24–48 hours.'
+              },
+              {
+                id: 3,
+                title: 'Confirm & We Deliver',
+                desc: 'Once you approve the quote, we handle production coordination, quality checks, and delivery to your location. Fully documented with GST invoicing.'
+              },
+              {
+                id: 4,
+                title: 'Long-Term Partnership',
+                desc: 'Most of our clients come back for more. We build a sourcing profile for your business so repeat orders get faster and easier every time.'
+              }
+            ].map((step) => (
+              <div key={step.id} className="group flex flex-col items-center relative z-10 text-center transition-all duration-300 hover:-translate-y-2">
+                <div className="w-[90px] h-[90px] rounded-full bg-[#FDFBF7] p-2 flex items-center justify-center mb-6 relative">
+                  <div className="w-full h-full rounded-full bg-[#c68c3e]/20 flex items-center justify-center transition-transform duration-500 group-hover:scale-110">
+                    <div className="w-[52px] h-[52px] rounded-full bg-[#c68c3e] flex items-center justify-center shadow-lg shadow-[#c68c3e]/30">
+                      <span className="font-serif text-2xl font-bold text-[#0A1A30]">{step.id}</span>
+                    </div>
+                  </div>
+                </div>
+                <h4 className="text-xl font-serif font-bold text-[#0A1A30] mb-3">{step.title}</h4>
+                <p className="text-[15px] text-slate-600 max-w-sm mx-auto leading-relaxed px-2">{step.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

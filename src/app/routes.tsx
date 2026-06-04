@@ -17,6 +17,7 @@ import BlogPage from './components/pages/BlogPage';
 import SupplierRegistrationPage from './components/pages/SupplierRegistrationPage';
 import BuyerFormPage from './components/pages/BuyerFormPage';
 import SupplierListingPage from './components/pages/SupplierListingPage';
+import ServiceDetailsPage from './components/pages/ServiceDetailsPage';
 
 export const router = createBrowserRouter([
   {
@@ -30,6 +31,7 @@ export const router = createBrowserRouter([
       { path: 'suppliers', Component: SupplierRegistrationPage },
       { path: 'buyers', Component: BuyerFormPage },
       { path: 'supplier-listing', Component: SupplierListingPage },
+      { path: 'service/:id', Component: ServiceDetailsPage },
       { path: 'categories', Component: CategoriesPage },
       { path: 'for-buyers', Component: ForBuyersPage },
       { path: 'for-suppliers', Component: ForSuppliersPage },
