@@ -1,4 +1,4 @@
-import { Outlet, Link, useLocation, ScrollRestoration } from 'react-router';
+import { Outlet, Link, useLocation } from 'react-router';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { EnquiryPopup, WhatsAppFloatingButton, CallFloatingButton } from './LeadCaptureComponents';
@@ -11,6 +11,12 @@ export default function Layout() {
   const location = useLocation();
 
   useEffect(() => {
+    // Blur any focused element (like a footer link) to prevent the browser 
+    // from auto-scrolling back down to keep it in view after the route changes.
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+
     // Force instant scroll to top and temporarily disable smooth scrolling
     document.documentElement.style.scrollBehavior = 'auto';
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
@@ -42,7 +48,6 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen overflow-x-clip bg-background font-sans text-foreground">
-      <ScrollRestoration />
       <Header onOpenEnquiry={() => setEnquiryOpen(true)} />
 
       <main className="min-h-screen pb-16 md:pb-0" >
