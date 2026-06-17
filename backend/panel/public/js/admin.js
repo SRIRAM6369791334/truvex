@@ -1,9 +1,40 @@
-/* ── Confirm dialogs ── */
+/* ── Confirm dialogs with SweetAlert2 (Liquid Glass) ── */
 document.querySelectorAll('[data-confirm]').forEach((element) => {
   element.addEventListener('click', (event) => {
+    event.preventDefault();
     const message = element.getAttribute('data-confirm') || 'Are you sure?';
-    if (!window.confirm(message)) {
-      event.preventDefault();
+    
+    if (typeof Swal !== 'undefined') {
+      Swal.fire({
+        title: 'Confirmation',
+        text: message,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#0B1F3A', // Deep Navy
+        cancelButtonColor: '#dc2626',  // Danger red
+        confirmButtonText: 'Yes, proceed',
+        background: 'rgba(255, 255, 255, 0.35)',
+        backdrop: 'rgba(65, 88, 208, 0.3)', // Blurred purple/blue backdrop
+        customClass: {
+          popup: 'glass-swal-popup'
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const form = element.closest('form');
+          if (form) {
+            form.submit();
+          } else if (element.tagName === 'A') {
+            window.location.href = element.href;
+          }
+        }
+      });
+    } else {
+      // Fallback
+      if (window.confirm(message)) {
+        const form = element.closest('form');
+        if (form) form.submit();
+        else if (element.tagName === 'A') window.location.href = element.href;
+      }
     }
   });
 });
@@ -71,3 +102,20 @@ document.querySelectorAll('.nav a').forEach((link) => {
   }
 });
 
+/* ── Mobile Sidebar Toggle ── */
+const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+const sidebar = document.querySelector('.sidebar');
+if (mobileMenuBtn && sidebar) {
+  mobileMenuBtn.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking outside on mobile
+  document.addEventListener('click', (e) => {
+    if (window.innerWidth <= 980 && sidebar.classList.contains('open')) {
+      if (!sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+        sidebar.classList.remove('open');
+      }
+    }
+  });
+}

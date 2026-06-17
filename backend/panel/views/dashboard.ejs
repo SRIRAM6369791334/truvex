@@ -14,10 +14,10 @@
 
 <!-- Stat Cards -->
 <section class="stat-grid">
-  <% const icons = ['📦','🏭','🛍️','📋','📞','💬','🔔','📧','🔧','🗂️']; %>
+  <% const icons = ['package','factory','shopping-bag','clipboard-list','phone','message-square','bell','mail','wrench','folder']; %>
   <% stats.forEach((stat, i) => { %>
     <article class="stat-card">
-      <div class="stat-icon"><%= icons[i % icons.length] %></div>
+      <div class="stat-icon"><i data-lucide="<%= icons[i % icons.length] %>"></i></div>
       <span><%= stat.label %></span>
       <strong><%= stat.total %></strong>
       <a class="stat-link" href="<%= stat.link %>">View all →</a>

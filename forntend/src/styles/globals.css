@@ -2,7 +2,7 @@
 
 @layer base {
   html {
-    @apply antialiased scroll-smooth;
+    @apply antialiased;
     -webkit-text-size-adjust: 100%;
   }
 

@@ -10,6 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/public/css/admin.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     /* Visually hidden utility for screen-reader-only text */
     .visually-hidden {
@@ -51,9 +53,14 @@
     </aside>
     <main class="shell" id="main-content">
       <header class="topbar">
-        <div>
-          <p class="eyebrow">Truvex Sourcing</p>
-          <h1><%= title %></h1>
+        <div style="display: flex; align-items: center; gap: var(--space-3);">
+          <button id="mobile-menu-btn" class="button ghost" aria-label="Toggle Menu" style="display: none; padding: 8px;">
+            <i data-lucide="menu"></i>
+          </button>
+          <div>
+            <p class="eyebrow">Truvex Sourcing</p>
+            <h1><%= title %></h1>
+          </div>
         </div>
         <div class="userbar">
           <span aria-label="Logged in as <%= user.name %>"><%= user.name %></span>
