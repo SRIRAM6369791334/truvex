@@ -84,9 +84,17 @@ router.post('/', upload.single('image_file'), async (req, res, next) => {
   try {
     const payload = categoryPayload(req.body, req.file);
 
-    if (!payload.name || !payload.slug) {
-      req.flash('error', 'Name and slug are required.');
+    if (!payload.name) {
+      req.flash('error', 'Name is required.');
       return res.redirect('/categories/new');
+    }
+
+    if (payload.trending) {
+      const rows = await queryRows(req.app.locals.db, 'SELECT COUNT(*) as count FROM categories WHERE trending = 1');
+      if (rows[0] && rows[0].count >= 6) {
+        req.flash('error', 'You can only select up to 6 categories to show on the homepage. Please deselect an existing one first.');
+        return res.redirect('/categories/new');
+      }
     }
 
     const result = await queryResult(
@@ -150,6 +158,18 @@ router.post('/:id', upload.single('image_file'), async (req, res, next) => {
     if (!payload.name || !payload.slug) {
       req.flash('error', 'Name and slug are required.');
       return res.redirect(`/categories/${req.params.id}/edit`);
+    }
+
+    if (payload.trending) {
+      const rows = await queryRows(
+        req.app.locals.db,
+        'SELECT COUNT(*) as count FROM categories WHERE trending = 1 AND id != ?',
+        [req.params.id]
+      );
+      if (rows[0] && rows[0].count >= 6) {
+        req.flash('error', 'You can only select up to 6 categories to show on the homepage. Please deselect an existing one first.');
+        return res.redirect(`/categories/${req.params.id}/edit`);
+      }
     }
 
     const result = await queryResult(

@@ -11,6 +11,10 @@ export default function Layout() {
   const location = useLocation();
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
+  useEffect(() => {
     const openHandler = () => setEnquiryOpen(true);
     const scrollHandler = () => {
       if (!scrollTriggered && window.scrollY > 700 && !location.pathname.startsWith('/contact')) {
