@@ -11,6 +11,20 @@ export default function Layout() {
   const location = useLocation();
 
   useEffect(() => {
+    // Force instant scroll to top and temporarily disable smooth scrolling
+    document.documentElement.style.scrollBehavior = 'auto';
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+    
+    // Re-enable global scroll behavior after scroll completes
+    const timer = setTimeout(() => {
+      document.documentElement.style.scrollBehavior = '';
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
+
+  useEffect(() => {
     const openHandler = () => setEnquiryOpen(true);
     const scrollHandler = () => {
       if (!scrollTriggered && window.scrollY > 700 && !location.pathname.startsWith('/contact')) {
