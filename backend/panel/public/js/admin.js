@@ -13,10 +13,10 @@ document.querySelectorAll('[data-confirm]').forEach((element) => {
         confirmButtonColor: '#0B1F3A', // Deep Navy
         cancelButtonColor: '#dc2626',  // Danger red
         confirmButtonText: 'Yes, proceed',
-        background: 'rgba(255, 255, 255, 0.35)',
-        backdrop: 'rgba(65, 88, 208, 0.3)', // Blurred purple/blue backdrop
+        background: '#ffffff',
+        backdrop: 'rgba(15, 23, 42, 0.4)', // Slate 900 backdrop
         customClass: {
-          popup: 'glass-swal-popup'
+          popup: 'premium-swal-popup'
         }
       }).then((result) => {
         if (result.isConfirmed) {
