@@ -1,10 +1,11 @@
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { MessageCircle, Phone, UploadCloud, X, ArrowRight, BadgeCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Lottie from 'lottie-react';
 import shieldAnimation from './lottie/Shield.json';
 import targetAnimation from './lottie/Target.json';
+import apiClient from '../../apiClient';
 
 export const serviceCategories = [
   {
@@ -178,6 +179,33 @@ export function ServiceCard({ service }: { service: (typeof serviceCategories)[n
 
 export function ServiceDynamicList() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [categories, setCategories] = useState<any[]>(serviceCategories);
+
+  useEffect(() => {
+    apiClient.get('/categories')
+      .then(res => {
+        if (res.data?.data) {
+          const trending = res.data.data.filter((c: any) => c.trending === 1 || c.trending === true).slice(0, 6);
+          if (trending.length > 0) {
+            const rootUrl = apiClient.defaults.baseURL?.replace(/\/api$/, '') || 'http://localhost:8000';
+            setCategories(trending.map((c: any, index: number) => {
+              // Find a matching default image from our predefined list by title, or fallback to an index-based one
+              const defaultMatch = serviceCategories.find(sc => sc.title.toLowerCase() === c.name.toLowerCase());
+              const fallbackImage = defaultMatch ? defaultMatch.image : serviceCategories[index % serviceCategories.length].image;
+              
+              return {
+                title: c.name,
+                desc: c.description || 'Verified suppliers ready to fulfill your bulk orders.',
+                image: c.image ? `${rootUrl}${c.image}` : fallbackImage
+              };
+            }));
+          }
+        }
+      })
+      .catch(err => console.error("Failed to fetch trending categories", err));
+  }, []);
+
+  if (!categories || categories.length === 0) return null;
 
   return (
     <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_1.2fr] lg:gap-16 items-start">
@@ -186,8 +214,8 @@ export function ServiceDynamicList() {
         <AnimatePresence mode="wait">
           <motion.img
             key={activeIndex}
-            src={serviceCategories[activeIndex].image}
-            alt={serviceCategories[activeIndex].title}
+            src={categories[activeIndex]?.image}
+            alt={categories[activeIndex]?.title}
             initial={{ opacity: 0, scale: 1.05 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
@@ -200,7 +228,7 @@ export function ServiceDynamicList() {
 
       {/* Right: Dynamic List */}
       <div className="flex flex-col gap-3">
-        {serviceCategories.map((service, index) => {
+        {categories.map((service, index) => {
           const isActive = index === activeIndex;
           return (
             <div
