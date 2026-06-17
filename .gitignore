@@ -10,4 +10,12 @@ yarn-error.log*
 .vercel
 build/
 coverage/
-.zip/
+
+# Junk / Setup files
+*.zip
+*.pdf
+*.sql
+.agents/
+PROJECT.md
+ORIGINAL_REQUEST.md
+truvex-homepage-v2.html
