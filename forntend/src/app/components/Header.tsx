@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { ChevronDown, MapPin, Menu, Phone, Search, X, Factory, Cpu, Package, ShieldCheck, Layers, ChevronRight, Home, Truck, ShoppingBag, Briefcase, Info, Mail } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { EnquiryTicker } from './MarketplaceComponents';
+import apiClient from '../../apiClient';
 
 interface HeaderProps {
   onOpenEnquiry: () => void;
@@ -98,48 +99,6 @@ const navLinks = [
   },
 ];
 
-const categoriesData = [
-  {
-    title: 'Industrial & Factory',
-    icon: Factory,
-    items: [
-      { name: 'Industrial Machinery', path: '/categories?cat=machinery' },
-      { name: 'Hydraulic Systems', path: '/categories?cat=hydraulic' },
-      { name: 'Pumps & Valves', path: '/categories?cat=pumps' },
-      { name: 'Pneumatic Tools', path: '/categories?cat=pneumatic' },
-    ],
-  },
-  {
-    title: 'Electrical & Panels',
-    icon: Cpu,
-    items: [
-      { name: 'Electrical Panels', path: '/categories?cat=panels' },
-      { name: 'Wires & Cables', path: '/categories?cat=wires' },
-      { name: 'Industrial Lighting', path: '/categories?cat=lighting' },
-      { name: 'Switchgears', path: '/categories?cat=switchgears' },
-    ],
-  },
-  {
-    title: 'Packaging & Materials',
-    icon: Package,
-    items: [
-      { name: 'Packaging Materials', path: '/categories?cat=packaging' },
-      { name: 'Boxes & Cartons', path: '/categories?cat=boxes' },
-      { name: 'Plastic Wraps', path: '/categories?cat=plastic' },
-      { name: 'Strapping Bands', path: '/categories?cat=strapping' },
-    ],
-  },
-  {
-    title: 'Construction & Safety',
-    icon: ShieldCheck,
-    items: [
-      { name: 'Construction Supplies', path: '/categories?cat=construction' },
-      { name: 'Safety Products', path: '/categories?cat=safety' },
-      { name: 'Cement & Concrete', path: '/categories?cat=concrete' },
-      { name: 'Protective Gear', path: '/categories?cat=protective' },
-    ],
-  },
-];
 
 const citiesList = ['Mumbai', 'Delhi', 'Bengaluru', 'Chennai', 'Kolkata', 'Hyderabad', 'Pune', 'Ahmedabad'];
 
@@ -150,7 +109,41 @@ export default function Header({ onOpenEnquiry }: HeaderProps) {
   const [isSticky, setIsSticky] = useState(false);
   const [selectedCity, setSelectedCity] = useState('Mumbai');
   const [cityDropdownOpen, setCityDropdownOpen] = useState(false);
+  const [categoriesData, setCategoriesData] = useState<any[]>([]);
   const location = useLocation();
+
+  useEffect(() => {
+    async function fetchHeaderCategories() {
+      try {
+        const res = await apiClient.get('/categories');
+        if (res.data?.data) {
+          // Format categories to match the expected mega menu structure
+          const formatted = res.data.data.slice(0, 4).map((cat: any) => {
+            // Assign icons dynamically or fallback to Layers
+            const iconMap: Record<string, any> = {
+              'Industrial & Factory': Factory,
+              'Electrical & Panels': Cpu,
+              'Packaging & Materials': Package,
+              'Construction & Safety': ShieldCheck,
+            };
+            
+            return {
+              title: cat.name,
+              icon: iconMap[cat.name] || Layers,
+              items: (cat.subcategories || []).slice(0, 5).map((sub: any) => ({
+                name: sub.name,
+                path: `/categories?cat=${sub.id}`,
+              }))
+            };
+          });
+          setCategoriesData(formatted);
+        }
+      } catch (err) {
+        console.error('Failed to fetch mega menu categories:', err);
+      }
+    }
+    fetchHeaderCategories();
+  }, []);
 
   const isActive = (path: string) =>
     path === '/' ? location.pathname === '/' : location.pathname.startsWith(path);
