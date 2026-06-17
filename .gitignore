@@ -1,15 +1,34 @@
+# General
 node_modules/
 dist/
-.env
 .DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Vite / React / Node
 .eslintcache
 .vite/
 .vercel
 build/
 coverage/
+
+# IDE
+.vscode/
+.idea/
+
+# Backend Uploads
+backend/node/uploads/*
+!backend/node/uploads/.gitkeep
 
 # Junk / Setup files
 *.zip
