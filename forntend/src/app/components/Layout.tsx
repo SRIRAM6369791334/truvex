@@ -17,17 +17,22 @@ export default function Layout() {
       document.activeElement.blur();
     }
 
-    // Force instant scroll to top and temporarily disable smooth scrolling
+    // Force instant scroll to top after React renders the new page
     document.documentElement.style.scrollBehavior = 'auto';
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-    document.body.scrollTop = 0;
-    document.documentElement.scrollTop = 0;
     
-    // Re-enable global scroll behavior after scroll completes
-    const timer = setTimeout(() => {
-      document.documentElement.style.scrollBehavior = '';
-    }, 50);
-    return () => clearTimeout(timer);
+    // Defer the actual scroll so the browser has time to paint the new DOM
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+      const root = document.getElementById('root');
+      if (root) root.scrollTop = 0;
+      
+      // Re-enable global scroll behavior after scroll completes
+      setTimeout(() => {
+        document.documentElement.style.scrollBehavior = '';
+      }, 50);
+    });
   }, [location.pathname]);
 
   useEffect(() => {
