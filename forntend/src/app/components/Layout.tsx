@@ -1,4 +1,4 @@
-import { Outlet, Link, useLocation } from 'react-router';
+import { Outlet, Link, useLocation, ScrollRestoration } from 'react-router';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { EnquiryPopup, WhatsAppFloatingButton, CallFloatingButton } from './LeadCaptureComponents';
@@ -9,10 +9,6 @@ export default function Layout() {
   const [enquiryOpen, setEnquiryOpen] = useState(false);
   const [scrollTriggered, setScrollTriggered] = useState(false);
   const location = useLocation();
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [location.pathname]);
 
   useEffect(() => {
     const openHandler = () => setEnquiryOpen(true);
@@ -32,6 +28,7 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen overflow-x-clip bg-background font-sans text-foreground">
+      <ScrollRestoration />
       <Header onOpenEnquiry={() => setEnquiryOpen(true)} />
 
       <main className="min-h-screen pb-16 md:pb-0" >
