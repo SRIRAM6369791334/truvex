@@ -1,0 +1,50 @@
+<%- include('../partials/head', { title, user, currentPath, flash }) %>
+
+<section class="panel" aria-label="<%= config.title %> records">
+  <div class="panel-header">
+    <div>
+      <p class="eyebrow">Submissions</p>
+      <h2><%= config.title %></h2>
+    </div>
+    <span class="count" aria-label="<%= rows.length %> records found"><%= rows.length %> records</span>
+  </div>
+  <%- include('../partials/search-toolbar', { placeholder: 'Search ' + config.title }) %>
+
+  <div class="table-wrap">
+    <table data-searchable aria-label="<%= config.title %> submissions table">
+      <thead>
+        <tr>
+          <% config.columns.forEach((column) => { %>
+            <th scope="col"><%= column[1] %></th>
+          <% }) %>
+          <th scope="col"><span class="visually-hidden">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% rows.forEach((row) => { %>
+          <tr>
+            <% config.columns.forEach((column) => { %>
+              <td>
+                <% if (column[0] === 'status') { %>
+                  <%- include('../partials/status-badge', { status: normalizeValue(row[column[0]]) }) %>
+                <% } else if (column[0] === 'is_active') { %>
+                  <%- include('../partials/status-badge', { status: row[column[0]] ? 'active' : 'inactive' }) %>
+                <% } else { %>
+                  <%= normalizeValue(row[column[0]]) %>
+                <% } %>
+              </td>
+            <% }) %>
+            <td>
+              <a class="button small" href="/submissions/<%= resourceKey %>/<%= row.id %>" aria-label="Open record <%= row.id %>">Open →</a>
+            </td>
+          </tr>
+        <% }) %>
+        <% if (!rows.length) { %>
+          <tr><td colspan="<%= config.columns.length + 1 %>" class="empty">No records found.</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<%- include('../partials/footer', { user }) %>
