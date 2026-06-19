@@ -69,7 +69,7 @@ const navLinks = [
       hover: {
         y: -3,
         scale: 1.12,
-        transition: { duration: 0.3, type: "spring", stiffness: 450, damping: 12 }
+        transition: { duration: 0.3, type: "spring" as any, stiffness: 450, damping: 12 }
       }
     }
   },
@@ -169,18 +169,18 @@ function SearchBar({ onMobileClose }: { onMobileClose?: () => void }) {
             {suggestions.map((s) => (
               <Link
                 key={s.id}
-                to={`/services?search=${encodeURIComponent(s.name)}`}
+                to={`/services?search=${encodeURIComponent(s.title)}`}
                 onClick={() => {
-                  setQuery(s.name || '');
+                  setQuery(s.title || '');
                   if (onMobileClose) onMobileClose();
                 }}
                 className="flex items-center gap-3 px-4 py-3 hover:bg-muted/30 transition-all border-b border-primary/5 last:border-0"
               >
                 <div className="h-8 w-8 shrink-0 overflow-hidden bg-muted/50 flex items-center justify-center border border-primary/5">
-                  {s.image ? <img src={s.image} alt={s.name} className="h-full w-full object-cover" /> : <Search size={12} className="text-primary/40" />}
+                  {s.image ? <img src={s.image} alt={s.title} className="h-full w-full object-cover" /> : <Search size={12} className="text-primary/40" />}
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-primary">{s.name}</div>
+                  <div className="text-sm font-semibold text-primary">{s.title}</div>
                   <div className="text-[11px] text-muted-foreground line-clamp-1">{s.description || 'View details'}</div>
                 </div>
               </Link>

@@ -269,7 +269,7 @@ export default function CategoriesPage() {
                   {totalPages > 1 && (
                     <motion.div layout className="mt-8 flex justify-center gap-2">
                       <button 
-                        onClick={() => handlePageChange(p => Math.max(1, typeof p === 'number' ? p - 1 : p(currentPage) - 1))}
+                        onClick={() => handlePageChange(p => Math.max(1, (typeof p === 'number' ? p : 1) - 1))}
                         disabled={currentPage === 1}
                         className="px-4 py-2 border border-border bg-white text-sm font-bold text-primary disabled:opacity-50 disabled:cursor-not-allowed hover:border-primary transition-colors rounded-none"
                       >
@@ -291,7 +291,7 @@ export default function CategoriesPage() {
                       ))}
                       
                       <button 
-                        onClick={() => handlePageChange(p => Math.min(totalPages, typeof p === 'number' ? p + 1 : p(currentPage) + 1))}
+                        onClick={() => handlePageChange(p => Math.min(totalPages, (typeof p === 'number' ? p : 1) + 1))}
                         disabled={currentPage === totalPages}
                         className="px-4 py-2 border border-border bg-white text-sm font-bold text-primary disabled:opacity-50 disabled:cursor-not-allowed hover:border-primary transition-colors rounded-none"
                       >

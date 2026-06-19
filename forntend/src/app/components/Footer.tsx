@@ -7,27 +7,27 @@ interface FooterProps {
 const footerCompanyLinks = [
   { label: 'Home', path: '/' },
   { label: 'About Us', path: '/about' },
-  { label: 'Why Truvex', path: '/why-truvex' },
-  { label: 'Roadmap', path: '/roadmap' },
-  { label: 'Blog & News', path: '/blog' },
+  // { label: 'Why Truvex', path: '/why-truvex' },
+  // { label: 'Roadmap', path: '/roadmap' },
+  // { label: 'Blog & News', path: '/blog' },
   { label: 'Contact Us', path: '/contact' },
 ];
 
 const footerSourcingLinks = [
   { label: 'Sourcing Services', path: '/services' },
-  { label: 'Browse Suppliers', path: '/supplier-listing' },
+  // { label: 'Browse Suppliers', path: '/supplier-listing' },
   { label: 'Product Categories', path: '/categories' },
-  { label: 'How It Works', path: '/how-it-works' },
-  { label: 'Pricing Plans', path: '/pricing' },
+  // { label: 'How It Works', path: '/how-it-works' },
+  // { label: 'Pricing Plans', path: '/pricing' },
 ];
 
 const footerPartnerLinks = [
-  { label: 'For Buyers', path: '/for-buyers' },
-  { label: 'For Suppliers', path: '/for-suppliers' },
+  // { label: 'For Buyers', path: '/for-buyers' },
+  // { label: 'For Suppliers', path: '/for-suppliers' },
   { label: 'Post a Requirement', path: '/buyers' },
   { label: 'Supplier Registration', path: '/suppliers' },
-  { label: 'FAQ', path: '/faq' },
-  { label: 'Testimonials', path: '/testimonials' },
+  // { label: 'FAQ', path: '/faq' },
+  // { label: 'Testimonials', path: '/testimonials' },
 ];
 
 export default function Footer({ onOpenEnquiry }: FooterProps) {
