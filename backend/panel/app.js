@@ -26,6 +26,7 @@ function createApp(options = {}) {
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
   app.use('/public', express.static(path.join(__dirname, 'public')));
+  app.use('/uploads', express.static(path.join(__dirname, '../node/uploads')));
 
   app.use(session({
     name: 'truvex_admin_sid',

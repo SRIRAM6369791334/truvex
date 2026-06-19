@@ -910,6 +910,25 @@ td small,
   color: var(--color-primary-600);
 }
 
+.image-preview {
+  margin-top: var(--space-2);
+}
+
+.image-preview img {
+  max-width: 250px;
+  max-height: 250px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-card);
+  display: block;
+  object-fit: cover;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.image-preview img:hover {
+  transform: scale(1.03);
+}
+
 /* ============================================================
    FORMS
    ============================================================ */

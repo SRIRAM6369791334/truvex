@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { useState, useEffect } from 'react';
 import { ChevronDown, MapPin, Menu, Phone, Search, X, Factory, Cpu, Package, ShieldCheck, Layers, ChevronRight, Home, Truck, ShoppingBag, Briefcase, Info, Mail } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -102,6 +102,96 @@ const navLinks = [
 
 const citiesList = ['Mumbai', 'Delhi', 'Bengaluru', 'Chennai', 'Kolkata', 'Hyderabad', 'Pune', 'Ahmedabad'];
 
+function SearchBar({ onMobileClose }: { onMobileClose?: () => void }) {
+  const [query, setQuery] = useState('');
+  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [isFocused, setIsFocused] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!query.trim()) {
+      setSuggestions([]);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      try {
+        const res = await apiClient.get('/services', { params: { search: query.trim() } });
+        setSuggestions((res.data?.data || []).slice(0, 5));
+      } catch (err) {
+        console.error('Failed to fetch search suggestions', err);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  const handleSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!query.trim()) return;
+    if (onMobileClose) onMobileClose();
+    navigate(`/services?search=${encodeURIComponent(query.trim())}`);
+    setIsFocused(false);
+  };
+
+  return (
+    <div className="relative w-full max-w-xl">
+      <form 
+        onSubmit={handleSubmit}
+        className="flex w-full items-center border border-primary/15 bg-muted/20 rounded-none focus-within:border-accent focus-within:bg-white focus-within:ring-4 focus-within:ring-accent/10 transition-all duration-300"
+      >
+        <div className="flex items-center pl-4 pr-2.5 text-primary/40">
+          <Search size={16} />
+        </div>
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setTimeout(() => setIsFocused(false), 200)}
+          className="min-w-0 flex-1 bg-transparent py-3.5 px-0 text-sm text-primary placeholder-primary/40 outline-none"
+          placeholder="Search products & suppliers..."
+        />
+        <button
+          type="submit"
+          className="market-button self-stretch flex items-center justify-center bg-accent px-4 lg:px-6 text-xs font-bold text-white hover:bg-accent/90 rounded-none transition-all cursor-pointer"
+        >
+          <span className="hidden lg:inline">Search</span>
+          <Search size={16} className="lg:hidden" />
+        </button>
+      </form>
+
+      <AnimatePresence>
+        {isFocused && query.trim() && suggestions.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 5 }}
+            className="absolute left-0 right-0 top-full mt-1.5 z-50 bg-white border border-primary/10 shadow-2xl rounded-none overflow-hidden"
+          >
+            {suggestions.map((s) => (
+              <Link
+                key={s.id}
+                to={`/services?search=${encodeURIComponent(s.name)}`}
+                onClick={() => {
+                  setQuery(s.name);
+                  if (onMobileClose) onMobileClose();
+                }}
+                className="flex items-center gap-3 px-4 py-3 hover:bg-muted/30 transition-all border-b border-primary/5 last:border-0"
+              >
+                <div className="h-8 w-8 shrink-0 overflow-hidden bg-muted/50 flex items-center justify-center border border-primary/5">
+                  {s.image ? <img src={s.image} alt={s.name} className="h-full w-full object-cover" /> : <Search size={12} className="text-primary/40" />}
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-primary">{s.name}</div>
+                  <div className="text-[11px] text-muted-foreground line-clamp-1">{s.description || 'View details'}</div>
+                </div>
+              </Link>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export default function Header({ onOpenEnquiry }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false);
@@ -191,7 +281,7 @@ export default function Header({ onOpenEnquiry }: HeaderProps) {
             </span>
           </div>
           <div className="flex shrink-0 items-center gap-2 relative">
-            <div className="relative hidden md:block city-select-container">
+            {/* <div className="relative hidden md:block city-select-container">
               <button
                 type="button"
                 onClick={() => setCityDropdownOpen(!cityDropdownOpen)}
@@ -228,7 +318,7 @@ export default function Header({ onOpenEnquiry }: HeaderProps) {
                   </motion.div>
                 )}
               </AnimatePresence>
-            </div>
+            </div> */}
 
             <button
               type="button"
@@ -257,21 +347,7 @@ export default function Header({ onOpenEnquiry }: HeaderProps) {
 
             {/* Premium Sharp-edged Search Bar */}
             <div className="hidden min-w-0 flex-1 items-center justify-center lg:flex px-8">
-              <div className="flex w-full max-w-xl items-center border border-primary/15 bg-muted/20 rounded-none focus-within:border-accent focus-within:bg-white focus-within:ring-4 focus-within:ring-accent/10 transition-all duration-300">
-                <div className="flex items-center pl-4 pr-2.5 text-primary/40">
-                  <Search size={16} />
-                </div>
-                <input
-                  className="min-w-0 flex-1 bg-transparent py-3.5 text-sm text-primary placeholder-primary/40 outline-none"
-                  placeholder="Search products, categories, suppliers..."
-                />
-                <Link
-                  to="/supplier-listing"
-                  className="market-button self-stretch flex items-center justify-center bg-accent px-6 text-xs font-bold text-white hover:bg-accent/90 rounded-none transition-all cursor-pointer"
-                >
-                  Search
-                </Link>
-              </div>
+              <SearchBar />
             </div>
 
             {/* Desktop Navigation Links */}
@@ -432,19 +508,7 @@ export default function Header({ onOpenEnquiry }: HeaderProps) {
                 <div className="p-5 space-y-5">
                   
                   {/* Search in Mobile Drawer */}
-                  <div className="flex border border-primary/10 rounded-none overflow-hidden bg-muted/30 focus-within:border-accent transition-all">
-                    <input
-                      className="min-w-0 flex-1 bg-transparent px-3 py-2.5 text-sm outline-none placeholder-primary/40 text-primary"
-                      placeholder="Search products & suppliers..."
-                    />
-                    <Link
-                      to="/supplier-listing"
-                      onClick={() => setMobileOpen(false)}
-                      className="market-button bg-accent px-4 py-2.5 text-sm font-bold text-white hover:bg-accent/90 rounded-none"
-                    >
-                      <Search size={16} />
-                    </Link>
-                  </div>
+                  <SearchBar onMobileClose={() => setMobileOpen(false)} />
 
                   <div className="grid grid-cols-1 gap-2">
                     

@@ -9,6 +9,7 @@ import {
 } from './ui/dialog';
 import { Button } from './ui/button';
 import { HelpCircle, Send } from 'lucide-react';
+import { submitRFQ } from '../../services/leadService';
 
 function Field({
   label,
@@ -34,14 +35,57 @@ function Field({
 
 export function RFQModal({ trigger }: { trigger?: React.ReactNode }) {
   const [open, setOpen] = useState(false);
+  const [productName, setProductName] = useState('');
+  const [quantity, setQuantity] = useState('');
+  const [deliveryCity, setDeliveryCity] = useState('');
+  const [mobile, setMobile] = useState('');
+  const [specifications, setSpecifications] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const resetForm = () => {
+    setProductName('');
+    setQuantity('');
+    setDeliveryCity('');
+    setMobile('');
+    setSpecifications('');
+    setError(null);
+    setSuccess(false);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setOpen(false);
+    setLoading(true);
+    setError(null);
+    try {
+      await submitRFQ({
+        product_name: productName,
+        quantity,
+        delivery_city: deliveryCity,
+        mobile,
+        specifications: specifications || undefined,
+      });
+      setSuccess(true);
+      setProductName('');
+      setQuantity('');
+      setDeliveryCity('');
+      setMobile('');
+      setSpecifications('');
+      setTimeout(() => {
+        setOpen(false);
+        setSuccess(false);
+      }, 2000);
+    } catch (err: any) {
+      console.error(err);
+      setError(err.response?.data?.message || 'Failed to submit RFQ. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={(val) => { setOpen(val); if (!val) resetForm(); }}>
       <DialogTrigger asChild>
         {trigger || <Button className="bg-accent text-white hover:bg-accent/90">Post Requirement</Button>}
       </DialogTrigger>
@@ -58,33 +102,81 @@ export function RFQModal({ trigger }: { trigger?: React.ReactNode }) {
             <div className="h-2 w-1/2 bg-accent" />
           </div>
 
-          <form onSubmit={handleSubmit} className="mt-5 grid gap-4">
-            <Field label="Product Name" required>
-              <input required className="w-full border border-border px-3 py-2 text-sm outline-none focus:border-accent" placeholder="e.g. Industrial steel pipes" />
-            </Field>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Quantity Required" required>
-                <input required className="w-full border border-border px-3 py-2 text-sm outline-none focus:border-accent" placeholder="e.g. 500 pieces" />
-              </Field>
-              <Field label="Delivery City" required>
-                <input required className="w-full border border-border px-3 py-2 text-sm outline-none focus:border-accent" placeholder="e.g. Mumbai" />
-              </Field>
+          {success ? (
+            <div className="mt-6 flex flex-col items-center justify-center py-8 text-center">
+              <div className="mb-4 text-5xl">✅</div>
+              <h3 className="font-serif text-xl font-bold text-primary">RFQ Submitted!</h3>
+              <p className="mt-2 text-sm text-muted-foreground">Our team will route your requirement to verified suppliers shortly.</p>
             </div>
-            <Field label="Mobile Number" required hint="Why we need this: suppliers respond fastest by phone or WhatsApp.">
-              <input required type="tel" className="w-full border border-border px-3 py-2 text-sm outline-none focus:border-accent" placeholder="+91 XXXXX XXXXX" />
-            </Field>
-            <Field label="Specifications">
-              <textarea rows={4} className="w-full border border-border px-3 py-2 text-sm outline-none focus:border-accent" placeholder="Mention grade, size, brand preference, timeline, or certifications." />
-            </Field>
-            <div className="flex justify-end gap-2 border-t border-border pt-4">
-              <Button type="button" variant="outline" onClick={() => setOpen(false)} className="rounded-md">
-                Cancel
-              </Button>
-              <Button type="submit" className="gap-2 rounded-md bg-accent text-white hover:bg-accent/90">
-                <Send size={16} /> Submit RFQ
-              </Button>
-            </div>
-          </form>
+          ) : (
+            <form onSubmit={handleSubmit} className="mt-5 grid gap-4">
+              {error && (
+                <div className="rounded border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">
+                  {error}
+                </div>
+              )}
+              <Field label="Product Name" required>
+                <input
+                  required
+                  value={productName}
+                  onChange={(e) => setProductName(e.target.value)}
+                  className="w-full border border-border px-3 py-2 text-sm outline-none focus:border-accent"
+                  placeholder="e.g. Industrial steel pipes"
+                />
+              </Field>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Field label="Quantity Required" required>
+                  <input
+                    required
+                    value={quantity}
+                    onChange={(e) => setQuantity(e.target.value)}
+                    className="w-full border border-border px-3 py-2 text-sm outline-none focus:border-accent"
+                    placeholder="e.g. 500 pieces"
+                  />
+                </Field>
+                <Field label="Delivery City" required>
+                  <input
+                    required
+                    value={deliveryCity}
+                    onChange={(e) => setDeliveryCity(e.target.value)}
+                    className="w-full border border-border px-3 py-2 text-sm outline-none focus:border-accent"
+                    placeholder="e.g. Mumbai"
+                  />
+                </Field>
+              </div>
+              <Field label="Mobile Number" required hint="Why we need this: suppliers respond fastest by phone or WhatsApp.">
+                <input
+                  required
+                  type="tel"
+                  value={mobile}
+                  onChange={(e) => setMobile(e.target.value)}
+                  className="w-full border border-border px-3 py-2 text-sm outline-none focus:border-accent"
+                  placeholder="+91 XXXXX XXXXX"
+                />
+              </Field>
+              <Field label="Specifications">
+                <textarea
+                  rows={4}
+                  value={specifications}
+                  onChange={(e) => setSpecifications(e.target.value)}
+                  className="w-full border border-border px-3 py-2 text-sm outline-none focus:border-accent"
+                  placeholder="Mention grade, size, brand preference, timeline, or certifications."
+                />
+              </Field>
+              <div className="flex justify-end gap-2 border-t border-border pt-4">
+                <Button type="button" variant="outline" onClick={() => setOpen(false)} className="rounded-md">
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="gap-2 rounded-md bg-accent text-white hover:bg-accent/90 disabled:opacity-60"
+                >
+                  <Send size={16} /> {loading ? 'Submitting...' : 'Submit RFQ'}
+                </Button>
+              </div>
+            </form>
+          )}
         </div>
       </DialogContent>
     </Dialog>

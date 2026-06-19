@@ -16,13 +16,23 @@
         <% if (field[0] === 'status') { %>
           <%- include('../partials/status-badge', { status: normalizeValue(record[field[0]]) }) %>
         <% } else if (field[0] === 'factory_images' && Array.isArray(record[field[0]])) { %>
-          <div class="image-list">
+          <div class="image-list" style="display: flex; gap: var(--space-2); flex-wrap: wrap;">
             <% record[field[0]].forEach((image) => { %>
-              <a href="<%= image %>" target="_blank" rel="noreferrer noopener"><%= image %></a>
+              <div class="image-preview">
+                <a href="<%= image %>" target="_blank" rel="noreferrer noopener">
+                  <img src="<%= image %>" alt="Factory Image" />
+                </a>
+              </div>
             <% }) %>
             <% if (!record[field[0]].length) { %>
               <em class="muted">No images attached</em>
             <% } %>
+          </div>
+        <% } else if (field[0] === 'reference_image' && record[field[0]]) { %>
+          <div class="image-preview">
+            <a href="<%= record[field[0]] %>" target="_blank" rel="noreferrer noopener">
+              <img src="<%= record[field[0]] %>" alt="Reference Image" />
+            </a>
           </div>
         <% } else { %>
           <strong><%= normalizeValue(record[field[0]]) || '—' %></strong>

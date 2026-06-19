@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import { ShieldCheck, PackageCheck, BadgeCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import AnimatedIcon from '../AnimatedIcon';
+import { submitRFQ } from '../../../services/leadService';
 
 import {
   CategoryCard,
@@ -27,8 +28,49 @@ const metrics = [
 ];
 
 function MiniRFQForm() {
+  const [product, setProduct] = useState('');
+  const [quantity, setQuantity] = useState('');
+  const [mobile, setMobile] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    try {
+      await submitRFQ({
+        product_name: product,
+        quantity,
+        delivery_city: 'Not specified',
+        mobile,
+      });
+      setSuccess(true);
+      setProduct('');
+      setQuantity('');
+      setMobile('');
+    } catch (err: any) {
+      console.error(err);
+      setError(err.response?.data?.message || 'Failed to submit. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (success) {
+    return (
+      <div className="rounded-none border border-accent/50 p-6 text-center text-white shadow-2xl bg-gradient-to-br from-accent/15 via-white/[0.03] to-white/[0.01] backdrop-blur-xl">
+        <div className="text-4xl mb-3">✅</div>
+        <h3 className="font-bold text-lg text-white mb-1">RFQ Submitted!</h3>
+        <p className="text-sm text-white/70">Our team will connect you with verified suppliers shortly.</p>
+        <button onClick={() => setSuccess(false)} className="mt-4 text-xs text-accent underline">Submit another</button>
+      </div>
+    );
+  }
+
   return (
-    <form className="rounded-none border p-5 text-white shadow-2xl border-accent/50 bg-gradient-to-br from-accent/15 via-white/[0.03] to-white/[0.01] shadow-accent/5 backdrop-blur-xl">
+    <form onSubmit={handleSubmit} className="rounded-none border p-5 text-white shadow-2xl border-accent/50 bg-gradient-to-br from-accent/15 via-white/[0.03] to-white/[0.01] shadow-accent/5 backdrop-blur-xl">
       <div className="mb-4 flex items-center justify-between gap-3 border-b border-white/10 pb-3">
         <div className="flex items-center gap-2">
           <span className="relative flex h-2 w-2">
@@ -39,28 +81,29 @@ function MiniRFQForm() {
         </div>
         <span className="hidden text-[10px] font-bold uppercase tracking-wider bg-accent/15 px-2.5 py-1 rounded-none text-accent sm:inline">Free for buyers</span>
       </div>
+      {error && <div className="mb-3 rounded border border-red-400/40 bg-red-500/10 px-3 py-2 text-xs text-red-300">{error}</div>}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.4fr_0.75fr_1fr_auto]">
         <div>
           <label htmlFor="product" className="mb-1.5 block text-[12px] font-bold text-white/80 uppercase tracking-wider">Product Name <span className="text-accent">*</span></label>
-          <input id="product" required className="w-full rounded-none border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-accent/60 focus:bg-white/10 transition-all duration-300" placeholder="e.g. Steel pipes" />
+          <input id="product" required value={product} onChange={(e) => setProduct(e.target.value)} className="w-full rounded-none border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-accent/60 focus:bg-white/10 transition-all duration-300" placeholder="e.g. Steel pipes" />
         </div>
         <div>
           <label htmlFor="quantity" className="mb-1.5 block text-[12px] font-bold text-white/80 uppercase tracking-wider">Quantity <span className="text-accent">*</span></label>
-          <input id="quantity" required className="w-full rounded-none border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-accent/60 focus:bg-white/10 transition-all duration-300" placeholder="500 pcs" />
+          <input id="quantity" required value={quantity} onChange={(e) => setQuantity(e.target.value)} className="w-full rounded-none border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-accent/60 focus:bg-white/10 transition-all duration-300" placeholder="500 pcs" />
         </div>
         <div>
           <label htmlFor="mobile" className="mb-1.5 block text-[12px] font-bold text-white/80 uppercase tracking-wider">
             Mobile Number <span className="text-accent">*</span>
             <span className="ml-1.5 cursor-help text-white/40 hover:text-white" title="Why we need this: suppliers respond fastest by phone or WhatsApp.">?</span>
           </label>
-          <input id="mobile" required className="w-full rounded-none border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-accent/60 focus:bg-white/10 transition-all duration-300" placeholder="+91 mobile" />
+          <input id="mobile" required value={mobile} onChange={(e) => setMobile(e.target.value)} className="w-full rounded-none border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-accent/60 focus:bg-white/10 transition-all duration-300" placeholder="+91 mobile" />
         </div>
-        <button type="submit" className="market-button hidden self-end bg-accent px-6 py-2.5 text-sm font-bold text-white hover:bg-accent/90 lg:block rounded-none min-h-11 shadow-lg shadow-accent/20">
-          Submit RFQ
+        <button type="submit" disabled={loading} className="market-button hidden self-end bg-accent px-6 py-2.5 text-sm font-bold text-white hover:bg-accent/90 lg:block rounded-none min-h-11 shadow-lg shadow-accent/20 disabled:opacity-60">
+          {loading ? '...' : 'Submit RFQ'}
         </button>
       </div>
-      <button type="submit" className="market-button mt-4 w-full bg-accent px-5 py-2.5 text-sm font-bold text-white hover:bg-accent/90 lg:hidden rounded-none min-h-11 shadow-lg shadow-accent/20">
-        Submit RFQ
+      <button type="submit" disabled={loading} className="market-button mt-4 w-full bg-accent px-5 py-2.5 text-sm font-bold text-white hover:bg-accent/90 lg:hidden rounded-none min-h-11 shadow-lg shadow-accent/20 disabled:opacity-60">
+        {loading ? 'Submitting...' : 'Submit RFQ'}
       </button>
     </form>
   );

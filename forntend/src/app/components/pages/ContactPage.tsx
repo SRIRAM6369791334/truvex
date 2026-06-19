@@ -3,6 +3,7 @@ import type React from 'react';
 import { MessageCircle, ArrowRight } from 'lucide-react';
 import { TrustSignalsBar } from '../MarketplaceComponents';
 import AnimatedIcon from '../AnimatedIcon';
+import { submitContactForm } from '../../../services/leadService';
 
 function Field({
   label,
@@ -25,6 +26,40 @@ function Field({
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [inquiryType, setInquiryType] = useState('');
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setLoading(true);
+    setError(null);
+    try {
+      await submitContactForm({
+        full_name: fullName,
+        email,
+        phone: phone || undefined,
+        inquiry_type: inquiryType,
+        message,
+      });
+      setSubmitted(true);
+      setFullName('');
+      setEmail('');
+      setPhone('');
+      setInquiryType('');
+      setMessage('');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err: any) {
+      console.error(err);
+      setError(err.response?.data?.message || 'Failed to send message. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="bg-[#f8f9fa] min-h-screen selection:bg-accent/20 font-sans">
@@ -164,42 +199,76 @@ export default function ContactPage() {
                     </button>
                   </div>
                 ) : (
-                  <form
-                    onSubmit={(event) => {
-                      event.preventDefault();
-                      setSubmitted(true);
-                    }}
-                    className="grid gap-6 animate-in fade-in duration-700"
-                  >
+                  <form onSubmit={handleSubmit} className="grid gap-6 animate-in fade-in duration-700">
+                    {error && (
+                      <div className="rounded-none border border-red-300 bg-red-50 px-5 py-4 text-sm font-medium text-red-700">
+                        {error}
+                      </div>
+                    )}
                     <div className="grid gap-6 md:grid-cols-2">
                       <Field label="Your Name" required>
-                        <input required className="w-full rounded-none border border-border bg-white px-5 py-4 text-[15px] text-primary outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-300" placeholder="John Doe" />
+                        <input
+                          required
+                          value={fullName}
+                          onChange={(e) => setFullName(e.target.value)}
+                          className="w-full rounded-none border border-border bg-white px-5 py-4 text-[15px] text-primary outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-300"
+                          placeholder="John Doe"
+                        />
                       </Field>
                       <Field label="Email Address" required>
-                        <input required type="email" className="w-full rounded-none border border-border bg-white px-5 py-4 text-[15px] text-primary outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-300" placeholder="john@company.com" />
+                        <input
+                          required
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="w-full rounded-none border border-border bg-white px-5 py-4 text-[15px] text-primary outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-300"
+                          placeholder="john@company.com"
+                        />
                       </Field>
                     </div>
                     <div className="grid gap-6 md:grid-cols-2">
                       <Field label="Phone Number">
-                        <input type="tel" className="w-full rounded-none border border-border bg-white px-5 py-4 text-[15px] text-primary outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-300" placeholder="+91 99999 99999" />
+                        <input
+                          type="tel"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          className="w-full rounded-none border border-border bg-white px-5 py-4 text-[15px] text-primary outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-300"
+                          placeholder="+91 99999 99999"
+                        />
                       </Field>
                       <Field label="Inquiry Type" required>
-                        <select required className="w-full rounded-none border border-border bg-white px-5 py-4 text-[15px] text-primary outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-300 appearance-none cursor-pointer">
-                          <option value="" disabled selected>Select a topic</option>
+                        <select
+                          required
+                          value={inquiryType}
+                          onChange={(e) => setInquiryType(e.target.value)}
+                          className="w-full rounded-none border border-border bg-white px-5 py-4 text-[15px] text-primary outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-300 appearance-none cursor-pointer"
+                        >
+                          <option value="" disabled>Select a topic</option>
                           <option>General Support</option>
-                          <option>Partnerships & Alliances</option>
-                          <option>Press & Media</option>
+                          <option>Partnerships &amp; Alliances</option>
+                          <option>Press &amp; Media</option>
                           <option>Other</option>
                         </select>
                       </Field>
                     </div>
                     <Field label="Your Message" required>
-                      <textarea required rows={5} className="w-full rounded-none border border-border bg-white px-5 py-4 text-[15px] text-primary outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-300 resize-y" placeholder="Tell us how we can help..." />
+                      <textarea
+                        required
+                        rows={5}
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        className="w-full rounded-none border border-border bg-white px-5 py-4 text-[15px] text-primary outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-300 resize-y"
+                        placeholder="Tell us how we can help..."
+                      />
                     </Field>
                     
                     <div className="mt-2">
-                      <button className="market-button inline-flex items-center justify-center gap-2 rounded-none bg-accent px-8 py-4 text-[15px] font-bold uppercase tracking-wider text-white hover:bg-primary transition-colors w-full md:w-auto shadow-md">
-                        Send Message <ArrowRight size={18} />
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        className="market-button inline-flex items-center justify-center gap-2 rounded-none bg-accent px-8 py-4 text-[15px] font-bold uppercase tracking-wider text-white hover:bg-primary transition-colors w-full md:w-auto shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
+                      >
+                        {loading ? 'Sending...' : <> Send Message <ArrowRight size={18} /></>}
                       </button>
                     </div>
                   </form>
@@ -212,3 +281,4 @@ export default function ContactPage() {
     </div>
   );
 }
+

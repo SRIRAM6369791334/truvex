@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import { EnquiryTicker, TrustSignalsBar } from '../MarketplaceComponents';
 import { Search, ChevronRight } from 'lucide-react';
 import AnimatedIcon from '../AnimatedIcon';
@@ -8,10 +8,14 @@ import { getCategories } from '../../../services/categoryService';
 import { submitServiceLead } from '../../../services/leadService';
 
 export default function ServicesPage() {
+  const [searchParams] = useSearchParams();
+  const initialCategory = searchParams.get('category') || 'All';
+  const initialSearch = searchParams.get('search') || '';
+
   const [services, setServices] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState(initialCategory);
+  const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,8 +35,17 @@ export default function ServicesPage() {
       })
       .catch((err) => console.error('Error fetching categories:', err));
 
-    // Fetch initial services
-    getServices()
+    // Fetch initial services using parameters if present!
+    const params: any = {};
+    if (initialCategory !== 'All') {
+      params.category = initialCategory;
+    }
+    if (initialSearch.trim()) {
+      params.search = initialSearch.trim();
+    }
+
+    setLoading(true);
+    getServices(params)
       .then((res) => {
         setServices(res.data || []);
         setLoading(false);
@@ -42,7 +55,7 @@ export default function ServicesPage() {
         setError('Failed to load services.');
         setLoading(false);
       });
-  }, []);
+  }, [initialCategory, initialSearch]);
 
   const handleSearch = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
