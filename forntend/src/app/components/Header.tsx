@@ -23,7 +23,7 @@ const categoriesIconVariants = {
     y: [0, -3, 0],
     scale: [1, 1.15, 1],
     rotate: [0, 8, -8, 0],
-    transition: { duration: 0.6, ease: "easeInOut" }
+    transition: { duration: 0.6, ease: "easeOut" as any }
   }
 };
 
@@ -35,7 +35,7 @@ const navLinks = [
     iconVariants: {
       hover: {
         y: [0, -3, 0],
-        transition: { duration: 0.4, ease: "easeInOut" }
+        transition: { duration: 0.4, ease: "easeOut" as any }
       }
     }
   },
@@ -46,7 +46,7 @@ const navLinks = [
     iconVariants: {
       hover: {
         x: [0, 5, -2, 3, 0],
-        transition: { duration: 0.6, ease: "easeInOut" }
+        transition: { duration: 0.6, ease: "easeOut" as any }
       }
     }
   },
@@ -57,7 +57,7 @@ const navLinks = [
     iconVariants: {
       hover: {
         rotate: [0, -12, 12, -8, 8, 0],
-        transition: { duration: 0.6, ease: "easeInOut" }
+        transition: { duration: 0.6, ease: "easeOut" as any }
       }
     }
   },
@@ -81,7 +81,7 @@ const navLinks = [
       hover: {
         scale: 1.15,
         rotate: 360,
-        transition: { duration: 0.6, ease: "easeInOut" }
+        transition: { duration: 0.6, ease: "easeOut" as any }
       }
     }
   },
@@ -93,7 +93,7 @@ const navLinks = [
       hover: {
         y: [0, -3, 1, 0],
         rotate: [0, -10, 10, 0],
-        transition: { duration: 0.5, ease: "easeInOut" }
+        transition: { duration: 0.5, ease: "easeOut" as any }
       }
     }
   },
@@ -109,13 +109,13 @@ function SearchBar({ onMobileClose }: { onMobileClose?: () => void }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!query.trim()) {
+    if (!(query || '').trim()) {
       setSuggestions([]);
       return;
     }
     const timer = setTimeout(async () => {
       try {
-        const res = await apiClient.get('/services', { params: { search: query.trim() } });
+        const res = await apiClient.get('/services', { params: { search: (query || '').trim() } });
         setSuggestions((res.data?.data || []).slice(0, 5));
       } catch (err) {
         console.error('Failed to fetch search suggestions', err);
@@ -126,9 +126,9 @@ function SearchBar({ onMobileClose }: { onMobileClose?: () => void }) {
 
   const handleSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if (!query.trim()) return;
+    if (!(query || '').trim()) return;
     if (onMobileClose) onMobileClose();
-    navigate(`/services?search=${encodeURIComponent(query.trim())}`);
+    navigate(`/services?search=${encodeURIComponent((query || '').trim())}`);
     setIsFocused(false);
   };
 
@@ -171,7 +171,7 @@ function SearchBar({ onMobileClose }: { onMobileClose?: () => void }) {
                 key={s.id}
                 to={`/services?search=${encodeURIComponent(s.name)}`}
                 onClick={() => {
-                  setQuery(s.name);
+                  setQuery(s.name || '');
                   if (onMobileClose) onMobileClose();
                 }}
                 className="flex items-center gap-3 px-4 py-3 hover:bg-muted/30 transition-all border-b border-primary/5 last:border-0"
@@ -465,7 +465,7 @@ export default function Header({ onOpenEnquiry }: HeaderProps) {
                           {cat.title}
                         </div>
                         <ul className="space-y-3.5">
-                          {cat.items.map((item, itemIdx) => (
+                          {cat.items.map((item: any, itemIdx: number) => (
                             <li key={itemIdx}>
                               <Link
                                 to={item.path}
@@ -539,7 +539,7 @@ export default function Header({ onOpenEnquiry }: HeaderProps) {
                                     {cat.title}
                                   </span>
                                   <div className="pl-4 border-l border-primary/5 space-y-2">
-                                    {cat.items.map((item, itemIdx) => (
+                                    {cat.items.map((item: any, itemIdx: number) => (
                                       <Link
                                         key={itemIdx}
                                         to={item.path}
