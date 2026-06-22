@@ -4,7 +4,6 @@ import { Link, useNavigate, useParams } from 'react-router';
 import { api } from '../api';
 import { confirmAction } from '../components/confirm';
 import { KeyValueEditor, StringListEditor, type KeyValue } from '../components/DynamicEditors';
-import { IconPicker } from '../components/IconPicker';
 import { validateImage } from '../components/imageValidation';
 import { ErrorPanel, Loading } from '../components/Loading';
 import { useToast } from '../toast';
@@ -139,10 +138,6 @@ export function ServiceFormPage() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!service.icon_name) {
-      showToast('Select an icon before saving.', 'error');
-      return;
-    }
     setSaving(true);
     try {
       const form = new FormData();
@@ -281,7 +276,6 @@ export function ServiceFormPage() {
                   {subcategories.map((subcategory) => <option key={subcategory.id} value={subcategory.id}>{subcategory.name}</option>)}
                 </select>
               </label>
-              <IconPicker onChange={(icon_name) => setService({ ...service, icon_name })} required value={service.icon_name} />
               <label htmlFor="service-sort"><span className="tw-label">Sort Order *</span><input className="tw-input" id="service-sort" onChange={(event) => setService({ ...service, sort_order: Number(event.target.value) })} required type="number" value={service.sort_order} /></label>
               <label className="flex items-center gap-3" htmlFor="service-stock"><input checked={service.in_stock} className="!w-auto" id="service-stock" onChange={(event) => setService({ ...service, in_stock: event.target.checked })} type="checkbox" /><span>In Stock</span></label>
               <label className="flex items-center gap-3" htmlFor="service-active"><input checked={service.is_active} className="!w-auto" id="service-active" onChange={(event) => setService({ ...service, is_active: event.target.checked })} type="checkbox" /><span>Active / Published</span></label>

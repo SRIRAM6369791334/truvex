@@ -77,7 +77,7 @@ export function KeyValueEditor({
             value={row.key}
           />
           <input
-            className="tw-input flex-1 w-full"
+            className="tw-input flex-1"
             onChange={(event) => {
               const next = [...rows];
               next[index] = { ...next[index], value: event.target.value };

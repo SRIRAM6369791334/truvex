@@ -9,6 +9,7 @@ The project has successfully integrated the official B2B sourcing platform logo 
 - [x] Integrate the logo in the Header component.
 - [x] Integrate the logo in the Footer component.
 - [x] Configure the favicon and app icons in `index.html`.
+- [x] Add favicon to the admin panel using the brand logo.
 - [x] Run autocrop script to remove empty white borders.
 - [x] Scale up header logo size to `h-14 md:h-16` and footer logo size to `h-20` for maximum legibility.
 - [x] Update admin panel templates (EJS and React layout/login views) to use the new logo.

@@ -3,7 +3,6 @@ import { useCallback, useEffect, useMemo, useState, type ChangeEvent, type FormE
 import { Link, useNavigate, useParams } from 'react-router';
 import { api } from '../api';
 import { confirmAction } from '../components/confirm';
-import { IconPicker } from '../components/IconPicker';
 import { validateImage } from '../components/imageValidation';
 import { ErrorPanel, Loading } from '../components/Loading';
 import { StatusBadge } from '../components/StatusBadge';
@@ -68,7 +67,6 @@ export function CategoryFormPage() {
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    if (!category.icon_name) { showToast('Select an icon before saving.', 'error'); return; }
     setSaving(true);
     try {
       const form = new FormData();
@@ -186,7 +184,6 @@ export function CategoryFormPage() {
           <section className="bento-card">
             <h3 className="bento-header"><Settings2 size={20} /> Classification</h3>
             <div className="space-y-5">
-              <IconPicker onChange={(icon_name) => setCategory({ ...category, icon_name })} required value={category.icon_name} />
               <label htmlFor="category-sort"><span className="tw-label">Sort Order</span>
                 <input className="tw-input" id="category-sort" onChange={(e) => setCategory({ ...category, sort_order: Number(e.target.value) })} type="number" value={category.sort_order} />
               </label>
@@ -232,7 +229,7 @@ export function CategoryFormPage() {
             {/* ===== LEFT: Subcategory list ===== */}
             <div className="sub-list-panel">
               {/* Column headers */}
-              <div className="sub-list-panel-header">
+              <div className="sub-panel-head">
                 <span>Img</span>
                 <span>Name / Slug</span>
                 <span>Description</span>
@@ -244,9 +241,11 @@ export function CategoryFormPage() {
               {/* Empty state */}
               {!subcategories.length && (
                 <div className="sub-empty">
-                  <Layers size={40} />
-                  <p>No subcategories yet.</p>
-                  <p style={{ fontSize: '0.78rem' }}>Use the form on the right to add your first one.</p>
+                  <div className="sub-empty-icon">
+                    <Layers size={36} />
+                  </div>
+                  <h4>No subcategories yet</h4>
+                  <p>Use the form on the right to add your first subcategory.</p>
                 </div>
               )}
 
@@ -255,113 +254,132 @@ export function CategoryFormPage() {
                 const isEditing = editingSubId === item.id;
                 const isSaving = savingSubId === item.id;
 
-                if (isEditing) {
-                  return (
-                    <div className="sub-item is-editing" key={item.id}>
-                      {/* Thumb col */}
+                return (
+                  <div className="sub-row-wrap" key={item.id}>
+                    {/* Read-only row (always visible as a reference) */}
+                    <div className={`sub-row ${isEditing ? 'bg-slate-50/50' : ''}`}>
+                      {/* Thumb */}
                       <div className="sub-thumb">
                         {item.image
                           ? <img alt={item.name} src={item.image} />
                           : <Layers size={18} />
                         }
                       </div>
-                      {/* Name / Slug edit */}
+                      {/* Name */}
                       <div>
-                        <input
-                          className="sub-edit-field"
-                          onChange={(e) => setEditDraft({ ...editDraft, name: e.target.value })}
-                          placeholder="Name"
-                          value={editDraft.name}
-                        />
-                        <input
-                          className="sub-edit-field slug"
-                          onChange={(e) => setEditDraft({ ...editDraft, slug: e.target.value })}
-                          placeholder="slug"
-                          value={editDraft.slug}
-                        />
+                        <span className="sub-name">{item.name}</span>
+                        <span className="sub-slug">{item.slug}</span>
                       </div>
-                      {/* Description edit */}
-                      <div>
-                        <textarea
-                          className="sub-edit-field textarea"
-                          onChange={(e) => setEditDraft({ ...editDraft, description: e.target.value })}
-                          placeholder="Description…"
-                          rows={2}
-                          value={editDraft.description}
-                        />
-                      </div>
+                      {/* Description */}
+                      <div className="sub-desc-cell">{item.description || <em style={{ opacity: 0.45 }}>—</em>}</div>
                       {/* Sort */}
-                      <div>
-                        <input
-                          className="sub-edit-field"
-                          min={0}
-                          onChange={(e) => setEditDraft({ ...editDraft, sort_order: Number(e.target.value) })}
-                          style={{ width: '60px', textAlign: 'center' }}
-                          type="number"
-                          value={editDraft.sort_order}
-                        />
-                      </div>
-                      {/* Active + image replace */}
-                      <div>
-                        <label className="sub-edit-toggle">
-                          <input
-                            checked={editDraft.is_active}
-                            onChange={(e) => setEditDraft({ ...editDraft, is_active: e.target.checked })}
-                            type="checkbox"
-                          />
-                          Active
-                        </label>
-                        <input
-                          accept="image/jpeg,image/png,image/webp"
-                          onChange={(e) => void selectImage(e, setEditImage)}
-                          style={{ fontSize: '0.7rem', display: 'block', width: '100%' }}
-                          title="Replace image"
-                          type="file"
-                        />
-                      </div>
+                      <div className="sub-sort-cell">{item.sort_order}</div>
+                      {/* Status */}
+                      <div><StatusBadge status={item.is_active ? 'active' : 'inactive'} /></div>
                       {/* Actions */}
                       <div className="sub-actions">
-                        <button aria-label="Save" className="sub-save-btn" disabled={isSaving} onClick={() => void saveEdit(item.id)} type="button">
-                          {isSaving ? '…' : <><Check size={13} /> Save</>}
+                        <button aria-label={`Edit ${item.name}`} className="sub-edit-btn" onClick={() => startEdit(item)} type="button">
+                          <Pencil size={12} /> Edit
                         </button>
-                        <button aria-label="Cancel" className="sub-cancel-btn" disabled={isSaving} onClick={cancelEdit} type="button">
-                          <X size={14} />
+                        <button aria-label={`Delete ${item.name}`} className="sub-del-btn" onClick={() => void deleteSubcategory(item.id)} type="button">
+                          <Trash2 size={14} />
                         </button>
                       </div>
                     </div>
-                  );
-                }
 
-                // Read-only row
-                return (
-                  <div className="sub-item" key={item.id}>
-                    {/* Thumb */}
-                    <div className="sub-thumb">
-                      {item.image
-                        ? <img alt={item.name} src={item.image} />
-                        : <Layers size={18} />
-                      }
-                    </div>
-                    {/* Name */}
-                    <div>
-                      <span className="sub-name">{item.name}</span>
-                      <span className="sub-slug">{item.slug}</span>
-                    </div>
-                    {/* Description */}
-                    <div className="sub-desc">{item.description || <em style={{ opacity: 0.45 }}>—</em>}</div>
-                    {/* Sort */}
-                    <div className="sub-sort">{item.sort_order}</div>
-                    {/* Status */}
-                    <div><StatusBadge status={item.is_active ? 'active' : 'inactive'} /></div>
-                    {/* Actions */}
-                    <div className="sub-actions">
-                      <button aria-label={`Edit ${item.name}`} className="sub-edit-btn" onClick={() => startEdit(item)} type="button">
-                        <Pencil size={12} /> Edit
-                      </button>
-                      <button aria-label={`Delete ${item.name}`} className="sub-del-btn" onClick={() => void deleteSubcategory(item.id)} type="button">
-                        <Trash2 size={14} />
-                      </button>
-                    </div>
+                    {/* Accordion edit block */}
+                    {isEditing && (
+                      <div className="sub-expand">
+                        <div className="sub-expand-inner">
+                          <div className="sub-expand-title">Edit Subcategory</div>
+                          <div className="sub-expand-grid">
+                            <div className="sub-fg">
+                              <span className="sub-fl">Name *</span>
+                              <input
+                                className="sub-fi"
+                                onChange={(e) => setEditDraft({ ...editDraft, name: e.target.value })}
+                                required
+                                value={editDraft.name}
+                              />
+                            </div>
+                            <div className="sub-fg">
+                              <span className="sub-fl">Slug</span>
+                              <input
+                                className="sub-fi"
+                                onChange={(e) => setEditDraft({ ...editDraft, slug: e.target.value })}
+                                placeholder="auto-generated"
+                                value={editDraft.slug}
+                              />
+                            </div>
+                            <div className="sub-fg md:col-span-2">
+                              <span className="sub-fl">Description</span>
+                              <textarea
+                                className="sub-fi"
+                                onChange={(e) => setEditDraft({ ...editDraft, description: e.target.value })}
+                                rows={2}
+                                value={editDraft.description}
+                              />
+                            </div>
+                            <div className="sub-fg">
+                              <span className="sub-fl">Sort Order</span>
+                              <input
+                                className="sub-fi"
+                                onChange={(e) => setEditDraft({ ...editDraft, sort_order: Number(e.target.value) })}
+                                type="number"
+                                value={editDraft.sort_order}
+                              />
+                            </div>
+                            <div className="sub-fg">
+                              <span className="sub-fl">Image</span>
+                              <div className="sub-upload-row">
+                                <span className="sub-upload-text">
+                                  {editImage ? editImage.name : 'Choose image file…'}
+                                </span>
+                                <input
+                                  accept="image/jpeg,image/png,image/webp"
+                                  onChange={(e) => void selectImage(e, setEditImage)}
+                                  type="file"
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="sub-expand-actions">
+                            <div className="flex-1">
+                              <label className="sub-add-toggle" style={{ maxWidth: '180px', padding: '0.45rem 0.75rem' }}>
+                                <span className="sub-add-toggle-text" style={{ fontSize: '0.78rem' }}>Active / Published</span>
+                                <div className="sub-ios">
+                                  <input
+                                    checked={editDraft.is_active}
+                                    onChange={(e) => setEditDraft({ ...editDraft, is_active: e.target.checked })}
+                                    type="checkbox"
+                                  />
+                                  <span className="sub-ios-track" />
+                                </div>
+                              </label>
+                            </div>
+                            <button
+                              aria-label="Save"
+                              className="sub-save-btn"
+                              disabled={isSaving}
+                              onClick={() => void saveEdit(item.id)}
+                              type="button"
+                            >
+                              {isSaving ? 'Saving…' : <><Check size={14} /> Save</>}
+                            </button>
+                            <button
+                              aria-label="Cancel"
+                              className="sub-cancel-btn"
+                              disabled={isSaving}
+                              onClick={cancelEdit}
+                              type="button"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -369,35 +387,50 @@ export function CategoryFormPage() {
 
             {/* ===== RIGHT: Add form ===== */}
             <form className="sub-add-card" onSubmit={(e) => void addSubcategory(e)}>
-              <div className="sub-add-card-header">
-                <Plus size={16} />
-                Add Subcategory
+              <div className="sub-add-head">
+                <div className="sub-add-head-icon">
+                  <Plus size={16} />
+                </div>
+                <div>
+                  <div className="sub-add-head-text">Add Subcategory</div>
+                  <div className="sub-add-head-sub">Create new child node</div>
+                </div>
               </div>
-              <div className="sub-add-card-body">
-                <div className="sub-field-group">
-                  <label className="sub-field-label" htmlFor="sub-name">Name *</label>
-                  <input className="sub-field-input" id="sub-name" onChange={(e) => setSubcategory({ ...subcategory, name: e.target.value })} placeholder="e.g. Steel Pipes" required value={subcategory.name} />
+              <div className="sub-add-body">
+                <div className="sub-fg">
+                  <label className="sub-fl" htmlFor="sub-name">Name *</label>
+                  <input className="sub-fi" id="sub-name" onChange={(e) => setSubcategory({ ...subcategory, name: e.target.value })} placeholder="e.g. Steel Pipes" required value={subcategory.name} />
                 </div>
-                <div className="sub-field-group">
-                  <label className="sub-field-label" htmlFor="sub-slug">Slug</label>
-                  <input className="sub-field-input" id="sub-slug" onChange={(e) => setSubcategory({ ...subcategory, slug: e.target.value })} placeholder="auto-generated" value={subcategory.slug} />
+                <div className="sub-fg">
+                  <label className="sub-fl" htmlFor="sub-slug">Slug</label>
+                  <input className="sub-fi" id="sub-slug" onChange={(e) => setSubcategory({ ...subcategory, slug: e.target.value })} placeholder="auto-generated" value={subcategory.slug} />
                 </div>
-                <div className="sub-field-group">
-                  <label className="sub-field-label" htmlFor="sub-desc">Description</label>
-                  <textarea className="sub-field-input" id="sub-desc" onChange={(e) => setSubcategory({ ...subcategory, description: e.target.value })} placeholder="Short description…" rows={3} style={{ resize: 'vertical' }} value={subcategory.description} />
+                <div className="sub-fg">
+                  <label className="sub-fl" htmlFor="sub-desc">Description</label>
+                  <textarea className="sub-fi" id="sub-desc" onChange={(e) => setSubcategory({ ...subcategory, description: e.target.value })} placeholder="Short description…" rows={3} value={subcategory.description} />
                 </div>
-                <div className="sub-field-group">
-                  <label className="sub-field-label" htmlFor="sub-img">Image (800×600)</label>
-                  <input accept="image/jpeg,image/png,image/webp" className="sub-field-input" id="sub-img" onChange={(e) => void selectImage(e, setSubcategoryImage)} type="file" />
+                <div className="sub-fg">
+                  <label className="sub-fl" htmlFor="sub-img">Image (800×600)</label>
+                  <div className="sub-upload-row">
+                    <span className="sub-upload-text">
+                      {subcategoryImage ? subcategoryImage.name : 'Choose image file…'}
+                    </span>
+                    <input accept="image/jpeg,image/png,image/webp" id="sub-img" onChange={(e) => void selectImage(e, setSubcategoryImage)} type="file" />
+                  </div>
                 </div>
-                <div className="sub-field-group">
-                  <label className="sub-field-label" htmlFor="sub-sort">Sort Order</label>
-                  <input className="sub-field-input" id="sub-sort" min={0} onChange={(e) => setSubcategory({ ...subcategory, sort_order: Number(e.target.value) })} type="number" value={subcategory.sort_order} />
+                <div className="sub-fg">
+                  <label className="sub-fl" htmlFor="sub-sort">Sort Order</label>
+                  <input className="sub-fi" id="sub-sort" min={0} onChange={(e) => setSubcategory({ ...subcategory, sort_order: Number(e.target.value) })} type="number" value={subcategory.sort_order} />
                 </div>
-                <label className="sub-active-toggle" htmlFor="sub-active">
-                  <input checked={subcategory.is_active} id="sub-active" onChange={(e) => setSubcategory({ ...subcategory, is_active: e.target.checked })} type="checkbox" />
-                  Active / Published
+                
+                <label className="sub-add-toggle" htmlFor="sub-active">
+                  <span className="sub-add-toggle-text">Active / Published</span>
+                  <div className="sub-ios">
+                    <input checked={subcategory.is_active} id="sub-active" onChange={(e) => setSubcategory({ ...subcategory, is_active: e.target.checked })} type="checkbox" />
+                    <span className="sub-ios-track" />
+                  </div>
                 </label>
+
                 <button className="sub-add-btn" type="submit">
                   <Plus size={15} /> Add Subcategory
                 </button>

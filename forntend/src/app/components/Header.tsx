@@ -425,7 +425,7 @@ export default function Header({ onOpenEnquiry }: HeaderProps) {
             <div className="flex items-center gap-3 xl:hidden">
               <button
                 onClick={() => setShowMobileSearch(!showMobileSearch)}
-                className="p-2 text-primary hover:bg-muted rounded-none transition-all cursor-pointer"
+                className="p-2 text-primary hover:bg-muted rounded-none transition-all cursor-pointer lg:hidden"
                 aria-label="Search"
               >
                 {showMobileSearch ? <X size={22} /> : <Search size={22} />}
@@ -447,7 +447,7 @@ export default function Header({ onOpenEnquiry }: HeaderProps) {
                 animate={{ height: 'auto', opacity: 1, y: 0, scaleY: 1 }}
                 exit={{ height: 0, opacity: 0, y: -15, scaleY: 0.95 }}
                 transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-                className="xl:hidden pb-4"
+                className="lg:hidden pb-4"
               >
                 <SearchBar onMobileClose={() => setShowMobileSearch(false)} />
               </motion.div>

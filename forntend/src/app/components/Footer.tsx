@@ -33,16 +33,16 @@ const footerPartnerLinks = [
 export default function Footer({ onOpenEnquiry }: FooterProps) {
   return (
     <footer className="border-t border-primary/10 bg-[#f1f5f9] text-primary">
-      <div className="mx-auto grid max-w-7xl gap-8 px-6 py-14 sm:grid-cols-2 md:grid-cols-4 items-start">
+      <div className="mx-auto grid max-w-7xl gap-8 px-6 py-14 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 items-start text-center sm:text-left">
         {/* Col 1: Logo & Description */}
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 items-center sm:items-start">
           <Link to="/" className="inline-block transition-all hover:opacity-95">
             <img src="/logo.png" alt="Truvex Sourcing" className="h-16 w-auto object-contain" />
           </Link>
-          <p className="text-sm leading-relaxed text-muted-foreground max-w-xs">
+          <p className="text-sm leading-relaxed text-muted-foreground max-w-xs mx-auto sm:mx-0">
             Verified supplier discovery, RFQ routing, and managed B2B sourcing for Indian businesses.
           </p>
-          <div className="flex flex-wrap gap-2 text-[10px] font-semibold">
+          <div className="flex flex-wrap gap-2 text-[10px] font-semibold justify-center sm:justify-start">
             <span className="border border-primary/15 bg-white text-primary/70 px-2.5 py-1">GST Registered</span>
             <span className="border border-primary/15 bg-white text-primary/70 px-2.5 py-1">Secure Platform</span>
           </div>
@@ -110,7 +110,7 @@ export default function Footer({ onOpenEnquiry }: FooterProps) {
         </div>
       </section> */}
       <div className="border-t border-primary/10">
-        <div className="mx-auto max-w-7xl px-6 py-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between text-xs text-muted-foreground">
+        <div className="mx-auto max-w-7xl px-6 py-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between text-xs text-muted-foreground text-center sm:text-left">
           <div>
             Copyright © 2026 Truvex. All rights reserved.
           </div>

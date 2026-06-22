@@ -184,34 +184,37 @@ export default function ServiceDetailsPage() {
 
               {/* Statistics Highlights Grid (New) */}
               {Array.isArray(service.stats) && service.stats.length > 0 && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
-                  {service.stats.map((stat: any, idx: number) => {
-                    let label = '';
-                    let value = '';
-                    
-                    if (typeof stat === 'string') {
-                      const trimmed = stat.trim();
-                      const firstSpace = trimmed.indexOf(' ');
-                      if (firstSpace > 0) {
-                        value = trimmed.substring(0, firstSpace);
-                        label = trimmed.substring(firstSpace + 1);
-                      } else {
-                        value = trimmed;
-                        label = '';
+                <div className="mb-8">
+                  <h3 className="font-bold text-primary mb-4 text-sm uppercase tracking-wider border-b border-border pb-2">Service Statistics</h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    {service.stats.map((stat: any, idx: number) => {
+                      let label = '';
+                      let value = '';
+                      
+                      if (typeof stat === 'string') {
+                        const trimmed = stat.trim();
+                        const firstSpace = trimmed.indexOf(' ');
+                        if (firstSpace > 0) {
+                          value = trimmed.substring(0, firstSpace);
+                          label = trimmed.substring(firstSpace + 1);
+                        } else {
+                          value = trimmed;
+                          label = '';
+                        }
+                      } else if (stat && typeof stat === 'object') {
+                        label = stat.label || stat.name || stat.key || '';
+                        value = stat.value || stat.val || '';
                       }
-                    } else if (stat && typeof stat === 'object') {
-                      label = stat.label || stat.name || stat.key || '';
-                      value = stat.value || stat.val || '';
-                    }
 
-                    if (!value && !label) return null;
-                    return (
-                      <div key={idx} className="bg-gradient-to-br from-slate-50 to-slate-100/50 border border-slate-100 p-4 rounded-none text-center shadow-sm">
-                        <div className="text-xl md:text-2xl font-bold text-accent mb-0.5">{value || label}</div>
-                        {value && label && <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">{label}</div>}
-                      </div>
-                    );
-                  })}
+                      if (!value && !label) return null;
+                      return (
+                        <div key={idx} className="bg-gradient-to-br from-slate-50 to-slate-100/50 border border-slate-100 p-4 rounded-none text-center shadow-sm">
+                          <div className="text-xl md:text-2xl font-bold text-accent mb-0.5">{value || label}</div>
+                          {value && label && <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">{label}</div>}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
 
@@ -239,7 +242,7 @@ export default function ServiceDetailsPage() {
                 {/* Specs Overview */}
                 <div className="flex flex-col justify-between">
                   <div>
-                    <h3 className="font-bold text-primary mb-4 text-sm uppercase tracking-wider border-b border-border pb-2">Product Specifications</h3>
+                    <h3 className="font-bold text-primary mb-4 text-sm uppercase tracking-wider border-b border-border pb-2">Technical Specifications</h3>
                     {specsList.length > 0 ? (
                       <div className="border border-border/40 rounded-none overflow-hidden">
                         <table className="w-full text-sm">
@@ -332,7 +335,7 @@ export default function ServiceDetailsPage() {
             {Array.isArray(service.process_steps) && service.process_steps.length > 0 && (
               <div className="bg-white rounded-none border border-border shadow-sm p-6 md:p-8 text-left">
                 <h3 className="font-bold text-primary mb-6 text-sm uppercase tracking-wider border-b border-border pb-2 flex items-center gap-2">
-                  <ListChecks size={18} className="text-accent" /> Sourcing & Execution Process
+                  <ListChecks size={18} className="text-accent" /> Process Steps
                 </h3>
                 <div className="relative border-l border-slate-200 ml-4 pl-6 space-y-6 py-2">
                   {service.process_steps.filter(Boolean).map((step: string, idx: number) => (
