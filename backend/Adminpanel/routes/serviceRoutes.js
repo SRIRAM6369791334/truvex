@@ -85,7 +85,9 @@ function applyFiles(payload, files) {
     payload.image = `/uploads/${files.image_file[0].filename}`;
   }
   if (files?.gallery_files?.length) {
-    payload.images = JSON.stringify(files.gallery_files.map((file) => `/uploads/${file.filename}`));
+    const newImages = files.gallery_files.map((file) => `/uploads/${file.filename}`);
+    const existing = JSON.parse(payload.images || '[]');
+    payload.images = JSON.stringify([...existing, ...newImages]);
   }
 }
 

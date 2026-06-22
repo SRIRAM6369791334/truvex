@@ -117,14 +117,36 @@ export function ServiceFormPage() {
 
   async function selectGallery(event: ChangeEvent<HTMLInputElement>) {
     const files = Array.from(event.target.files || []);
+    if (!files.length) return;
     try {
       await Promise.all(files.map(validateImage));
-      galleryPreviews.forEach((preview) => URL.revokeObjectURL(preview));
-      setGalleryFiles(files);
-      setGalleryPreviews(files.map((file) => URL.createObjectURL(file)));
+      setGalleryFiles((prev) => {
+        const updated = [...prev, ...files].slice(0, 10);
+        return updated;
+      });
+      setGalleryPreviews((prev) => {
+        const newPreviews = files.map((file) => URL.createObjectURL(file));
+        const updated = [...prev, ...newPreviews].slice(0, 10);
+        return updated;
+      });
     } catch (validationError) {
-      event.target.value = '';
       showToast(errorMessage(validationError), 'error');
+    }
+    event.target.value = '';
+  }
+
+  function removeGalleryImage(index: number, isExisting: boolean) {
+    if (isExisting) {
+      setService((prev) => ({
+        ...prev,
+        images: prev.images.filter((_, i) => i !== index),
+      }));
+    } else {
+      setGalleryFiles((prev) => prev.filter((_, i) => i !== index));
+      setGalleryPreviews((prev) => {
+        URL.revokeObjectURL(prev[index]);
+        return prev.filter((_, i) => i !== index);
+      });
     }
   }
 
@@ -138,6 +160,10 @@ export function ServiceFormPage() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!editing && !mainImage) {
+      showToast('Main image is required.', 'error');
+      return;
+    }
     setSaving(true);
     try {
       const form = new FormData();
@@ -276,7 +302,6 @@ export function ServiceFormPage() {
                   {subcategories.map((subcategory) => <option key={subcategory.id} value={subcategory.id}>{subcategory.name}</option>)}
                 </select>
               </label>
-              <label htmlFor="service-sort"><span className="tw-label">Sort Order *</span><input className="tw-input" id="service-sort" onChange={(event) => setService({ ...service, sort_order: Number(event.target.value) })} required type="number" value={service.sort_order} /></label>
               <label className="flex items-center gap-3" htmlFor="service-stock"><input checked={service.in_stock} className="!w-auto" id="service-stock" onChange={(event) => setService({ ...service, in_stock: event.target.checked })} type="checkbox" /><span>In Stock</span></label>
               <label className="flex items-center gap-3" htmlFor="service-active"><input checked={service.is_active} className="!w-auto" id="service-active" onChange={(event) => setService({ ...service, is_active: event.target.checked })} type="checkbox" /><span>Active / Published</span></label>
             </div>

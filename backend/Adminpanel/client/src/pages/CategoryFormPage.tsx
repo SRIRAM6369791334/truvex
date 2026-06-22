@@ -67,11 +67,15 @@ export function CategoryFormPage() {
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
+    if (!editing && !imageFile) {
+      showToast('Category image is required.', 'error');
+      return;
+    }
     setSaving(true);
     try {
       const form = new FormData();
       form.append('name', category.name); form.append('slug', category.slug);
-      form.append('description', category.description); form.append('icon_name', category.icon_name);
+      form.append('description', category.description); form.append('icon_name', category.icon_name || '');
       form.append('tags', JSON.stringify(category.tags)); form.append('trending', String(category.trending));
       form.append('is_active', String(category.is_active)); form.append('sort_order', String(category.sort_order));
       form.append('existing_image', category.image || '');
@@ -79,9 +83,26 @@ export function CategoryFormPage() {
       const response = editing
         ? await api.patch<{ id: string }>(`/api/categories/${id}`, form)
         : await api.post<{ id: number | string }>('/api/categories', form);
-      showToast(response.message || `Category ${editing ? 'updated' : 'created'}.`);
-      if (!editing) navigate(`/categories/${response.data.id}/edit`, { replace: true });
-      else await load();
+      
+      if (!editing) {
+        const { default: Swal } = await import('sweetalert2');
+        await Swal.fire({
+          title: 'Created!',
+          text: 'Category has been created successfully.',
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false,
+          customClass: {
+            popup: 'premium-swal-popup',
+            title: 'premium-swal-title',
+            htmlContainer: 'premium-swal-content'
+          }
+        });
+        window.location.href = 'http://172.16.0.10:5002/categories';
+      } else {
+        showToast(response.message || 'Category updated.');
+        await load();
+      }
     } catch (e) { showToast(errorMessage(e), 'error'); }
     finally { setSaving(false); }
   }
@@ -163,18 +184,15 @@ export function CategoryFormPage() {
               <label htmlFor="category-slug"><span className="tw-label">Slug</span>
                 <input className="tw-input" id="category-slug" onChange={(e) => setCategory({ ...category, slug: e.target.value })} placeholder="Auto-generated if blank" value={category.slug} />
               </label>
-              <label className="md:col-span-2" htmlFor="category-description"><span className="tw-label">Description</span>
-                <textarea className="tw-input" id="category-description" onChange={(e) => setCategory({ ...category, description: e.target.value })} rows={3} value={category.description} />
-              </label>
-              <label className="md:col-span-2" htmlFor="category-tags"><span className="tw-label">Tags (one per line)</span>
-                <textarea className="tw-input" id="category-tags" onChange={(e) => setCategory({ ...category, tags: e.target.value.split(/\r?\n/) })} rows={4} value={category.tags.join('\n')} />
+              <label className="md:col-span-2" htmlFor="category-description"><span className="tw-label">Description *</span>
+                <textarea className="tw-input" id="category-description" onChange={(e) => setCategory({ ...category, description: e.target.value })} required rows={3} value={category.description} />
               </label>
             </div>
           </section>
           <section className="bento-card">
             <h3 className="bento-header"><ImageIcon size={20} /> Category Image</h3>
-            <label htmlFor="category-image"><span className="tw-label">800×600 image, maximum 2 MB</span>
-              <input accept="image/jpeg,image/png,image/webp" className="tw-input" id="category-image" onChange={(e) => void selectImage(e, setImageFile, true)} type="file" />
+            <label htmlFor="category-image"><span className="tw-label">800×600 image, maximum 2 MB {!editing && '*'}</span>
+              <input accept="image/jpeg,image/png,image/webp" className="tw-input" id="category-image" onChange={(e) => void selectImage(e, setImageFile, true)} type="file" required={!editing} />
             </label>
             {displayedImage && <div className="image-thumbs"><img alt="Category preview" src={displayedImage} /></div>}
           </section>
@@ -184,9 +202,6 @@ export function CategoryFormPage() {
           <section className="bento-card">
             <h3 className="bento-header"><Settings2 size={20} /> Classification</h3>
             <div className="space-y-5">
-              <label htmlFor="category-sort"><span className="tw-label">Sort Order</span>
-                <input className="tw-input" id="category-sort" onChange={(e) => setCategory({ ...category, sort_order: Number(e.target.value) })} type="number" value={category.sort_order} />
-              </label>
               <label className="flex items-center gap-3" htmlFor="category-trending">
                 <input checked={category.trending} className="!w-auto" id="category-trending" onChange={(e) => setCategory({ ...category, trending: e.target.checked })} type="checkbox" />
                 <span>Show on homepage (maximum 6)</span>
@@ -233,7 +248,6 @@ export function CategoryFormPage() {
                 <span>Img</span>
                 <span>Name / Slug</span>
                 <span>Description</span>
-                <span style={{ textAlign: 'center' }}>Sort</span>
                 <span>Status</span>
                 <span style={{ textAlign: 'right' }}>Actions</span>
               </div>
@@ -272,8 +286,6 @@ export function CategoryFormPage() {
                       </div>
                       {/* Description */}
                       <div className="sub-desc-cell">{item.description || <em style={{ opacity: 0.45 }}>—</em>}</div>
-                      {/* Sort */}
-                      <div className="sub-sort-cell">{item.sort_order}</div>
                       {/* Status */}
                       <div><StatusBadge status={item.is_active ? 'active' : 'inactive'} /></div>
                       {/* Actions */}
@@ -320,15 +332,7 @@ export function CategoryFormPage() {
                                 value={editDraft.description}
                               />
                             </div>
-                            <div className="sub-fg">
-                              <span className="sub-fl">Sort Order</span>
-                              <input
-                                className="sub-fi"
-                                onChange={(e) => setEditDraft({ ...editDraft, sort_order: Number(e.target.value) })}
-                                type="number"
-                                value={editDraft.sort_order}
-                              />
-                            </div>
+
                             <div className="sub-fg">
                               <span className="sub-fl">Image</span>
                               <div className="sub-upload-row">
@@ -418,10 +422,7 @@ export function CategoryFormPage() {
                     <input accept="image/jpeg,image/png,image/webp" id="sub-img" onChange={(e) => void selectImage(e, setSubcategoryImage)} type="file" />
                   </div>
                 </div>
-                <div className="sub-fg">
-                  <label className="sub-fl" htmlFor="sub-sort">Sort Order</label>
-                  <input className="sub-fi" id="sub-sort" min={0} onChange={(e) => setSubcategory({ ...subcategory, sort_order: Number(e.target.value) })} type="number" value={subcategory.sort_order} />
-                </div>
+
                 
                 <label className="sub-add-toggle" htmlFor="sub-active">
                   <span className="sub-add-toggle-text">Active / Published</span>

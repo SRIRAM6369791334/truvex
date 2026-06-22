@@ -2097,3 +2097,65 @@ textarea.sub-fi { resize: vertical; min-height: 80px; line-height: 1.6; }
 }
 
 .sub-add-btn:active { transform: translateY(0); }
+
+/* ============================================================
+   SWEETALERT CUSTOM STYLING (ADMIN OVERRIDES)
+   ============================================================ */
+.premium-swal-popup {
+  background: #ffffff !important;
+  border: 1px solid var(--color-neutral-200) !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+  border-radius: var(--radius-lg) !important;
+  font-family: 'IBM Plex Sans', Arial, sans-serif !important;
+}
+
+.premium-swal-title {
+  color: var(--color-primary-700) !important;
+  font-size: 1.5rem !important;
+  font-weight: 700 !important;
+  margin-top: 1rem !important;
+}
+
+.premium-swal-content {
+  color: var(--color-neutral-600) !important;
+  font-size: 1rem !important;
+}
+
+/* Gallery image thumbnail styles with delete overlay */
+.thumb-wrapper {
+  position: relative;
+  display: inline-block;
+}
+.thumb-wrapper img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--color-neutral-200);
+}
+.thumb-remove-btn {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: var(--color-danger) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 50% !important;
+  width: 20px !important;
+  height: 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 14px !important;
+  font-weight: bold !important;
+  cursor: pointer !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15) !important;
+  transition: all 0.2s ease !important;
+  line-height: 1 !important;
+  padding: 0 !important;
+  z-index: 10;
+}
+.thumb-remove-btn:hover {
+  background: #b91c1c !important;
+  transform: scale(1.1) !important;
+}

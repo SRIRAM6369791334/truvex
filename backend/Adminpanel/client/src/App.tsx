@@ -12,6 +12,7 @@ import { RecordDetailPage } from './pages/RecordDetailPage';
 import { RecordListPage } from './pages/RecordListPage';
 import { ServiceFormPage } from './pages/ServiceFormPage';
 import { ServicesPage } from './pages/ServicesPage';
+import { SettingsPage } from './pages/SettingsPage';
 
 function ProtectedRoute() {
   const { user, loading } = useAuth();
@@ -51,6 +52,7 @@ export default function App() {
             <Route element={<CategoriesPage />} path="/categories" />
             <Route element={<CategoryFormPage />} path="/categories/new" />
             <Route element={<CategoryFormPage />} path="/categories/:id/edit" />
+            <Route element={<SettingsPage />} path="/settings" />
             <Route element={<NotFoundPage />} path="*" />
           </Route>
         </Route>

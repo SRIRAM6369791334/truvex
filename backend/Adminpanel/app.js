@@ -14,6 +14,7 @@ const dashboardRoutes = require('./routes/dashboardRoutes');
 const recordRoutes = require('./routes/recordRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
+const settingsRoutes = require('./routes/settingsRoutes');
 
 function createApp(options = {}) {
   const app = express();
@@ -54,6 +55,7 @@ function createApp(options = {}) {
   app.use('/api/submissions', recordRoutes);
   app.use('/api/services', serviceRoutes);
   app.use('/api/categories', categoryRoutes);
+  app.use('/api/settings', settingsRoutes);
 
   app.use('/api', (_req, res) => {
     res.status(404).json({ error: 'API endpoint not found.' });

@@ -14,7 +14,7 @@ const links = [
   ['/submissions/rfq', 'RFQs'],
   ['/submissions/enquiries', 'Enquiries'],
   ['/submissions/contacts', 'Contacts'],
-  // Hidden: Callbacks and Newsletter removed from sidebar
+  ['/settings', 'Settings'],
 ];
 
 function pageTitle(pathname: string) {

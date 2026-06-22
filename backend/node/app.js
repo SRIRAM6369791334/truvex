@@ -12,6 +12,7 @@ const buyerRoutes = require('./routes/buyerRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
 const supplierRoutes = require('./routes/supplierRoutes');
 const { createFormRouter } = require('./routes/formRoutes');
+const settingsRoutes = require('./routes/settingsRoutes');
 
 const FORM_ROUTES = {
   contacts: {
@@ -90,6 +91,7 @@ function createApp(options = {}) {
   app.use('/api/services', serviceRoutes);
   app.use('/api/buyers', buyerRoutes);
   app.use('/api/suppliers', supplierRoutes);
+  app.use('/api/settings', settingsRoutes);
 
   Object.entries(FORM_ROUTES).forEach(([route, config]) => {
     app.use(`/api/${route}`, createFormRouter(config));

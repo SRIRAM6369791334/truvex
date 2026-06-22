@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { ShieldCheck, PackageCheck, BadgeCheck } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import AnimatedIcon from '../AnimatedIcon';
 import { submitRFQ } from '../../../services/leadService';
+import apiClient from '../../../apiClient';
 
 import {
   CategoryCard,
@@ -234,6 +235,45 @@ function BannerAnimation() {
 }
 
 export default function HomePage() {
+  const [banners, setBanners] = useState<string[]>([
+    "https://images.unsplash.com/photo-1494412651409-8963ce7935a7?w=1600&q=80",
+    "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1600&q=80",
+    "https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=1600&q=80"
+  ]);
+  const [currentIdx, setCurrentIdx] = useState(0);
+
+  useEffect(() => {
+    const loadBanners = async () => {
+      try {
+        const res = await apiClient.get('/settings');
+        if (res.data?.success && res.data.data?.homepage_banner_images?.length > 0) {
+          setBanners(res.data.data.homepage_banner_images);
+        } else if (res.data?.data?.homepage_banner_images?.length > 0) {
+          setBanners(res.data.data.homepage_banner_images);
+        }
+      } catch (err) {
+        console.error('Failed to load dynamic banners:', err);
+      }
+    };
+    loadBanners();
+  }, []);
+
+  useEffect(() => {
+    if (banners.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentIdx((prev) => (prev + 1) % banners.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [banners]);
+
+  const resolveBannerUrl = (url: string) => {
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    const rootUrl = apiClient.defaults.baseURL?.replace(/\/api$/, '') || 'http://172.16.0.10:5001';
+    return `${rootUrl}${url}`;
+  };
+
   return (
     <div className="bg-background">
       {/* ─── Promo Banner ─── */}
@@ -277,13 +317,20 @@ export default function HomePage() {
       </div>
 
       <section className="w-full relative py-32 flex flex-col items-center justify-center min-h-[500px] overflow-hidden border-b border-border">
-        {/* Shipping Background Image */}
+        {/* Shipping Background Images Carousel */}
         <div className="absolute inset-0 z-0">
-          <img 
-            src="https://images.unsplash.com/photo-1494412651409-8963ce7935a7?w=1600&q=80" 
-            alt="Global Shipping Logistics" 
-            className="w-full h-full object-cover"
-          />
+          <AnimatePresence mode="popLayout">
+            <motion.img 
+              key={currentIdx}
+              src={resolveBannerUrl(banners[currentIdx])} 
+              alt="Global Shipping Logistics" 
+              className="absolute inset-0 w-full h-full object-cover"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.2, ease: "easeInOut" }}
+            />
+          </AnimatePresence>
         </div>
         
         {/* Frosted Glass Overlay (Glassmorphism) */}

@@ -17,6 +17,7 @@ DROP TABLE IF EXISTS contacts;
 DROP TABLE IF EXISTS buyers;
 DROP TABLE IF EXISTS admin_users;
 DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS settings;
 
 CREATE TABLE categories (
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -210,3 +211,12 @@ LEFT JOIN suppliers s
   ON s.category_id = c.id
   AND s.status = 'approved'
 GROUP BY c.id;
+
+CREATE TABLE settings (
+  `key` VARCHAR(255) PRIMARY KEY,
+  `value` TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+INSERT INTO settings (`key`, `value`) VALUES ('homepage_banner_images', '["https://images.unsplash.com/photo-1494412651409-8963ce7935a7?w=1600&q=80","https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1600&q=80","https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=1600&q=80"]');
