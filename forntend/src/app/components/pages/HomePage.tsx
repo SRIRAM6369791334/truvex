@@ -37,8 +37,15 @@ function MiniRFQForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError(null);
+
+    // Validate mobile number: must be exactly 10 digits
+    if (mobile.length !== 10) {
+      setError('Mobile number must be exactly 10 digits.');
+      return;
+    }
+
+    setLoading(true);
     try {
       await submitRFQ({
         product_name: product,
@@ -96,7 +103,20 @@ function MiniRFQForm() {
             Mobile Number <span className="text-accent">*</span>
             <span className="ml-1.5 cursor-help text-white/40 hover:text-white" title="Why we need this: suppliers respond fastest by phone or WhatsApp.">?</span>
           </label>
-          <input id="mobile" required value={mobile} onChange={(e) => setMobile(e.target.value)} className="w-full rounded-none border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-accent/60 focus:bg-white/10 transition-all duration-300" placeholder="+91 mobile" />
+          <input
+            id="mobile"
+            required
+            type="text"
+            value={mobile}
+            onChange={(e) => {
+              const value = e.target.value.replace(/\D/g, ''); // only allow digits
+              if (value.length <= 10) {
+                setMobile(value);
+              }
+            }}
+            className="w-full rounded-none border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-accent/60 focus:bg-white/10 transition-all duration-300"
+            placeholder="e.g. 9876543210"
+          />
         </div>
         <button type="submit" disabled={loading} className="market-button hidden self-end bg-accent px-6 py-2.5 text-sm font-bold text-white hover:bg-accent/90 lg:block rounded-none min-h-11 shadow-lg shadow-accent/20 disabled:opacity-60">
           {loading ? '...' : 'Submit RFQ'}
@@ -350,8 +370,8 @@ export default function HomePage() {
                     <div className={isHighlighted ? "animate-pulse" : ""}>
                       <AnimatedIcon icon={metric.iconName as any} size={32} />
                     </div>
-                    {isHighlighted && <span className="h-1.5 w-1.5 rounded-none absolute right-6 top-6 bg-accent animate-ping" />}
-                    <span className={`h-1.5 w-1.5 rounded-none absolute right-6 top-6 ${isHighlighted ? "bg-accent" : "bg-white/20"}`} />
+                    {/* {isHighlighted && <span className="h-1.5 w-1.5 rounded-none absolute right-6 top-6 bg-accent animate-ping" />} */}
+                    {/* <span className={`h-1.5 w-1.5 rounded-none absolute right-6 top-6 ${isHighlighted ? "bg-accent" : "bg-white/20"}`} /> */}
                   </div>
                   <div className="mt-5 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">{metric.value}</div>
                   <div className={`mt-1.5 break-words text-[10px] font-bold uppercase tracking-wider ${isHighlighted ? 'text-accent' : 'text-white/50'}`}>{metric.label}</div>

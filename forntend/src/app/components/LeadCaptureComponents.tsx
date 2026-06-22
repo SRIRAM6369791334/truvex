@@ -196,7 +196,8 @@ export function ServiceDynamicList() {
               return {
                 title: c.name,
                 desc: c.description || 'Verified suppliers ready to fulfill your bulk orders.',
-                image: c.image ? `${rootUrl}${c.image}` : fallbackImage
+                image: c.image ? `${rootUrl}${c.image}` : fallbackImage,
+                fallbackImage: fallbackImage
               };
             }));
           }
@@ -216,6 +217,12 @@ export function ServiceDynamicList() {
             key={activeIndex}
             src={categories[activeIndex]?.image}
             alt={categories[activeIndex]?.title}
+            onError={(e) => {
+              const fb = categories[activeIndex]?.fallbackImage;
+              if (fb && e.currentTarget.src !== fb) {
+                e.currentTarget.src = fb;
+              }
+            }}
             initial={{ opacity: 0, scale: 1.05 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
@@ -315,8 +322,15 @@ export function EnquiryPopup({
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    setLoading(true);
     setError(null);
+
+    // Validate mobile number: must be exactly 10 digits
+    if (mobile.length !== 10) {
+      setError('Mobile number must be exactly 10 digits.');
+      return;
+    }
+
+    setLoading(true);
     try {
       const { submitEnquiry } = await import('../../services/leadService');
       await submitEnquiry({
@@ -378,10 +392,16 @@ export function EnquiryPopup({
               />
               <input 
                 required 
+                type="text"
                 value={mobile}
-                onChange={(e) => setMobile(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, ''); // only allow digits
+                  if (value.length <= 10) {
+                    setMobile(value);
+                  }
+                }}
                 className="min-h-12 rounded-xl border border-border px-4 py-3 text-base outline-none focus:border-accent" 
-                placeholder="+91 mobile number" 
+                placeholder="10-digit mobile number" 
               />
             </div>
             <textarea 

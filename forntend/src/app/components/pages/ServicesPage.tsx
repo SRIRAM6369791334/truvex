@@ -20,12 +20,21 @@ export default function ServicesPage() {
   const [error, setError] = useState<string | null>(null);
 
   // Quick RFQ form states
-  const [rfqProduct, setRfqProduct] = useState('');
+  const [allServicesList, setAllServicesList] = useState<any[]>([]);
+  const [rfqServiceId, setRfqServiceId] = useState('');
   const [rfqQty, setRfqQty] = useState('');
   const [rfqMobile, setRfqMobile] = useState('');
   const [rfqSubmitting, setRfqSubmitting] = useState(false);
   const [rfqSuccess, setRfqSuccess] = useState(false);
   const [rfqError, setRfqError] = useState<string | null>(null);
+
+  useEffect(() => {
+    getServices()
+      .then((res) => {
+        setAllServicesList(res.data || []);
+      })
+      .catch((err) => console.error('Error fetching services for dropdown:', err));
+  }, []);
 
   useEffect(() => {
     // Fetch categories for dropdown
@@ -84,14 +93,14 @@ export default function ServicesPage() {
 
   const handleQuickRFQSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!rfqProduct.trim() || !rfqMobile.trim()) {
-      setRfqError('Product Name and Mobile Number are required.');
+    if (!rfqServiceId || !rfqMobile.trim()) {
+      setRfqError('Service and Mobile Number are required.');
       return;
     }
 
     // Basic mobile validation
-    if (!/^[6-9]\d{9}$/.test(rfqMobile)) {
-      setRfqError('Mobile number must be a valid 10-digit Indian number.');
+    if (rfqMobile.length !== 10) {
+      setRfqError('Mobile number must be exactly 10 digits.');
       return;
     }
 
@@ -99,13 +108,16 @@ export default function ServicesPage() {
     setRfqError(null);
 
     try {
+      const selectedService = allServicesList.find(s => String(s.id) === String(rfqServiceId));
       await submitServiceLead({
         full_name: 'Quick RFQ Buyer',
         mobile: rfqMobile,
-        requirement_details: `Quick RFQ for: ${rfqProduct}. Quantity: ${rfqQty || 'N/A'}`
+        service_id: Number(rfqServiceId),
+        quantity: rfqQty || undefined,
+        requirement_details: `Quick RFQ for Service: ${selectedService ? selectedService.title : 'Unknown'}.`
       });
       setRfqSuccess(true);
-      setRfqProduct('');
+      setRfqServiceId('');
       setRfqQty('');
       setRfqMobile('');
     } catch (err: any) {
@@ -236,14 +248,19 @@ export default function ServicesPage() {
                           </div>
                         )}
                         <div>
-                          <input 
-                            type="text" 
+                          <select 
                             required
-                            value={rfqProduct}
-                            onChange={(e) => setRfqProduct(e.target.value)}
-                            placeholder="Product / Service Name *" 
-                            className="w-full rounded-none border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all shadow-sm" 
-                          />
+                            value={rfqServiceId}
+                            onChange={(e) => setRfqServiceId(e.target.value)}
+                            className="w-full rounded-none border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all shadow-sm cursor-pointer text-slate-700 font-medium" 
+                          >
+                            <option value="" className="text-slate-400">Select Service *</option>
+                            {allServicesList.map((service) => (
+                              <option key={service.id} value={service.id} className="text-slate-800">
+                                {service.title}
+                              </option>
+                            ))}
+                          </select>
                         </div>
                         <div>
                           <input 
@@ -256,10 +273,15 @@ export default function ServicesPage() {
                         </div>
                         <div>
                           <input 
-                            type="tel" 
+                            type="text" 
                             required
                             value={rfqMobile}
-                            onChange={(e) => setRfqMobile(e.target.value)}
+                            onChange={(e) => {
+                              const value = e.target.value.replace(/\D/g, ''); // only allow digits
+                              if (value.length <= 10) {
+                                setRfqMobile(value);
+                              }
+                            }}
                             placeholder="Mobile Number *" 
                             className="w-full rounded-none border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all shadow-sm" 
                           />

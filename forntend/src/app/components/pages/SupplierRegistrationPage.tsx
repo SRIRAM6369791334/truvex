@@ -1,12 +1,10 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { ImageUpload, OTPModal } from '../LeadCaptureComponents';
+import { ImageUpload } from '../LeadCaptureComponents';
 import { categories } from '../MarketplaceComponents';
 import AnimatedIcon from '../AnimatedIcon';
 import { registerSupplier } from '../../../services/supplierService';
 
 export default function SupplierRegistrationPage() {
-  const [otpOpen, setOtpOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   // Form states
@@ -41,9 +39,9 @@ export default function SupplierRegistrationPage() {
       setValidationError('Mobile Number is required.');
       return;
     }
-    // Mobile number validation (10 digit Indian format)
-    if (!/^[6-9]\d{9}$/.test(mobile)) {
-      setValidationError('Mobile Number must be a valid 10-digit Indian number.');
+    // Mobile number validation (exactly 10 digits)
+    if (mobile.length !== 10) {
+      setValidationError('Mobile Number must be exactly 10 digits.');
       return;
     }
     // Email validation (if provided)
@@ -61,11 +59,10 @@ export default function SupplierRegistrationPage() {
     }
 
     // If valid, open OTP modal
-    setOtpOpen(true);
+    handleOTPVerify();
   };
 
   const handleOTPVerify = async () => {
-    setOtpOpen(false);
     setSubmitting(true);
     setSubmitError(null);
 
@@ -184,9 +181,14 @@ export default function SupplierRegistrationPage() {
                     <Field 
                       label="Mobile Number" 
                       required 
-                      type="tel" 
+                      type="text" 
                       value={mobile}
-                      onChange={(e) => setMobile(e.target.value)}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, ''); // only allow digits
+                        if (value.length <= 10) {
+                          setMobile(value);
+                        }
+                      }}
                     />
                     <Field 
                       label="Email" 
@@ -224,7 +226,7 @@ export default function SupplierRegistrationPage() {
                     disabled={submitting}
                     className="market-button mt-2 min-h-12 w-full rounded-none bg-accent px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-primary disabled:opacity-50"
                   >
-                    {submitting ? 'Registering...' : 'Verify OTP & Register'}
+                    {submitting ? 'Registering...' : 'Register'}
                   </button>
                 </form>
               )}
@@ -261,12 +263,6 @@ export default function SupplierRegistrationPage() {
         </div>
       </section>
 
-      <OTPModal
-        open={otpOpen}
-        onClose={() => setOtpOpen(false)}
-        onVerify={handleOTPVerify}
-        title="Supplier OTP Verification"
-      />
     </div>
   );
 }

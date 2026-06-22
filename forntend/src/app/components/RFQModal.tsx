@@ -56,8 +56,15 @@ export function RFQModal({ trigger }: { trigger?: React.ReactNode }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError(null);
+
+    // Validate mobile number: must be exactly 10 digits
+    if (mobile.length !== 10) {
+      setError('Mobile number must be exactly 10 digits.');
+      return;
+    }
+
+    setLoading(true);
     try {
       await submitRFQ({
         product_name: productName,
@@ -147,11 +154,16 @@ export function RFQModal({ trigger }: { trigger?: React.ReactNode }) {
               <Field label="Mobile Number" required hint="Why we need this: suppliers respond fastest by phone or WhatsApp.">
                 <input
                   required
-                  type="tel"
+                  type="text"
                   value={mobile}
-                  onChange={(e) => setMobile(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, ''); // only allow digits
+                    if (value.length <= 10) {
+                      setMobile(value);
+                    }
+                  }}
                   className="w-full border border-border px-3 py-2 text-sm outline-none focus:border-accent"
-                  placeholder="+91 XXXXX XXXXX"
+                  placeholder="Enter 10-digit mobile number (e.g., 9876543210)"
                 />
               </Field>
               <Field label="Specifications">

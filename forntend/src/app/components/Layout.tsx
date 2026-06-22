@@ -19,7 +19,7 @@ export default function Layout() {
 
     // Force instant scroll to top after React renders the new page
     document.documentElement.style.scrollBehavior = 'auto';
-    
+
     // Defer the actual scroll so the browser has time to paint the new DOM
     requestAnimationFrame(() => {
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
@@ -27,7 +27,7 @@ export default function Layout() {
       document.documentElement.scrollTop = 0;
       const root = document.getElementById('root');
       if (root) root.scrollTop = 0;
-      
+
       // Re-enable global scroll behavior after scroll completes
       setTimeout(() => {
         document.documentElement.style.scrollBehavior = '';
@@ -61,9 +61,13 @@ export default function Layout() {
 
       <Footer onOpenEnquiry={() => setEnquiryOpen(true)} />
 
-      <div className="fixed bottom-0 left-0 right-0 z-50 grid w-screen max-w-full grid-cols-2 border-t border-border bg-white p-2 shadow-2xl md:hidden">
-        <Link to="/buyers" className="market-button min-h-12 bg-accent py-3 text-center text-sm font-bold text-white">Post Requirement</Link>
-        <Link to="/supplier-listing" className="market-button min-h-12 bg-primary py-3 text-center text-sm font-bold text-white">Find Supplier</Link>
+      <div className="hidden fixed bottom-0 left-0 right-0 z-50 grid w-screen max-w-full grid-cols-2 border-t border-border bg-white p-2 shadow-2xl md:hidden">
+        <Link to="/buyers" className="market-button min-h-12 bg-accent py-3 text-center text-sm font-bold text-white">
+          Post Requirement
+        </Link>
+        <Link to="/supplier-listing" className="market-button min-h-12 bg-primary py-3 text-center text-sm font-bold text-white">
+          Find Supplier
+        </Link>
       </div>
       <WhatsAppFloatingButton />
       <CallFloatingButton />

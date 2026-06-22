@@ -10,7 +10,7 @@
     @apply font-sans text-foreground bg-background selection:bg-accent/20 selection:text-accent;
     overflow-x: hidden;
     background:
-      radial-gradient(ellipse at 20% 50%, rgba(201,151,58,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 20% 50%, rgba(13,148,136,0.08) 0%, transparent 60%),
       radial-gradient(ellipse at 80% 20%, rgba(13,110,110,0.06) 0%, transparent 60%),
       var(--background);
   }

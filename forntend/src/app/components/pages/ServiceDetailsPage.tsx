@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router';
-import { ChevronRight, ShieldCheck, CheckCircle2, Truck, ArrowRight } from 'lucide-react';
+import { ChevronRight, ShieldCheck, CheckCircle2, Truck, ArrowRight, TrendingUp, ListChecks } from 'lucide-react';
 import { CategoryCard, categories } from '../MarketplaceComponents';
 import { getServiceById, getServices } from '../../../services/serviceService';
 import { submitServiceLead } from '../../../services/leadService';
@@ -64,8 +64,8 @@ export default function ServiceDetailsPage() {
       setFormError('Full Name and Mobile Number are required.');
       return;
     }
-    if (!/^[6-9]\d{9}$/.test(mobile)) {
-      setFormError('Mobile number must be a valid 10-digit Indian number.');
+    if (mobile.length !== 10) {
+      setFormError('Mobile number must be exactly 10 digits.');
       return;
     }
     
@@ -118,13 +118,25 @@ export default function ServiceDetailsPage() {
     );
   }
 
-  // Handle images gallery
-  const galleryImages = Array.isArray(service.images) && service.images.length > 0
-    ? service.images
-    : [service.image || 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800'];
+  // Handle images gallery (combine main image and gallery images, ensuring unique values)
+  const galleryImages = Array.from(
+    new Set([
+      service.image,
+      ...(Array.isArray(service.images) ? service.images : []),
+    ])
+  ).filter(Boolean);
 
-  // Handle specifications
-  const specsList = Array.isArray(service.specs) ? service.specs : [];
+  // Fallback to placeholder if no images at all
+  if (galleryImages.length === 0) {
+    galleryImages.push('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800');
+  }
+
+  // Handle specifications (can be an object or an array)
+  const specsList = Array.isArray(service.specs)
+    ? service.specs
+    : service.specs && typeof service.specs === 'object'
+    ? Object.entries(service.specs).map(([key, value]) => ({ key, value }))
+    : [];
 
   return (
     <div className="bg-[#f0f2f5] min-h-screen pb-20">
@@ -149,6 +161,14 @@ export default function ServiceDetailsPage() {
             
             {/* Main Product Card */}
             <div className="bg-white rounded-none border border-border shadow-sm p-5 md:p-8">
+              <div className="flex flex-wrap items-center gap-2 mb-3">
+                <span className="text-[11px] font-bold uppercase tracking-wider bg-accent/10 px-2.5 py-1 rounded-none text-accent">
+                  {service.category_name || 'Industrial Service'}
+                </span>
+                <span className="text-[11px] font-bold uppercase tracking-wider bg-teal-50 px-2.5 py-1 rounded-none text-teal-600">
+                  Verified Sourcing
+                </span>
+              </div>
               <h1 className="font-serif text-2xl md:text-3xl font-bold text-primary mb-2">{service.title}</h1>
               
               <div className="flex items-center gap-4 mb-6 pb-6 border-b border-border/50 text-sm font-medium">
@@ -162,11 +182,44 @@ export default function ServiceDetailsPage() {
                 </span>
               </div>
 
+              {/* Statistics Highlights Grid (New) */}
+              {Array.isArray(service.stats) && service.stats.length > 0 && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
+                  {service.stats.map((stat: any, idx: number) => {
+                    let label = '';
+                    let value = '';
+                    
+                    if (typeof stat === 'string') {
+                      const trimmed = stat.trim();
+                      const firstSpace = trimmed.indexOf(' ');
+                      if (firstSpace > 0) {
+                        value = trimmed.substring(0, firstSpace);
+                        label = trimmed.substring(firstSpace + 1);
+                      } else {
+                        value = trimmed;
+                        label = '';
+                      }
+                    } else if (stat && typeof stat === 'object') {
+                      label = stat.label || stat.name || stat.key || '';
+                      value = stat.value || stat.val || '';
+                    }
+
+                    if (!value && !label) return null;
+                    return (
+                      <div key={idx} className="bg-gradient-to-br from-slate-50 to-slate-100/50 border border-slate-100 p-4 rounded-none text-center shadow-sm">
+                        <div className="text-xl md:text-2xl font-bold text-accent mb-0.5">{value || label}</div>
+                        {value && label && <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">{label}</div>}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
               <div className="grid md:grid-cols-2 gap-8">
                 {/* Image Gallery */}
                 <div className="space-y-4">
-                  <div className="border border-border/50 rounded-none bg-slate-50 aspect-square flex items-center justify-center overflow-hidden">
-                    <img src={activeImage || galleryImages[0]} alt={service.title} className="w-full h-full object-contain" />
+                  <div className="border border-border/50 rounded-none bg-slate-50 aspect-square flex items-center justify-center overflow-hidden relative group">
+                    <img src={activeImage || galleryImages[0]} alt={service.title} className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" />
                   </div>
                   {galleryImages.length > 1 && (
                     <div className="grid grid-cols-4 gap-2">
@@ -184,26 +237,30 @@ export default function ServiceDetailsPage() {
                 </div>
 
                 {/* Specs Overview */}
-                <div>
-                  <h3 className="font-bold text-primary mb-4 text-sm uppercase tracking-wider border-b border-border pb-2">Product Specifications</h3>
-                  {specsList.length > 0 ? (
-                    <table className="w-full text-sm">
-                      <tbody>
-                        {specsList.map((spec: any, idx: number) => {
-                          const label = spec.label || spec.name || spec.key || '';
-                          const val = spec.value || spec.val || '';
-                          return (
-                            <tr key={idx} className="border-b border-border/30 last:border-0">
-                              <td className="py-2.5 text-muted-foreground font-medium w-1/2">{label}</td>
-                              <td className="py-2.5 text-primary font-semibold">{val}</td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">Contact us for custom specifications and sourcing details.</p>
-                  )}
+                <div className="flex flex-col justify-between">
+                  <div>
+                    <h3 className="font-bold text-primary mb-4 text-sm uppercase tracking-wider border-b border-border pb-2">Product Specifications</h3>
+                    {specsList.length > 0 ? (
+                      <div className="border border-border/40 rounded-none overflow-hidden">
+                        <table className="w-full text-sm">
+                          <tbody>
+                            {specsList.map((spec: any, idx: number) => {
+                              const label = spec.label || spec.name || spec.key || '';
+                              const val = spec.value || spec.val || '';
+                              return (
+                                <tr key={idx} className="border-b border-border/30 last:border-0 odd:bg-slate-50/50">
+                                  <td className="py-2.5 px-3 text-muted-foreground font-semibold w-1/2">{label}</td>
+                                  <td className="py-2.5 px-3 text-primary font-bold">{val}</td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">Contact us for custom specifications and sourcing details.</p>
+                    )}
+                  </div>
                   
                   <div className="mt-6 space-y-3 border-t border-border/50 pt-5 text-left">
                     <div className="flex items-start gap-2 text-sm text-slate-600">
@@ -224,30 +281,73 @@ export default function ServiceDetailsPage() {
               <h3 className="font-bold text-primary mb-4 text-sm uppercase tracking-wider border-b border-border pb-2">Product Description</h3>
               <div className="prose prose-sm max-w-none text-slate-600 space-y-4">
                 <p>{service.long_description || service.description}</p>
-                
+              </div>
+            </div>
+
+            {/* Key Highlights: Features & Benefits */}
+            {((Array.isArray(service.features) && service.features.length > 0) || 
+              (Array.isArray(service.benefits) && service.benefits.length > 0)) && (
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Features */}
                 {Array.isArray(service.features) && service.features.length > 0 && (
-                  <div>
-                    <p className="text-primary font-bold">Key Features:</p>
-                    <ul className="list-disc pl-5 space-y-1">
-                      {service.features.map((feat: string, idx: number) => (
-                        <li key={idx}>{feat}</li>
+                  <div className="bg-white rounded-none border border-border shadow-sm p-6 text-left">
+                    <h3 className="font-bold text-primary mb-4 text-sm uppercase tracking-wider border-b border-border pb-2 flex items-center gap-2">
+                      <ShieldCheck size={18} className="text-teal-600" /> Key Features
+                    </h3>
+                    <ul className="space-y-3">
+                      {service.features.filter(Boolean).map((feat: string, idx: number) => (
+                        <li key={idx} className="flex items-start gap-2.5 text-sm text-slate-600">
+                          <span className="h-5 w-5 rounded-full bg-teal-50 border border-teal-100 flex items-center justify-center shrink-0 mt-0.5">
+                            <span className="text-[10px] text-teal-600">✓</span>
+                          </span>
+                          <span>{feat}</span>
+                        </li>
                       ))}
                     </ul>
                   </div>
                 )}
 
+                {/* Benefits */}
                 {Array.isArray(service.benefits) && service.benefits.length > 0 && (
-                  <div>
-                    <p className="text-primary font-bold">Benefits:</p>
-                    <ul className="list-disc pl-5 space-y-1">
-                      {service.benefits.map((benefit: string, idx: number) => (
-                        <li key={idx}>{benefit}</li>
+                  <div className="bg-white rounded-none border border-border shadow-sm p-6 text-left">
+                    <h3 className="font-bold text-primary mb-4 text-sm uppercase tracking-wider border-b border-border pb-2 flex items-center gap-2">
+                      <TrendingUp size={18} className="text-accent" /> Value Benefits
+                    </h3>
+                    <ul className="space-y-3">
+                      {service.benefits.filter(Boolean).map((benefit: string, idx: number) => (
+                        <li key={idx} className="flex items-start gap-2.5 text-sm text-slate-600">
+                          <span className="h-5 w-5 rounded-full bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0 mt-0.5">
+                            <span className="text-[10px] text-accent">★</span>
+                          </span>
+                          <span>{benefit}</span>
+                        </li>
                       ))}
                     </ul>
                   </div>
                 )}
               </div>
-            </div>
+            )}
+
+            {/* Sourcing Process Timeline */}
+            {Array.isArray(service.process_steps) && service.process_steps.length > 0 && (
+              <div className="bg-white rounded-none border border-border shadow-sm p-6 md:p-8 text-left">
+                <h3 className="font-bold text-primary mb-6 text-sm uppercase tracking-wider border-b border-border pb-2 flex items-center gap-2">
+                  <ListChecks size={18} className="text-accent" /> Sourcing & Execution Process
+                </h3>
+                <div className="relative border-l border-slate-200 ml-4 pl-6 space-y-6 py-2">
+                  {service.process_steps.filter(Boolean).map((step: string, idx: number) => (
+                    <div key={idx} className="relative">
+                      {/* Timeline Node */}
+                      <span className="absolute -left-[35px] top-0 flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-accent to-[#b07b32] text-[10px] font-bold text-white ring-4 ring-white">
+                        {idx + 1}
+                      </span>
+                      <h4 className="text-sm font-bold text-primary mb-1">Step {idx + 1}</h4>
+                      <p className="text-sm text-slate-600">{step}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
           </div>
 
@@ -297,10 +397,15 @@ export default function ServiceDetailsPage() {
                       <div className="flex">
                         <span className="inline-flex items-center px-3 border border-r-0 border-slate-200 bg-slate-100 text-sm text-slate-500 font-bold">+91</span>
                         <input 
-                          type="tel" 
+                          type="text" 
                           required
                           value={mobile}
-                          onChange={(e) => setMobile(e.target.value)}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, ''); // only allow digits
+                            if (value.length <= 10) {
+                              setMobile(value);
+                            }
+                          }}
                           placeholder="Enter Mobile Number" 
                           className="flex-1 rounded-none border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all shadow-sm" 
                         />

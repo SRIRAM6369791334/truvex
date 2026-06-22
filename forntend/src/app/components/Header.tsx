@@ -67,9 +67,9 @@ const navLinks = [
     icon: Briefcase,
     iconVariants: {
       hover: {
-        y: -3,
-        scale: 1.12,
-        transition: { duration: 0.3, type: "spring" as any, stiffness: 450, damping: 12 }
+        y: [0, -3, 0],
+        scale: [1, 1.12, 1],
+        transition: { duration: 0.4, ease: "easeOut" as any }
       }
     }
   },
@@ -79,8 +79,8 @@ const navLinks = [
     icon: Info,
     iconVariants: {
       hover: {
-        scale: 1.15,
-        rotate: 360,
+        scale: [1, 1.15, 1],
+        rotate: [0, 360],
         transition: { duration: 0.6, ease: "easeOut" as any }
       }
     }
@@ -129,6 +129,7 @@ function SearchBar({ onMobileClose }: { onMobileClose?: () => void }) {
     if (!(query || '').trim()) return;
     if (onMobileClose) onMobileClose();
     navigate(`/services?search=${encodeURIComponent((query || '').trim())}`);
+    setQuery('');
     setIsFocused(false);
   };
 
@@ -151,10 +152,10 @@ function SearchBar({ onMobileClose }: { onMobileClose?: () => void }) {
         />
         <button
           type="submit"
-          className="market-button self-stretch flex items-center justify-center bg-accent px-4 lg:px-6 text-xs font-bold text-white hover:bg-accent/90 rounded-none transition-all cursor-pointer"
+          className="market-button self-stretch flex items-center justify-center bg-accent px-4 text-white hover:bg-accent/90 rounded-none transition-all cursor-pointer"
+          aria-label="Search"
         >
-          <span className="hidden lg:inline">Search</span>
-          <Search size={16} className="lg:hidden" />
+          <Search size={16} />
         </button>
       </form>
 
@@ -171,7 +172,7 @@ function SearchBar({ onMobileClose }: { onMobileClose?: () => void }) {
                 key={s.id}
                 to={`/services?search=${encodeURIComponent(s.title)}`}
                 onClick={() => {
-                  setQuery(s.title || '');
+                  setQuery('');
                   if (onMobileClose) onMobileClose();
                 }}
                 className="flex items-center gap-3 px-4 py-3 hover:bg-muted/30 transition-all border-b border-primary/5 last:border-0"
@@ -193,10 +194,11 @@ function SearchBar({ onMobileClose }: { onMobileClose?: () => void }) {
 }
 
 export default function Header({ onOpenEnquiry }: HeaderProps) {
+  const [isSticky, setIsSticky] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
-  const [isSticky, setIsSticky] = useState(false);
   const [selectedCity, setSelectedCity] = useState('Mumbai');
   const [cityDropdownOpen, setCityDropdownOpen] = useState(false);
   const [categoriesData, setCategoriesData] = useState<any[]>([]);
@@ -341,8 +343,8 @@ export default function Header({ onOpenEnquiry }: HeaderProps) {
           <div className="flex min-h-16 items-center justify-between gap-4">
             
             {/* Logo */}
-            <Link to="/" className="shrink-0 text-3xl font-bold tracking-tight text-primary transition-all hover:opacity-95">
-              <span className="font-serif text-accent">Truvex</span>
+            <Link to="/" className="shrink-0 transition-all hover:opacity-95">
+              <img src="/logo.png" alt="Truvex Sourcing" className="h-14 md:h-16 w-auto object-contain" />
             </Link>
 
             {/* Premium Sharp-edged Search Bar */}
@@ -421,13 +423,13 @@ export default function Header({ onOpenEnquiry }: HeaderProps) {
 
             {/* Mobile / Tablet Controls */}
             <div className="flex items-center gap-3 xl:hidden">
-              <Link
-                to="/supplier-listing"
-                className="p-2 text-primary hover:bg-muted rounded-none"
+              <button
+                onClick={() => setShowMobileSearch(!showMobileSearch)}
+                className="p-2 text-primary hover:bg-muted rounded-none transition-all cursor-pointer"
                 aria-label="Search"
               >
-                <Search size={22} />
-              </Link>
+                {showMobileSearch ? <X size={22} /> : <Search size={22} />}
+              </button>
               <button
                 className="flex p-2 text-primary hover:bg-muted rounded-none transition-all cursor-pointer"
                 onClick={() => setMobileOpen((open) => !open)}
@@ -438,6 +440,19 @@ export default function Header({ onOpenEnquiry }: HeaderProps) {
             </div>
 
           </div>
+          <AnimatePresence>
+            {showMobileSearch && (
+              <motion.div
+                initial={{ height: 0, opacity: 0, y: -15, scaleY: 0.95 }}
+                animate={{ height: 'auto', opacity: 1, y: 0, scaleY: 1 }}
+                exit={{ height: 0, opacity: 0, y: -15, scaleY: 0.95 }}
+                transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+                className="xl:hidden pb-4"
+              >
+                <SearchBar onMobileClose={() => setShowMobileSearch(false)} />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Mega Menu Dropdown */}
@@ -486,118 +501,131 @@ export default function Header({ onOpenEnquiry }: HeaderProps) {
           )}
         </AnimatePresence>
 
-        {/* Mobile Navigation Drawer */}
-        <AnimatePresence>
-          {mobileOpen && (
-            <>
-              {/* Backdrop blur overlay */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setMobileOpen(false)}
-                className="fixed inset-0 z-40 bg-primary/20 backdrop-blur-sm xl:hidden"
-              />
-              <motion.div
-                initial={{ opacity: 0, y: -15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -15 }}
-                transition={{ type: 'spring', stiffness: 350, damping: 28 }}
-                className="absolute left-0 right-0 top-full z-50 max-h-[75vh] overflow-y-auto bg-white border-b border-primary/10 rounded-none shadow-[0_24px_50px_rgba(0,0,0,0.12)] xl:hidden"
-              >
-                <div className="p-5 space-y-5">
-                  
-                  {/* Search in Mobile Drawer */}
-                  <SearchBar onMobileClose={() => setMobileOpen(false)} />
-
-                  <div className="grid grid-cols-1 gap-2">
-                    
-                    {/* Mobile Categories Accordion */}
-                    <div className="border-b border-primary/5 pb-2">
-                      <button
-                        onClick={() => setMobileCategoriesOpen(!mobileCategoriesOpen)}
-                        className="flex w-full items-center justify-between px-3 py-3 text-[14px] font-bold text-primary hover:bg-muted/40 rounded-none transition-all cursor-pointer"
-                      >
-                        <span className="flex items-center gap-2"><Layers size={16} className="text-accent" /> Product Categories</span>
-                        <ChevronDown size={16} className={`text-primary/60 transition-transform duration-350 ${mobileCategoriesOpen ? 'rotate-180' : ''}`} />
-                      </button>
-                      
-                      <AnimatePresence>
-                        {mobileCategoriesOpen && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            className="overflow-hidden bg-muted/20 pl-4 pr-3 py-3 space-y-4 rounded-none mt-1"
-                          >
-                            {categoriesData.map((cat, idx) => {
-                              const CatIcon = cat.icon;
-                              return (
-                                <div key={idx} className="space-y-2">
-                                  <span className="flex items-center gap-1.5 text-[11px] font-bold text-accent uppercase tracking-wider">
-                                    <CatIcon size={12} />
-                                    {cat.title}
-                                  </span>
-                                  <div className="pl-4 border-l border-primary/5 space-y-2">
-                                    {cat.items.map((item: any, itemIdx: number) => (
-                                      <Link
-                                        key={itemIdx}
-                                        to={item.path}
-                                        onClick={() => setMobileOpen(false)}
-                                        className="block py-1 text-sm text-primary/80 hover:text-accent font-medium transition-all"
-                                      >
-                                        {item.name}
-                                      </Link>
-                                    ))}
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-
-                    {/* Standard Links */}
-                    {navLinks.map((link) => {
-                      const Icon = link.icon;
-                      return (
-                        <Link
-                          key={link.path}
-                          to={link.path}
-                          onClick={() => setMobileOpen(false)}
-                          className={`flex items-center gap-2.5 px-3 py-3 text-sm font-semibold rounded-none transition-all ${
-                            isActive(link.path)
-                              ? 'bg-primary text-white shadow-md'
-                              : 'text-primary hover:bg-muted/40 hover:text-accent'
-                          }`}
-                        >
-                          <Icon size={16} className={isActive(link.path) ? 'text-white' : 'text-primary/60'} />
-                          {link.label}
-                        </Link>
-                      );
-                    })}
-                  </div>
-
-                  <div className="pt-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setMobileOpen(false);
-                        onOpenEnquiry();
-                      }}
-                      className="w-full market-button bg-accent py-3 text-center text-sm font-bold text-white rounded-none shadow-lg shadow-accent/25 hover:bg-accent/90 transition-all cursor-pointer"
-                    >
-                      Post Buy Requirement
-                    </button>
-                  </div>
-
-                </div>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
       </nav>
+
+      {/* Mobile Navigation Drawer */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            {/* Backdrop blur overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileOpen(false)}
+              className="fixed inset-0 z-[70] bg-black/40 backdrop-blur-xs xl:hidden"
+            />
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', stiffness: 320, damping: 32 }}
+              className="fixed top-0 right-0 bottom-0 z-[80] w-full max-w-[320px] bg-white shadow-2xl xl:hidden h-screen flex flex-col"
+            >
+              {/* Mobile Drawer Header */}
+              <div className="flex items-center justify-between p-5 border-b border-primary/5 shrink-0">
+                <img src="/logo.png" alt="Logo" className="h-10 w-auto object-contain" />
+                <button
+                  onClick={() => setMobileOpen(false)}
+                  className="p-1 text-primary hover:bg-muted transition-all rounded-none cursor-pointer"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              <div className="p-5 space-y-5 flex-1 overflow-y-auto">
+                
+                {/* Search in Mobile Drawer */}
+                <SearchBar onMobileClose={() => setMobileOpen(false)} />
+
+                <div className="grid grid-cols-1 gap-2">
+                  
+                  {/* Mobile Categories Accordion */}
+                  <div className="border-b border-primary/5 pb-2">
+                    <button
+                      onClick={() => setMobileCategoriesOpen(!mobileCategoriesOpen)}
+                      className="flex w-full items-center justify-between px-3 py-3 text-[14px] font-bold text-primary hover:bg-muted/40 rounded-none transition-all cursor-pointer"
+                    >
+                      <span className="flex items-center gap-2"><Layers size={16} className="text-accent" /> Product Categories</span>
+                      <ChevronDown size={16} className={`text-primary/60 transition-transform duration-350 ${mobileCategoriesOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    
+                    <AnimatePresence>
+                      {mobileCategoriesOpen && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          className="overflow-hidden bg-muted/20 pl-4 pr-3 py-3 space-y-4 rounded-none mt-1"
+                        >
+                          {categoriesData.map((cat, idx) => {
+                            const CatIcon = cat.icon;
+                            return (
+                              <div key={idx} className="space-y-2">
+                                <span className="flex items-center gap-1.5 text-[11px] font-bold text-accent uppercase tracking-wider">
+                                  <CatIcon size={12} />
+                                  {cat.title}
+                                </span>
+                                <div className="pl-4 border-l border-primary/5 space-y-2">
+                                  {cat.items.map((item: any, itemIdx: number) => (
+                                    <Link
+                                      key={itemIdx}
+                                      to={item.path}
+                                      onClick={() => setMobileOpen(false)}
+                                      className="block py-1 text-sm text-primary/80 hover:text-accent font-medium transition-all"
+                                    >
+                                      {item.name}
+                                    </Link>
+                                  ))}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* Standard Links */}
+                  {navLinks.map((link) => {
+                    const Icon = link.icon;
+                    return (
+                      <Link
+                        key={link.path}
+                        to={link.path}
+                        onClick={() => setMobileOpen(false)}
+                        className={`flex items-center gap-2.5 px-3 py-3 text-sm font-semibold rounded-none transition-all ${
+                          isActive(link.path)
+                            ? 'bg-primary text-white shadow-md'
+                            : 'text-primary hover:bg-muted/40 hover:text-accent'
+                        }`}
+                      >
+                        <Icon size={16} className={isActive(link.path) ? 'text-white' : 'text-primary/60'} />
+                        {link.label}
+                      </Link>
+                    );
+                  })}
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onOpenEnquiry();
+                      setTimeout(() => {
+                        setMobileOpen(false);
+                      }, 200);
+                    }}
+                    className="w-full market-button bg-accent py-3 text-center text-sm font-bold text-white rounded-none shadow-lg shadow-accent/25 hover:bg-accent/90 transition-all cursor-pointer"
+                  >
+                    Post Buy Requirement
+                  </button>
+                </div>
+
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </>
   );
 }

@@ -50,6 +50,11 @@ export default defineConfig(({ mode }) => ({
         changeOrigin: true,
         secure: false,
       },
+      '/uploads': {
+        target: apiProxyTarget(mode),
+        changeOrigin: true,
+        secure: false,
+      },
     },
   },
 
