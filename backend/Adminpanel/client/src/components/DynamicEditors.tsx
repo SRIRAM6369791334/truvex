@@ -65,9 +65,9 @@ export function KeyValueEditor({
   return (
     <div>
       {rows.map((row, index) => (
-        <div className="flex flex-col sm:flex-row gap-3 mb-3 items-stretch sm:items-center" key={index}>
+        <div className="flex gap-3 mb-3 items-center" key={index}>
           <input
-            className="tw-input w-full sm:w-1/3"
+            className="tw-input flex-1"
             onChange={(event) => {
               const next = [...rows];
               next[index] = { ...next[index], key: event.target.value };

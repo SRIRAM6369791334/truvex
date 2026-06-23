@@ -7,6 +7,7 @@ import { KeyValueEditor, StringListEditor, type KeyValue } from '../components/D
 import { validateImage } from '../components/imageValidation';
 import { ErrorPanel, Loading } from '../components/Loading';
 import { useToast } from '../toast';
+import { SummernoteEditor } from '../components/SummernoteEditor';
 import type { CategoryOption, Service, Subcategory } from '../types';
 import { errorMessage } from '../utils';
 
@@ -71,9 +72,19 @@ export function ServiceFormPage() {
         return '';
       }).filter(Boolean));
     }
+    if (response.data.process_steps) {
+      response.data.process_steps = response.data.process_steps.map((item: any) => {
+        if (typeof item === 'string') return item.replace(/\[object Object\]/g, 'Step Details');
+        if (item && typeof item === 'object') {
+          return item.title && item.description ? `${item.title}: ${item.description}` : item.step || item.title || item.name || item.value || JSON.stringify(item);
+        }
+        return '';
+      }).filter(Boolean);
+    }
     if (response.data.specs) {
       setSpecRows(Object.entries(response.data.specs).map(([key, value]) => ({ key, value: String(value) })));
     }
+    setService(response.data);
   }, [id]);
 
   useEffect(() => {
@@ -164,6 +175,23 @@ export function ServiceFormPage() {
       showToast('Main image is required.', 'error');
       return;
     }
+    const totalGalleryImages = (service.images?.length || 0) + galleryFiles.length;
+    if (totalGalleryImages === 0) {
+      showToast('At least one gallery image is required.', 'error');
+      return;
+    }
+    if (service.process_steps.filter(Boolean).length === 0) {
+      showToast('At least one process step is required.', 'error');
+      return;
+    }
+    if (statRows.filter(Boolean).length === 0) {
+      showToast('At least one service statistic is required.', 'error');
+      return;
+    }
+    if (specRows.filter((item) => item.key.trim() !== '').length === 0) {
+      showToast('At least one technical specification is required.', 'error');
+      return;
+    }
     setSaving(true);
     try {
       const form = new FormData();
@@ -243,47 +271,100 @@ export function ServiceFormPage() {
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <label htmlFor="service-title"><span className="tw-label">Title *</span><input className="tw-input" id="service-title" onChange={(event) => setService({ ...service, title: event.target.value })} required value={service.title} /></label>
               <label htmlFor="service-slug"><span className="tw-label">Slug</span><input className="tw-input" id="service-slug" onChange={(event) => setService({ ...service, slug: event.target.value })} placeholder="Auto-generated if blank" value={service.slug} /></label>
-              <label className="md:col-span-2" htmlFor="service-description"><span className="tw-label">Short Description *</span><textarea className="tw-input" id="service-description" onChange={(event) => setService({ ...service, description: event.target.value })} required rows={3} value={service.description} /></label>
-              <label className="md:col-span-2" htmlFor="service-long-description"><span className="tw-label">Long Description</span><textarea className="tw-input" id="service-long-description" onChange={(event) => setService({ ...service, long_description: event.target.value })} rows={6} value={service.long_description} /></label>
-              <label htmlFor="service-features"><span className="tw-label">Features (one per line)</span><textarea className="tw-input" id="service-features" onChange={(event) => setService({ ...service, features: event.target.value.split(/\r?\n/) })} rows={6} value={service.features.join('\n')} /></label>
-              <label htmlFor="service-benefits"><span className="tw-label">Benefits (one per line)</span><textarea className="tw-input" id="service-benefits" onChange={(event) => setService({ ...service, benefits: event.target.value.split(/\r?\n/) })} rows={6} value={service.benefits.join('\n')} /></label>
+              <label className="md:col-span-2" htmlFor="service-description">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="tw-label">Short Description *</span>
+                  <span className="text-[11px] text-gray-500 font-medium">{service.description.length}/250</span>
+                </div>
+                <textarea className="tw-input mt-0" id="service-description" onChange={(event) => setService({ ...service, description: event.target.value })} required maxLength={250} rows={3} value={service.description} />
+              </label>
+              <div className="md:col-span-2">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="tw-label">Long Description *</span>
+                </div>
+                <SummernoteEditor
+                  id="service-long-description"
+                  value={service.long_description}
+                  onChange={(value) => setService({ ...service, long_description: value })}
+                />
+              </div>
+              <label htmlFor="service-features"><span className="tw-label">Features (one per line) *</span><textarea className="tw-input" id="service-features" onChange={(event) => setService({ ...service, features: event.target.value.split(/\r?\n/) })} required rows={6} value={service.features.join('\n')} /></label>
+              <label htmlFor="service-benefits"><span className="tw-label">Benefits (one per line) *</span><textarea className="tw-input" id="service-benefits" onChange={(event) => setService({ ...service, benefits: event.target.value.split(/\r?\n/) })} required rows={6} value={service.benefits.join('\n')} /></label>
             </div>
           </section>
 
           <section className="bento-card">
             <h3 className="bento-header"><ImageIcon size={20} /> Service Images</h3>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <label htmlFor="service-image"><span className="tw-label">Main image (800×600, max 2 MB)</span><input accept="image/jpeg,image/png,image/webp" className="tw-input" id="service-image" onChange={(event) => void selectMainImage(event)} type="file" /></label>
-              <label htmlFor="service-gallery"><span className="tw-label">Gallery images (800×600, up to 10)</span><input accept="image/jpeg,image/png,image/webp" className="tw-input" id="service-gallery" multiple onChange={(event) => void selectGallery(event)} type="file" /></label>
+              <label htmlFor="service-image">
+                <span className="tw-label">Main image (800×600, max 2 MB) {!editing && '*'}</span>
+                <input accept="image/jpeg,image/png,image/webp" className="tw-input" id="service-image" onChange={(event) => void selectMainImage(event)} type="file" required={!editing} />
+              </label>
+              <label htmlFor="service-gallery">
+                <span className="tw-label">Gallery images (800×600, up to 10) {!editing && '*'}</span>
+                <input accept="image/jpeg,image/png,image/webp" className="tw-input" id="service-gallery" multiple onChange={(event) => void selectGallery(event)} type="file" />
+              </label>
             </div>
-            {(mainPreview || service.image) && <div className="image-thumbs"><img alt="Main service preview" src={mainPreview || service.image} /></div>}
-            <div className="image-thumbs">
-              {(galleryPreviews.length ? galleryPreviews : service.images).map((image) => <img alt="Service gallery preview" key={image} src={image} />)}
+            {(mainPreview || service.image) && (
+              <div className="image-thumbs mt-3">
+                <span className="tw-label block mb-1">Main Image Preview</span>
+                <img alt="Main service preview" src={mainPreview || service.image} />
+              </div>
+            )}
+            <div className="image-thumbs flex flex-wrap gap-4 mt-4">
+              {/* Existing Gallery Images */}
+              {service.images?.map((image, index) => (
+                <div key={`existing-${image}`} className="thumb-wrapper">
+                  <img alt="Service gallery existing" src={image} />
+                  <button
+                    aria-label="Remove existing gallery image"
+                    className="thumb-remove-btn"
+                    onClick={() => removeGalleryImage(index, true)}
+                    type="button"
+                  >
+                    &times;
+                  </button>
+                </div>
+              ))}
+              {/* Newly Uploaded Gallery Previews */}
+              {galleryPreviews.map((image, index) => (
+                <div key={`new-${image}`} className="thumb-wrapper">
+                  <img alt="Service gallery preview" src={image} />
+                  <button
+                    aria-label="Remove new gallery image"
+                    className="thumb-remove-btn"
+                    onClick={() => removeGalleryImage(index, false)}
+                    type="button"
+                  >
+                    &times;
+                  </button>
+                </div>
+              ))}
             </div>
           </section>
 
           <section className="bento-card">
-            <h3 className="bento-header"><ListChecks size={20} /> Process Steps</h3>
+            <h3 className="bento-header"><ListChecks size={20} /> Process Steps *</h3>
             <StringListEditor addLabel="Add step" onChange={(process_steps) => setService({ ...service, process_steps })} placeholder="Enter step description" values={service.process_steps} />
           </section>
 
           <section className="bento-card">
-            <h3 className="bento-header">Service Statistics</h3>
+            <h3 className="bento-header">Service Statistics *</h3>
             <StringListEditor addLabel="Add statistic" onChange={updateStats} placeholder="Statistic, e.g. 200+ Clients" values={statRows} />
           </section>
 
           <section className="bento-card">
-            <h3 className="bento-header">Technical Specifications</h3>
+            <h3 className="bento-header">Technical Specifications *</h3>
             <KeyValueEditor addLabel="Add specification" keyPlaceholder="Specification" onChange={updateSpecs} valuePlaceholder="Value" values={specRows} />
           </section>
         </div>
 
         <div className="space-y-8">
           <section className="bento-card">
-            <h3 className="bento-header"><Settings2 size={20} /> Classification</h3>
-            <div className="space-y-5">
+            <h3 className="bento-header mb-6"><Settings2 size={20} /> Classification</h3>
+            <div className="space-y-6">
               <label htmlFor="service-category">
-                <span className="tw-label">Category *</span>
+                <span className="tw-label mb-2 mt-2">Category *</span>
                 <select
                   className="tw-input"
                   id="service-category"
@@ -296,14 +377,23 @@ export function ServiceFormPage() {
                 </select>
               </label>
               <label htmlFor="service-subcategory">
-                <span className="tw-label">Subcategory *</span>
+                <span className="tw-label mb-2 mt-2">Subcategory *</span>
                 <select className="tw-input" id="service-subcategory" onChange={(event) => setService({ ...service, subcategory_id: event.target.value })} required value={service.subcategory_id}>
                   <option value="">— Unassigned —</option>
                   {subcategories.map((subcategory) => <option key={subcategory.id} value={subcategory.id}>{subcategory.name}</option>)}
                 </select>
               </label>
-              <label className="flex items-center gap-3" htmlFor="service-stock"><input checked={service.in_stock} className="!w-auto" id="service-stock" onChange={(event) => setService({ ...service, in_stock: event.target.checked })} type="checkbox" /><span>In Stock</span></label>
-              <label className="flex items-center gap-3" htmlFor="service-active"><input checked={service.is_active} className="!w-auto" id="service-active" onChange={(event) => setService({ ...service, is_active: event.target.checked })} type="checkbox" /><span>Active / Published</span></label>
+              
+              <div className="mt-8 space-y-6">
+                <label className="flex items-center gap-3 cursor-pointer" htmlFor="service-stock">
+                  <input checked={service.in_stock} className="!w-auto w-5 h-5" id="service-stock" onChange={(event) => setService({ ...service, in_stock: event.target.checked })} type="checkbox" />
+                  <span className="text-gray-700 font-medium">In Stock</span>
+                </label>
+                <label className="flex items-center gap-3 cursor-pointer" htmlFor="service-active">
+                  <input checked={service.is_active} className="!w-auto w-5 h-5" id="service-active" onChange={(event) => setService({ ...service, is_active: event.target.checked })} type="checkbox" />
+                  <span className="text-gray-700 font-medium">Active / Published</span>
+                </label>
+              </div>
             </div>
           </section>
 

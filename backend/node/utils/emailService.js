@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
 });
 
 function buildHtmlTemplate({ title, message, fields = {}, isUser = false }) {
-  const logoUrl = `${process.env.FRONTEND_URL || 'http://172.16.0.10:5173'}/logo.png`;
+  const logoUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/logo.png`;
 
   const fieldsRows = Object.entries(fields)
     .map(([key, val]) => {

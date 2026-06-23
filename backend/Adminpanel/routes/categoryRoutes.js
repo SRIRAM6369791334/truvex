@@ -85,7 +85,7 @@ router.get('/', async (req, res, next) => {
       db,
       `SELECT c.*, COALESCE(csc.supplier_count, 0) AS supplier_count
        FROM categories c
-       LEFT JOIN category_supplier_counts csc ON csc.category_id = c.id
+       LEFT JOIN (SELECT category_id, COUNT(id) as supplier_count FROM suppliers WHERE status = 'approved' GROUP BY category_id) csc ON csc.category_id = c.id
        ORDER BY c.sort_order ASC, c.name ASC`,
     );
     const subcategories = await queryRows(

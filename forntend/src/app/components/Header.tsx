@@ -199,6 +199,7 @@ export default function Header({ onOpenEnquiry }: HeaderProps) {
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
+  const [activeMegaCategory, setActiveMegaCategory] = useState<number>(0);
   const [selectedCity, setSelectedCity] = useState('Mumbai');
   const [cityDropdownOpen, setCityDropdownOpen] = useState(false);
   const [categoriesData, setCategoriesData] = useState<any[]>([]);
@@ -209,22 +210,33 @@ export default function Header({ onOpenEnquiry }: HeaderProps) {
       try {
         const res = await apiClient.get('/categories');
         if (res.data?.data) {
+          // Deduplicate categories by name to prevent same category appearing twice
+          const uniqueCats: any[] = [];
+          res.data.data.forEach((cat: any) => {
+            if (!uniqueCats.find(c => c.name === cat.name)) {
+              uniqueCats.push(cat);
+            }
+          });
+
           // Format categories to match the expected mega menu structure
-          const formatted = res.data.data.slice(0, 4).map((cat: any) => {
+          const formatted = uniqueCats.map((cat: any) => {
             // Assign icons dynamically or fallback to Layers
             const iconMap: Record<string, any> = {
-              'Industrial & Factory': Factory,
+              'Industrial Machinery': Factory,
               'Electrical & Panels': Cpu,
               'Packaging & Materials': Package,
-              'Construction & Safety': ShieldCheck,
+              'Safety Equipment': ShieldCheck,
+              'Construction Materials': Layers,
             };
             
             return {
               title: cat.name,
               icon: iconMap[cat.name] || Layers,
-              items: (cat.subcategories || []).slice(0, 5).map((sub: any) => ({
+              items: (cat.subcategories || [])
+                .filter((sub: any) => sub && sub.name && sub.name.trim() !== '')
+                .map((sub: any) => ({
                 name: sub.name,
-                path: `/categories?cat=${sub.id}`,
+                path: `/services?category=${encodeURIComponent(cat.slug || cat.name)}&search=${encodeURIComponent(sub.name)}`,
               }))
             };
           });
@@ -327,7 +339,7 @@ export default function Header({ onOpenEnquiry }: HeaderProps) {
               onClick={onOpenEnquiry}
               className="market-button hidden bg-accent px-3.5 py-1.5 font-bold text-white hover:bg-accent/90 rounded-none transition-all sm:inline-flex cursor-pointer"
             >
-              Post Buy Requirement
+              Request for Quotation
             </button>
           </div>
         </div>
@@ -467,34 +479,66 @@ export default function Header({ onOpenEnquiry }: HeaderProps) {
               onMouseEnter={() => setMegaMenuOpen(true)}
               onMouseLeave={() => setMegaMenuOpen(false)}
             >
-              <div className="overflow-hidden border border-primary/10 bg-white/95 p-8 shadow-[0_30px_70px_rgba(0,0,0,0.12)] rounded-none backdrop-blur-xl">
-                <div className="grid grid-cols-4 gap-8">
+              <div className="border border-primary/10 bg-white shadow-[0_30px_70px_rgba(0,0,0,0.12)] rounded-none flex h-[500px]">
+                {/* Left Side: Categories */}
+                <div className="w-1/3 border-r border-primary/10 bg-muted/30 flex flex-col py-4 overflow-y-auto custom-scrollbar">
                   {categoriesData.map((cat, idx) => {
                     const Icon = cat.icon;
+                    const isActive = idx === activeMegaCategory;
                     return (
-                      <div key={idx} className="space-y-4">
-                        <div className="flex items-center gap-2.5 font-serif text-lg font-bold text-primary border-b border-primary/5 pb-2">
-                          <span className="rounded-none bg-accent/10 p-2 text-accent">
-                            <Icon size={18} />
+                      <div 
+                        key={idx}
+                        onMouseEnter={() => setActiveMegaCategory(idx)}
+                        className={`flex items-center justify-between px-6 py-3.5 cursor-pointer transition-all border-l-4 shrink-0 ${isActive ? 'border-accent bg-white shadow-sm text-primary' : 'border-transparent text-primary/70 hover:bg-white/50 hover:text-primary'}`}
+                      >
+                        <div className="flex items-center gap-3 font-semibold text-sm">
+                          <span className={`p-1.5 rounded-none ${isActive ? 'bg-accent/10 text-accent' : 'bg-primary/5 text-primary/40'}`}>
+                            <Icon size={16} />
                           </span>
                           {cat.title}
                         </div>
-                        <ul className="space-y-3.5">
-                          {cat.items.map((item: any, itemIdx: number) => (
-                            <li key={itemIdx}>
-                              <Link
-                                to={item.path}
-                                className="group flex items-center justify-between py-1 text-sm text-primary/70 hover:text-accent transition-all"
-                              >
-                                <span>{item.name}</span>
-                                <ChevronRight size={14} className="opacity-0 -translate-x-1 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
+                        <ChevronRight size={14} className={isActive ? 'text-accent' : 'text-primary/30'} />
                       </div>
                     );
                   })}
+                </div>
+
+                {/* Right Side: Subcategories */}
+                <div className="w-2/3 p-8 bg-white relative overflow-y-auto custom-scrollbar">
+                  {categoriesData[activeMegaCategory] && (
+                    <motion.div
+                      key={activeMegaCategory}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <div className="flex items-center gap-3 mb-6 border-b border-primary/5 pb-4">
+                         {(() => { const Icon = categoriesData[activeMegaCategory].icon; return <span className="bg-accent/10 p-2 text-accent rounded-none"><Icon size={20} /></span>; })()}
+                         <h3 className="font-serif text-2xl font-bold text-primary">{categoriesData[activeMegaCategory].title}</h3>
+                      </div>
+                      
+                      {categoriesData[activeMegaCategory].items.length > 0 ? (
+                        <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+                          {categoriesData[activeMegaCategory].items.map((item: any, itemIdx: number) => (
+                            <Link
+                              key={itemIdx}
+                              to={item.path}
+                              onClick={() => setMegaMenuOpen(false)}
+                              className="group flex items-center justify-between p-3 rounded-none border border-transparent hover:border-accent/20 hover:bg-accent/5 hover:shadow-sm text-sm text-primary/80 hover:text-accent transition-all"
+                            >
+                              <span className="font-medium">{item.name}</span>
+                              <ChevronRight size={14} className="opacity-0 -translate-x-2 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
+                            </Link>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center py-12 text-primary/40">
+                          <Layers size={40} className="mb-3 opacity-20" />
+                          <p>No subcategories found for this category.</p>
+                        </div>
+                      )}
+                    </motion.div>
+                  )}
                 </div>
               </div>
             </motion.div>
@@ -617,7 +661,7 @@ export default function Header({ onOpenEnquiry }: HeaderProps) {
                     }}
                     className="w-full market-button bg-accent py-3 text-center text-sm font-bold text-white rounded-none shadow-lg shadow-accent/25 hover:bg-accent/90 transition-all cursor-pointer"
                   >
-                    Post Buy Requirement
+                    Request for Quotation
                   </button>
                 </div>
 

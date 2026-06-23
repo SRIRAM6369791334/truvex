@@ -40,7 +40,7 @@ async function fetchCategory(db, identifier) {
     db,
     `SELECT c.*, COALESCE(csc.supplier_count, 0) AS supplier_count
      FROM categories c
-     LEFT JOIN category_supplier_counts csc ON csc.category_id = c.id
+     LEFT JOIN (SELECT category_id, COUNT(id) as supplier_count FROM suppliers WHERE status = 'approved' GROUP BY category_id) csc ON csc.category_id = c.id
      WHERE ${predicate}
      LIMIT 1`,
     [value],
@@ -57,7 +57,7 @@ categoryRouter.get('/', asyncHandler(async (req, res) => {
     db,
     `SELECT c.*, COALESCE(csc.supplier_count, 0) AS supplier_count
      FROM categories c
-     LEFT JOIN category_supplier_counts csc ON csc.category_id = c.id
+     LEFT JOIN (SELECT category_id, COUNT(id) as supplier_count FROM suppliers WHERE status = 'approved' GROUP BY category_id) csc ON csc.category_id = c.id
      ${whereClause}
      ORDER BY c.sort_order ASC, c.name ASC`,
   );

@@ -49,19 +49,38 @@ export function SettingsPage() {
     }
 
     setUploading(true);
-    try {
-      const formData = new FormData();
-      formData.append('image', file);
 
-      const response = await api.post<Settings>('/api/settings/banner', formData);
-      setSettings(response.data);
-      showToast(response.message || 'Banner image added successfully.', 'success');
-    } catch (err) {
-      showToast(errorMessage(err), 'error');
-    } finally {
+    const img = new Image();
+    img.onload = async () => {
+      URL.revokeObjectURL(img.src);
+      if (img.width !== 1024 || img.height !== 1024) {
+        showToast(`Image dimensions must be exactly 1024x1024. Uploaded: ${img.width}x${img.height}`, 'error');
+        setUploading(false);
+        e.target.value = '';
+        return;
+      }
+
+      try {
+        const formData = new FormData();
+        formData.append('image', file);
+
+        const response = await api.post<Settings>('/api/settings/banner', formData);
+        setSettings(response.data);
+        showToast(response.message || 'Banner image added successfully.', 'success');
+      } catch (err) {
+        showToast(errorMessage(err), 'error');
+      } finally {
+        setUploading(false);
+        e.target.value = '';
+      }
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(img.src);
+      showToast('Invalid image file.', 'error');
       setUploading(false);
       e.target.value = '';
-    }
+    };
+    img.src = URL.createObjectURL(file);
   }
 
   async function handleDeleteImage(imagePath: string) {
@@ -86,8 +105,8 @@ export function SettingsPage() {
     <section className="panel" aria-label="Site settings">
       <div className="panel-header">
         <div>
-          <p className="eyebrow">Configuration</p>
-          <h2>Settings</h2>
+          {/* <p className="eyebrow">Configuration</p> */}
+          <h2>Banners</h2>
         </div>
       </div>
 
@@ -96,12 +115,12 @@ export function SettingsPage() {
         <article className="bento-card">
           <div className="flex items-center gap-2 mb-4">
             <ImageIcon className="text-primary" size={20} />
-            <h3 className="bento-header m-0">Homepage Banner Carousel</h3>
+            <h3 className="bento-header m-0">Homepage Banner </h3>
           </div>
           
-          <p className="muted mb-6 text-sm">
+          {/* <p className="muted mb-6 text-sm">
             Configure the banner background images rotating on the homepage. If no custom images are uploaded, the default high-quality shipping/logistics images will be displayed.
-          </p>
+          </p> */}
 
           {/* Current Images Gallery */}
           <div className="mb-8">
@@ -162,7 +181,7 @@ export function SettingsPage() {
                   {uploading ? 'Uploading image...' : 'Click to upload image'}
                 </span>
                 <span className="text-xs text-neutral-400 mt-1">
-                  JPG, PNG, WEBP (Max 2MB)
+                  JPG, PNG, WEBP (1024x1024, Max 2MB)
                 </span>
                 <input 
                   type="file" 

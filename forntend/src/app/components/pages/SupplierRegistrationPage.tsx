@@ -44,9 +44,9 @@ export default function SupplierRegistrationPage() {
       setValidationError('Mobile Number must be exactly 10 digits.');
       return;
     }
-    // Email validation (if provided)
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setValidationError('Email must match a valid email format (e.g. name@domain.com).');
+    // Email validation
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setValidationError('Valid Email is required.');
       return;
     }
     if (!coreProductSegment.trim()) {
@@ -192,6 +192,7 @@ export default function SupplierRegistrationPage() {
                     />
                     <Field 
                       label="Email" 
+                      required
                       type="email" 
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}

@@ -31,7 +31,7 @@ export default function AboutPage() {
         <div className="mx-auto max-w-4xl px-4 text-center">
           <h2 className="text-[11px] font-bold uppercase tracking-widest text-primary/60 mb-4 border-b-2 border-accent inline-block pb-1">About The Platform</h2>
           <h3 className="text-3xl md:text-4xl font-serif font-bold text-primary mb-8">India's Fastest-Growing Online B2B Marketplace</h3>
-          <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
+          <p className="text-lg md:text-xl text-muted-foreground leading-relaxed text-justify">
             Truvex is designed to connect verified manufacturers with bulk buyers, wholesalers, and retailers across the country. We focus on providing a seamless platform to Small & Medium Enterprises (SMEs), Large Enterprises, as well as individual entrepreneurs. By leveraging technology, we bridge the gap between supply and demand, ensuring that finding the right product or partner is never hard.
           </p>
         </div>
@@ -60,7 +60,7 @@ export default function AboutPage() {
               <div className="mb-16">
                 <h2 className="text-[11px] font-bold uppercase tracking-widest text-primary/60 mb-2 border-b-2 border-accent inline-block pb-1">Our Mission</h2>
                 <h3 className="text-3xl font-serif font-bold text-primary mb-6 mt-4">To make doing business easy</h3>
-                <p className="text-lg text-muted-foreground leading-relaxed">
+                <p className="text-lg text-muted-foreground leading-relaxed text-justify">
                   We saw businesses wasting hours searching directories, getting irrelevant leads, and dealing with unverified suppliers. Our mission is to eliminate this friction by providing a highly vetted, transparent, and ultra-fast sourcing marketplace that empowers every Indian SME.
                 </p>
               </div>
@@ -68,7 +68,7 @@ export default function AboutPage() {
               <div>
                 <h2 className="text-[11px] font-bold uppercase tracking-widest text-primary/60 mb-2 border-b-2 border-accent inline-block pb-1">Our Vision</h2>
                 <h3 className="text-3xl font-serif font-bold text-primary mb-6 mt-4">The Most Trusted Distribution Network</h3>
-                <p className="text-lg text-muted-foreground leading-relaxed">
+                <p className="text-lg text-muted-foreground leading-relaxed text-justify">
                   To become the most trusted distribution network in global markets — where every partner, supplier, and client feels the difference that quality sourcing makes. We don't just deliver products; we deliver certainty.
                 </p>
               </div>
@@ -138,7 +138,7 @@ export default function AboutPage() {
             <div>
               <h2 className="text-[11px] font-bold uppercase tracking-widest text-primary/60 mb-2 border-b-2 border-accent inline-block pb-1">Our Reach</h2>
               <h3 className="text-3xl font-serif font-bold text-primary mb-6 mt-4">Connecting Tier-1 Hubs to Tier-3 Markets</h3>
-              <p className="text-lg text-muted-foreground leading-relaxed mb-6">
+              <p className="text-lg text-muted-foreground leading-relaxed mb-6 text-justify">
                 Our robust technological infrastructure bridges the geographical gap in Indian commerce. We enable a manufacturer in a Tier-1 industrial hub to instantly receive and fulfill bulk requirements from a retailer in a remote Tier-3 city.
               </p>
               <div className="flex items-center gap-4 text-primary font-bold bg-[#f4f6f8] p-4 border border-border">

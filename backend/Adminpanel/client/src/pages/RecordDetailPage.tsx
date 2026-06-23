@@ -5,6 +5,7 @@ import { ErrorPanel, Loading } from '../components/Loading';
 import { StatusBadge } from '../components/StatusBadge';
 import { useToast } from '../toast';
 import type { RecordDetailData } from '../types';
+import { confirmAction } from '../components/confirm';
 import { errorMessage, formatValue } from '../utils';
 
 function DetailValue({ field, value }: { field: string; value: unknown }) {
@@ -29,7 +30,7 @@ function DetailValue({ field, value }: { field: string; value: unknown }) {
     );
   }
   if (field === 'admin_notes') {
-    let notesList: { text: string; timestamp: string }[] = [];
+    let notesList: { text: string; timestamp: string; status?: string }[] = [];
     if (value) {
       try {
         const parsed = JSON.parse(String(value));
@@ -46,13 +47,18 @@ function DetailValue({ field, value }: { field: string; value: unknown }) {
     return (
       <div className="space-y-3 mt-1">
         {notesList.map((note, index) => (
-          <div key={index} className="text-sm border-l-2 border-teal-500 pl-3 py-1 bg-slate-50/50 rounded-r-md">
+          <div key={index} className="text-sm border-l-2 border-teal-500 pl-3 py-1 bg-slate-50/50 rounded-r-md mb-2">
             <p className="text-slate-800 font-normal whitespace-pre-wrap">{note.text}</p>
-            {note.timestamp && (
-              <span className="text-[10px] text-slate-400 block mt-1">
-                {new Date(note.timestamp).toLocaleString()}
-              </span>
-            )}
+            <div className="flex items-center gap-2 mt-1">
+              {note.status && (
+                <span className="text-[10px] bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full capitalize">{note.status.replaceAll('_', ' ')}</span>
+              )}
+              {note.timestamp && (
+                <span className="text-[10px] text-slate-400">
+                  {new Date(note.timestamp).toLocaleString()}
+                </span>
+              )}
+            </div>
           </div>
         ))}
       </div>
@@ -67,7 +73,10 @@ export function RecordDetailPage() {
   const [data, setData] = useState<RecordDetailData | null>(null);
   const [error, setError] = useState('');
   const [status, setStatus] = useState('');
-  const [notesHistory, setNotesHistory] = useState<{ text: string; timestamp: string }[]>([]);
+  const [notesHistory, setNotesHistory] = useState<{ text: string; timestamp: string; status?: string }[]>([]);
+  const [editingNoteIndex, setEditingNoteIndex] = useState<number | null>(null);
+  const [editingNoteText, setEditingNoteText] = useState('');
+  const [savingNote, setSavingNote] = useState(false);
   const [newNote, setNewNote] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -77,7 +86,7 @@ export function RecordDetailPage() {
     setStatus(String(response.data.record.status || ''));
     
     const rawNotes = response.data.record.admin_notes;
-    let parsedHistory: { text: string; timestamp: string }[] = [];
+    let parsedHistory: { text: string; timestamp: string; status?: string }[] = [];
     if (rawNotes) {
       try {
         const parsed = JSON.parse(String(rawNotes));
@@ -113,6 +122,49 @@ export function RecordDetailPage() {
       showToast(errorMessage(requestError), 'error');
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleEditNote(index: number) {
+    if (savingNote) return;
+    setSavingNote(true);
+    try {
+      const updatedNotes = [...notesHistory];
+      updatedNotes[index] = { ...updatedNotes[index], text: editingNoteText };
+      
+      const response = await api.put(`/api/submissions/${resource}/${id}/notes`, {
+        notes: updatedNotes,
+      });
+      showToast(response.message || 'Note updated.');
+      setEditingNoteIndex(null);
+      await load();
+    } catch (requestError) {
+      showToast(errorMessage(requestError), 'error');
+    } finally {
+      setSavingNote(false);
+    }
+  }
+
+  async function handleDeleteNote(index: number) {
+    if (!(await confirmAction('Are you sure you want to delete this note?', 'Delete Note'))) return;
+    if (savingNote) return;
+    setSavingNote(true);
+    try {
+      const updatedNotes = [...notesHistory];
+      updatedNotes.splice(index, 1);
+      
+      const response = await api.put(`/api/submissions/${resource}/${id}/notes`, {
+        notes: updatedNotes,
+      });
+      showToast(response.message || 'Note deleted.');
+      if (editingNoteIndex === index) {
+        setEditingNoteIndex(null);
+      }
+      await load();
+    } catch (requestError) {
+      showToast(errorMessage(requestError), 'error');
+    } finally {
+      setSavingNote(false);
     }
   }
 
@@ -165,15 +217,70 @@ export function RecordDetailPage() {
                     <div className="space-y-3 max-h-60 overflow-y-auto pr-1 border border-slate-100 rounded-xl p-3 bg-slate-50/30">
                       {notesHistory.map((note, index) => (
                         <div key={index} className="bg-white rounded-lg p-3 border border-slate-100 shadow-sm">
-                          <div className="flex justify-between items-center mb-1">
-                            <span className="text-[10px] font-bold text-teal-600 uppercase tracking-wider">Note #{index + 1}</span>
-                            {note.timestamp && (
-                              <span className="text-[10px] text-slate-400">
-                                {new Date(note.timestamp).toLocaleString()}
-                              </span>
-                            )}
+                          <div className="flex justify-between items-center mb-2">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[10px] font-bold text-teal-600 uppercase tracking-wider">Note #{index + 1}</span>
+                              {note.status && (
+                                <span className="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full capitalize">{note.status.replaceAll('_', ' ')}</span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-3">
+                              {note.timestamp && (
+                                <span className="text-[10px] text-slate-400">
+                                  {new Date(note.timestamp).toLocaleString()}
+                                </span>
+                              )}
+                              {editingNoteIndex !== index && (
+                                <>
+                                  <button
+                                    type="button"
+                                    onClick={() => { setEditingNoteIndex(index); setEditingNoteText(note.text); }}
+                                    className="text-[10px] text-blue-600 hover:underline cursor-pointer font-medium"
+                                  >
+                                    Edit
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => void handleDeleteNote(index)}
+                                    className="text-[10px] text-red-600 hover:underline cursor-pointer font-medium"
+                                  >
+                                    Delete
+                                  </button>
+                                </>
+                              )}
+                            </div>
                           </div>
-                          <p className="text-sm text-slate-800 whitespace-pre-wrap font-medium">{note.text}</p>
+                          
+                          {editingNoteIndex === index ? (
+                            <div className="mt-2">
+                              <textarea
+                                className="tw-input w-full text-sm mb-2"
+                                rows={3}
+                                value={editingNoteText}
+                                onChange={(e) => setEditingNoteText(e.target.value)}
+                              />
+                              <div className="flex gap-2">
+                                <button
+                                  type="button"
+                                  className="text-xs bg-teal-600 text-white px-3 py-1.5 rounded font-medium transition-colors hover:bg-teal-700 disabled:opacity-50"
+                                  onClick={() => void handleEditNote(index)}
+                                  disabled={savingNote}
+                                >
+                                  {savingNote ? 'Saving...' : 'Save Note'}
+                                </button>
+                                <button
+                                  type="button"
+                                  className="text-xs border border-slate-300 px-3 py-1.5 rounded font-medium hover:bg-slate-50 disabled:opacity-50"
+                                  onClick={() => setEditingNoteIndex(null)}
+                                  disabled={savingNote}
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <p className="text-sm text-slate-800 whitespace-pre-wrap font-medium">{note.text}</p>
+                          )}
                         </div>
                       ))}
                     </div>

@@ -41,15 +41,16 @@ router.get('/', asyncHandler(async (req, res) => {
   }
 
   if (req.query.search) {
-    where.push('(s.title LIKE ? OR s.description LIKE ?)');
-    values.push(`%${req.query.search}%`, `%${req.query.search}%`);
+    where.push('(s.title LIKE ? OR s.description LIKE ? OR sub.name LIKE ?)');
+    values.push(`%${req.query.search}%`, `%${req.query.search}%`, `%${req.query.search}%`);
   }
 
   const rows = await queryRows(
     db,
-    `SELECT s.*, c.name AS category_name, c.slug AS category_slug
+    `SELECT s.*, c.name AS category_name, c.slug AS category_slug, sub.name AS subcategory_name
      FROM services s
      LEFT JOIN categories c ON c.id = s.category_id
+     LEFT JOIN subcategories sub ON sub.id = s.subcategory_id
      WHERE ${where.join(' AND ')}
      ORDER BY s.sort_order ASC, s.title ASC
      LIMIT 200`,
@@ -64,9 +65,10 @@ router.get('/:id', asyncHandler(async (req, res) => {
   const [predicate, value] = servicePredicate(req.params.id);
   const rows = await queryRows(
     db,
-    `SELECT s.*, c.name AS category_name, c.slug AS category_slug
+    `SELECT s.*, c.name AS category_name, c.slug AS category_slug, sub.name AS subcategory_name
      FROM services s
      LEFT JOIN categories c ON c.id = s.category_id
+     LEFT JOIN subcategories sub ON sub.id = s.subcategory_id
      WHERE ${predicate}
        AND s.is_active = true
      LIMIT 1`,

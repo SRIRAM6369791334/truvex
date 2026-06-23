@@ -98,7 +98,7 @@ export function CategoryFormPage() {
             htmlContainer: 'premium-swal-content'
           }
         });
-        window.location.href = 'http://172.16.0.10:5002/categories';
+        window.location.href = '/categories';
       } else {
         showToast(response.message || 'Category updated.');
         await load();
@@ -184,8 +184,12 @@ export function CategoryFormPage() {
               <label htmlFor="category-slug"><span className="tw-label">Slug</span>
                 <input className="tw-input" id="category-slug" onChange={(e) => setCategory({ ...category, slug: e.target.value })} placeholder="Auto-generated if blank" value={category.slug} />
               </label>
-              <label className="md:col-span-2" htmlFor="category-description"><span className="tw-label">Description *</span>
-                <textarea className="tw-input" id="category-description" onChange={(e) => setCategory({ ...category, description: e.target.value })} required rows={3} value={category.description} />
+              <label className="md:col-span-2" htmlFor="category-description">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="tw-label">Description *</span>
+                  <span className="text-[11px] text-gray-500 font-medium">{category.description.length}/250</span>
+                </div>
+                <textarea className="tw-input mt-0" id="category-description" onChange={(e) => setCategory({ ...category, description: e.target.value })} required maxLength={250} rows={3} value={category.description} />
               </label>
             </div>
           </section>
@@ -324,11 +328,16 @@ export function CategoryFormPage() {
                               />
                             </div>
                             <div className="sub-fg md:col-span-2">
-                              <span className="sub-fl">Description</span>
+                              <div className="flex justify-between items-center mb-1">
+                                <span className="sub-fl">Description *</span>
+                                <span className="text-[11px] text-gray-500 font-medium">{editDraft.description.length}/250</span>
+                              </div>
                               <textarea
-                                className="sub-fi"
+                                className="sub-fi mt-0"
                                 onChange={(e) => setEditDraft({ ...editDraft, description: e.target.value })}
-                                rows={2}
+                                placeholder="Description"
+                                required
+                                maxLength={250}
                                 value={editDraft.description}
                               />
                             </div>
@@ -410,8 +419,11 @@ export function CategoryFormPage() {
                   <input className="sub-fi" id="sub-slug" onChange={(e) => setSubcategory({ ...subcategory, slug: e.target.value })} placeholder="auto-generated" value={subcategory.slug} />
                 </div>
                 <div className="sub-fg">
-                  <label className="sub-fl" htmlFor="sub-desc">Description</label>
-                  <textarea className="sub-fi" id="sub-desc" onChange={(e) => setSubcategory({ ...subcategory, description: e.target.value })} placeholder="Short description…" rows={3} value={subcategory.description} />
+                  <div className="flex justify-between items-center mb-1">
+                    <label className="sub-fl mb-0" htmlFor="sub-desc">Description *</label>
+                    <span className="text-[11px] text-gray-500 font-medium">{subcategory.description.length}/250</span>
+                  </div>
+                  <textarea className="sub-fi" id="sub-desc" onChange={(e) => setSubcategory({ ...subcategory, description: e.target.value })} placeholder="Short description…" required maxLength={250} rows={3} value={subcategory.description} />
                 </div>
                 <div className="sub-fg">
                   <label className="sub-fl" htmlFor="sub-img">Image (800×600)</label>

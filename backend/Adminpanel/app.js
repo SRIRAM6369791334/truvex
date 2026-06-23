@@ -16,6 +16,8 @@ const serviceRoutes = require('./routes/serviceRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 
+const cors = require('cors');
+
 function createApp(options = {}) {
   const app = express();
   const clientDist = options.clientDist || path.join(__dirname, 'client', 'dist');
@@ -24,6 +26,9 @@ function createApp(options = {}) {
   app.locals.db = options.db || database;
   app.locals.appName = 'Truvex Admin';
 
+  app.set('trust proxy', 1);
+
+  app.use(cors({ origin: true, credentials: true }));
   app.use(helmet({ contentSecurityPolicy: false }));
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());

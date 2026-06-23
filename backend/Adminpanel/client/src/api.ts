@@ -26,7 +26,10 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<ApiEnve
     headers.set('Content-Type', 'application/json');
   }
 
-  const response = await fetch(path, {
+const baseUrl = import.meta.env.VITE_API_URL || '';
+  const url = path.startsWith('http') ? path : baseUrl + path;
+
+  const response = await fetch(url, {
     ...init,
     credentials: 'same-origin',
     headers,
@@ -50,6 +53,12 @@ export const api = {
   post<T>(path: string, body?: unknown) {
     return request<T>(path, {
       method: 'POST',
+      body: body instanceof FormData ? body : JSON.stringify(body ?? {}),
+    });
+  },
+  put<T>(path: string, body?: unknown) {
+    return request<T>(path, {
+      method: 'PUT',
       body: body instanceof FormData ? body : JSON.stringify(body ?? {}),
     });
   },

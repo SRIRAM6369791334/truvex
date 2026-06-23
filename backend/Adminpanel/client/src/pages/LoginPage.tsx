@@ -50,7 +50,7 @@ export function LoginPage() {
         <h1>Welcome back</h1>
         <p>Sign in to manage sourcing submissions, suppliers, services, and categories.</p>
         {error && <div className="flash error" role="alert">{error}</div>}
-        <form className="form-stack" onSubmit={(event) => void handleSubmit(event)}>
+        <form className="form-stack mt-[15px]" onSubmit={(event) => void handleSubmit(event)}>
           <label htmlFor="email">
             <span>Email address</span>
             <input

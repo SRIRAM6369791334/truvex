@@ -88,7 +88,7 @@ const RESOURCES = {
       ['quantity', 'Quantity'],
       ['delivery_city', 'Delivery City'],
       ['mobile', 'Mobile'],
-      ['specifications', 'Specifications'],
+      // ['specifications', 'Specifications'],
       ['admin_notes', 'Admin Notes'],
     ],
   },
@@ -100,7 +100,7 @@ const RESOURCES = {
       ['product_service', 'Product / Service'],
       ['quantity_budget', 'Quantity / Budget'],
       ['mobile', 'Mobile'],
-      ['source_page', 'Source'],
+      // ['source_page', 'Source'],
       ['status', 'Status'],
     ],
     detailFields: [
@@ -108,7 +108,7 @@ const RESOURCES = {
       ['quantity_budget', 'Quantity / Budget'],
       ['mobile', 'Mobile'],
       ['requirement_details', 'Requirement Details'],
-      ['source_page', 'Source Page'],
+      // ['source_page', 'Source Page'],
     ],
   },
   'service-leads': {
@@ -299,7 +299,8 @@ router.patch('/:resource/:id/status', async (req, res, next) => {
       if (newNoteText) {
         notesArray.push({
           text: newNoteText,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          status: req.body.status
         });
       }
 
@@ -331,6 +332,32 @@ router.patch('/:resource/:id/status', async (req, res, next) => {
       },
       message: 'Status updated.',
     });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.put('/:resource/:id/notes', async (req, res, next) => {
+  try {
+    const config = getConfig(req.params.resource);
+    const hasAdminNotes = config.detailFields.some(([field]) => field === 'admin_notes');
+    if (!hasAdminNotes) {
+      return res.status(400).json({ error: 'This resource does not support admin notes.' });
+    }
+
+    const updatedNotesJson = JSON.stringify(req.body.notes || []);
+
+    const result = await queryResult(
+      req.app.locals.db,
+      `UPDATE ${config.table} SET admin_notes = ? WHERE id = ?`,
+      [updatedNotesJson, req.params.id]
+    );
+
+    if (!result.affectedRows) {
+      return res.status(404).json({ error: 'Record not found.' });
+    }
+
+    return res.json({ message: 'Notes history updated.', admin_notes: updatedNotesJson });
   } catch (error) {
     return next(error);
   }

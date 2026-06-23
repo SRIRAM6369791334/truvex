@@ -6,6 +6,7 @@ import { useToast } from '../toast';
 
 const links = [
   ['/', 'Dashboard'],
+  ['/settings', 'Banner'],
   ['/categories', 'Categories'],
   ['/services', 'Services'],
   ['/submissions/buyers', 'Buyers'],
@@ -14,7 +15,7 @@ const links = [
   ['/submissions/rfq', 'RFQs'],
   ['/submissions/enquiries', 'Enquiries'],
   ['/submissions/contacts', 'Contacts'],
-  ['/settings', 'Settings'],
+  
 ];
 
 function pageTitle(pathname: string) {

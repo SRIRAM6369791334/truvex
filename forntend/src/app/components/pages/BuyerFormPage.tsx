@@ -46,6 +46,10 @@ export default function BuyerFormPage() {
       setValidationError('Requirement Details are required.');
       return;
     }
+    if (!estimatedBudget.trim()) {
+      setValidationError('Estimated Budget is required.');
+      return;
+    }
 
     // Open OTP modal if validation passes
     handleOTPVerify();
@@ -197,6 +201,7 @@ export default function BuyerFormPage() {
                   </div>
                   <Field 
                     label="Estimated Budget" 
+                    required
                     value={estimatedBudget}
                     onChange={(e) => setEstimatedBudget(e.target.value)}
                   />

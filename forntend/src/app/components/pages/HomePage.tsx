@@ -31,6 +31,7 @@ const metrics = [
 function MiniRFQForm() {
   const [product, setProduct] = useState('');
   const [quantity, setQuantity] = useState('');
+  const [city, setCity] = useState('');
   const [mobile, setMobile] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -51,12 +52,13 @@ function MiniRFQForm() {
       await submitRFQ({
         product_name: product,
         quantity,
-        delivery_city: 'Not specified',
+        delivery_city: city,
         mobile,
       });
       setSuccess(true);
       setProduct('');
       setQuantity('');
+      setCity('');
       setMobile('');
     } catch (err: any) {
       console.error(err);
@@ -85,12 +87,12 @@ function MiniRFQForm() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-none bg-accent opacity-75"></span>
             <span className="relative inline-flex rounded-none h-2 w-2 bg-accent"></span>
           </span>
-          <h2 className="text-xs font-bold uppercase tracking-wider text-white/95">Post Buy Requirement</h2>
+          <h2 className="text-xs font-bold uppercase tracking-wider text-white/95">Request for Quotation</h2>
         </div>
-        <span className="hidden text-[10px] font-bold uppercase tracking-wider bg-accent/15 px-2.5 py-1 rounded-none text-accent sm:inline">Free for buyers</span>
+        {/* <span className="hidden text-[10px] font-bold uppercase tracking-wider bg-accent/15 px-2.5 py-1 rounded-none text-accent sm:inline">Free for buyers</span> */}
       </div>
       {error && <div className="mb-3 rounded border border-red-400/40 bg-red-500/10 px-3 py-2 text-xs text-red-300">{error}</div>}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.4fr_0.75fr_1fr_auto]">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.2fr_0.6fr_0.8fr_1fr_auto]">
         <div>
           <label htmlFor="product" className="mb-1.5 block text-[12px] font-bold text-white/80 uppercase tracking-wider">Product Name <span className="text-accent">*</span></label>
           <input id="product" required value={product} onChange={(e) => setProduct(e.target.value)} className="w-full rounded-none border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-accent/60 focus:bg-white/10 transition-all duration-300" placeholder="e.g. Steel pipes" />
@@ -98,6 +100,10 @@ function MiniRFQForm() {
         <div>
           <label htmlFor="quantity" className="mb-1.5 block text-[12px] font-bold text-white/80 uppercase tracking-wider">Quantity <span className="text-accent">*</span></label>
           <input id="quantity" required value={quantity} onChange={(e) => setQuantity(e.target.value)} className="w-full rounded-none border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-accent/60 focus:bg-white/10 transition-all duration-300" placeholder="500 pcs" />
+        </div>
+        <div>
+          <label htmlFor="city" className="mb-1.5 block text-[12px] font-bold text-white/80 uppercase tracking-wider">City <span className="text-accent">*</span></label>
+          <input id="city" required value={city} onChange={(e) => setCity(e.target.value)} className="w-full rounded-none border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-accent/60 focus:bg-white/10 transition-all duration-300" placeholder="e.g. Chennai" />
         </div>
         <div>
           <label htmlFor="mobile" className="mb-1.5 block text-[12px] font-bold text-white/80 uppercase tracking-wider">
@@ -270,7 +276,7 @@ export default function HomePage() {
     if (url.startsWith('http://') || url.startsWith('https://')) {
       return url;
     }
-    const rootUrl = apiClient.defaults.baseURL?.replace(/\/api$/, '') || 'http://172.16.0.10:5001';
+    const rootUrl = apiClient.defaults.baseURL?.replace(/\/api$/, '') || 'http://localhost:5001';
     return `${rootUrl}${url}`;
   };
 
@@ -560,7 +566,7 @@ export default function HomePage() {
       {/* <SupplierNetworkInteractive /> */}
 
       {/* <TestimonialCarousel /> */}
-      <SupplierBuyerCTA />
+      {/* <SupplierBuyerCTA /> */}
       {/* <IndustryInsightsBlog /> */}
       <TrustedByBrands />
       {/* <MiniFAQ /> */}
@@ -587,7 +593,7 @@ export default function HomePage() {
             <p className="mt-1 text-sm text-muted-foreground">Send your requirement and get matched with verified suppliers by phone or WhatsApp.</p>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row">
-            <Link to="/contact" className="market-button bg-accent px-5 py-3 text-center text-sm font-bold text-white">Post Buy Requirement</Link>
+            <Link to="/contact" className="market-button bg-accent px-5 py-3 text-center text-sm font-bold text-white">Request for Quotation</Link>
             <Link to="/services" className="market-button border border-primary px-5 py-3 text-center text-sm font-bold text-primary">Find Supplier</Link>
           </div>
         </div>

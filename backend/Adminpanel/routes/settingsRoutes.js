@@ -46,6 +46,10 @@ router.post('/banner', upload.single('image'), async (req, res, next) => {
       ? settings.homepage_banner_images
       : [];
 
+    if (bannerImages.length >= 3) {
+      return res.status(400).json({ error: 'Maximum 3 banners allowed. Please remove an old banner before adding a new one.' });
+    }
+
     const newImagePath = `/uploads/${req.file.filename}`;
     bannerImages.push(newImagePath);
 

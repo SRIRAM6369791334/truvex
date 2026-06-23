@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import { Filter, Search, Tag, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -62,6 +62,9 @@ function SubcategoryCard({ subcategory }: { subcategory: any }) {
 }
 
 export default function CategoriesPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const catParam = searchParams.get('cat');
+
   const [activeFilter, setActiveFilter] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
   const [categoriesList, setCategoriesList] = useState<any[]>([]);
@@ -87,7 +90,16 @@ export default function CategoriesPage() {
               subList: (cat.subcategories || []).map((sub: any) => sub.name),
             };
           });
-          setCategoriesList(mapped);
+          
+          // Deduplicate categories by name
+          const uniqueMapped: any[] = [];
+          mapped.forEach((cat: any) => {
+            if (!uniqueMapped.find(c => c.name === cat.name)) {
+              uniqueMapped.push(cat);
+            }
+          });
+          
+          setCategoriesList(uniqueMapped);
           setLoading(false);
         }
       })
@@ -103,9 +115,36 @@ export default function CategoriesPage() {
     };
   }, []);
 
+  useEffect(() => {
+    if (catParam && categoriesList.length > 0) {
+      const isCategory = categoriesList.find(c => c.slug === catParam || c.name === catParam);
+      if (isCategory) {
+        setActiveFilter(isCategory.name);
+        setSearchQuery('');
+      } else {
+        setActiveFilter('All');
+        setSearchQuery(catParam);
+      }
+      setCurrentPage(1);
+    } else if (!catParam && categoriesList.length > 0) {
+      setActiveFilter('All');
+      setSearchQuery('');
+    }
+  }, [catParam, categoriesList]);
+
   const handleFilterChange = (filter: string) => {
     if (filter === activeFilter) return;
     setActiveFilter(filter);
+    setSearchQuery('');
+    
+    // Find category to set slug in URL if possible
+    const cat = categoriesList.find(c => c.name === filter);
+    if (cat) {
+      setSearchParams({ cat: cat.slug || cat.name });
+    } else {
+      setSearchParams({});
+    }
+    
     setCurrentPage(1);
   };
 
@@ -134,6 +173,7 @@ export default function CategoriesPage() {
       return (
         sub.name.toLowerCase().includes(q) ||
         sub.categoryName.toLowerCase().includes(q) ||
+        (sub.slug && sub.slug.toLowerCase().includes(q)) ||
         (sub.description && sub.description.toLowerCase().includes(q))
       );
     }
@@ -173,12 +213,12 @@ export default function CategoriesPage() {
                 Search
               </button>
             </div>
-            <div className="flex flex-wrap gap-2">
+            {/* <div className="flex overflow-x-auto whitespace-nowrap scrollbar-hide gap-2 pb-2">
               {filters.map((filter) => (
                 <button
                   key={filter}
                   onClick={() => handleFilterChange(filter)}
-                  className={`flex items-center gap-1 border px-4 py-2 text-[12px] font-bold rounded-none transition-colors ${
+                  className={`flex items-center gap-1 border px-4 py-2 text-[12px] font-bold rounded-none transition-colors whitespace-nowrap shrink-0 ${
                     activeFilter === filter 
                     ? 'border-primary bg-primary text-white shadow-sm' 
                     : 'border-border bg-[#f8f9fa] text-primary hover:border-accent hover:bg-white'
@@ -187,7 +227,7 @@ export default function CategoriesPage() {
                   <Filter size={13} /> {filter}
                 </button>
               ))}
-            </div>
+            </div> */}
           </div>
 
           <div className="flex flex-col lg:flex-row gap-6">

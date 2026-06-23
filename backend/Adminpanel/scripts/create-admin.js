@@ -6,7 +6,7 @@ const database = require('../config/database');
 async function main() {
   const name = process.env.DEFAULT_ADMIN_NAME || 'Truvex Admin';
   const email = (process.env.DEFAULT_ADMIN_EMAIL || 'admin@truvex.in').trim().toLowerCase();
-  const password = process.env.DEFAULT_ADMIN_PASSWORD || 'TruvexAdmin@2024';
+  const password = process.env.DEFAULT_ADMIN_PASSWORD || 'Admin@2026';
 
   if (!password || password.length < 12) {
     throw new Error('DEFAULT_ADMIN_PASSWORD must be at least 12 characters.');
