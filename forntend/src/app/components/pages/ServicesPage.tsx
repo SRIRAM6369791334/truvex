@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import { EnquiryTicker, TrustSignalsBar } from '../MarketplaceComponents';
 import { Search, ChevronRight } from 'lucide-react';
 import AnimatedIcon from '../AnimatedIcon';
@@ -8,20 +8,36 @@ import { getCategories } from '../../../services/categoryService';
 import { submitServiceLead } from '../../../services/leadService';
 
 export default function ServicesPage() {
+  const [searchParams] = useSearchParams();
+  const initialCategory = searchParams.get('category') || 'All';
+  const initialSearch = searchParams.get('search') || '';
+
   const [services, setServices] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState(initialCategory);
+  const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
   // Quick RFQ form states
-  const [rfqProduct, setRfqProduct] = useState('');
+  const [allServicesList, setAllServicesList] = useState<any[]>([]);
+  const [rfqServiceId, setRfqServiceId] = useState('');
   const [rfqQty, setRfqQty] = useState('');
   const [rfqMobile, setRfqMobile] = useState('');
   const [rfqSubmitting, setRfqSubmitting] = useState(false);
   const [rfqSuccess, setRfqSuccess] = useState(false);
   const [rfqError, setRfqError] = useState<string | null>(null);
+
+  useEffect(() => {
+    getServices()
+      .then((res) => {
+        setAllServicesList(res.data || []);
+      })
+      .catch((err) => console.error('Error fetching services for dropdown:', err));
+  }, []);
 
   useEffect(() => {
     // Fetch categories for dropdown
@@ -31,8 +47,17 @@ export default function ServicesPage() {
       })
       .catch((err) => console.error('Error fetching categories:', err));
 
-    // Fetch initial services
-    getServices()
+    // Fetch initial services using parameters if present!
+    const params: any = {};
+    if (initialCategory !== 'All') {
+      params.category = initialCategory;
+    }
+    if (initialSearch.trim()) {
+      params.search = initialSearch.trim();
+    }
+
+    setLoading(true);
+    getServices(params)
       .then((res) => {
         setServices(res.data || []);
         setLoading(false);
@@ -42,10 +67,11 @@ export default function ServicesPage() {
         setError('Failed to load services.');
         setLoading(false);
       });
-  }, []);
+  }, [initialCategory, initialSearch]);
 
   const handleSearch = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+    setCurrentPage(1);
     setLoading(true);
     setError(null);
 
@@ -71,14 +97,14 @@ export default function ServicesPage() {
 
   const handleQuickRFQSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!rfqProduct.trim() || !rfqMobile.trim()) {
-      setRfqError('Product Name and Mobile Number are required.');
+    if (!rfqServiceId || !rfqMobile.trim()) {
+      setRfqError('Service and Mobile Number are required.');
       return;
     }
 
     // Basic mobile validation
-    if (!/^[6-9]\d{9}$/.test(rfqMobile)) {
-      setRfqError('Mobile number must be a valid 10-digit Indian number.');
+    if (rfqMobile.length !== 10) {
+      setRfqError('Mobile number must be exactly 10 digits.');
       return;
     }
 
@@ -86,13 +112,16 @@ export default function ServicesPage() {
     setRfqError(null);
 
     try {
+      const selectedService = allServicesList.find(s => String(s.id) === String(rfqServiceId));
       await submitServiceLead({
         full_name: 'Quick RFQ Buyer',
         mobile: rfqMobile,
-        requirement_details: `Quick RFQ for: ${rfqProduct}. Quantity: ${rfqQty || 'N/A'}`
+        service_id: Number(rfqServiceId),
+        quantity: rfqQty || undefined,
+        requirement_details: `Quick RFQ for Service: ${selectedService ? selectedService.title : 'Unknown'}.`
       });
       setRfqSuccess(true);
-      setRfqProduct('');
+      setRfqServiceId('');
       setRfqQty('');
       setRfqMobile('');
     } catch (err: any) {
@@ -101,6 +130,14 @@ export default function ServicesPage() {
     } finally {
       setRfqSubmitting(false);
     }
+  };
+
+  const totalPages = Math.ceil(services.length / itemsPerPage);
+  const currentServices = services.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -223,14 +260,19 @@ export default function ServicesPage() {
                           </div>
                         )}
                         <div>
-                          <input 
-                            type="text" 
+                          <select 
                             required
-                            value={rfqProduct}
-                            onChange={(e) => setRfqProduct(e.target.value)}
-                            placeholder="Product / Service Name *" 
-                            className="w-full rounded-none border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all shadow-sm" 
-                          />
+                            value={rfqServiceId}
+                            onChange={(e) => setRfqServiceId(e.target.value)}
+                            className="w-full rounded-none border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all shadow-sm cursor-pointer text-slate-700 font-medium" 
+                          >
+                            <option value="" className="text-slate-400">Select Service *</option>
+                            {allServicesList.map((service) => (
+                              <option key={service.id} value={service.id} className="text-slate-800">
+                                {service.title}
+                              </option>
+                            ))}
+                          </select>
                         </div>
                         <div>
                           <input 
@@ -243,10 +285,15 @@ export default function ServicesPage() {
                         </div>
                         <div>
                           <input 
-                            type="tel" 
+                            type="text" 
                             required
                             value={rfqMobile}
-                            onChange={(e) => setRfqMobile(e.target.value)}
+                            onChange={(e) => {
+                              const value = e.target.value.replace(/\D/g, ''); // only allow digits
+                              if (value.length <= 10) {
+                                setRfqMobile(value);
+                              }
+                            }}
                             placeholder="Mobile Number *" 
                             className="w-full rounded-none border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all shadow-sm" 
                           />
@@ -295,39 +342,74 @@ export default function ServicesPage() {
                   <p className="text-slate-500 font-bold">No sourcing services found matching the search criteria.</p>
                 </div>
               ) : (
-                <div className="grid md:grid-cols-2 gap-6">
-                  {services.map((service) => (
-                    <div key={service.id} className="group flex flex-col sm:flex-row gap-5 bg-white border border-slate-100 rounded-none p-5 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-accent/30 transition-all duration-300">
-                       <div className="w-full sm:w-28 h-40 sm:h-28 flex-shrink-0 bg-slate-50 rounded-none overflow-hidden relative">
-                          <img src={service.image || 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=300'} alt={service.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                          <div className="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-colors"></div>
-                       </div>
-                       <div className="flex-1 text-left flex flex-col justify-between">
-                          <div>
-                            <span className="text-[11px] font-bold text-accent uppercase tracking-wider">{service.category_name}</span>
-                            <h3 className="font-bold text-primary text-[17px] mb-1 group-hover:text-accent transition-colors mt-0.5">
-                              <Link to={`/service/${service.id || service.slug}`}>{service.title}</Link>
-                            </h3>
-                            <p className="text-xs text-slate-500 line-clamp-2 mb-3 leading-relaxed">{service.description}</p>
-                          </div>
-                          <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-50">
-                            {service.price ? (
-                              <span className="text-xs font-bold text-slate-700">₹ {service.price} / {service.price_unit || 'Piece'}</span>
-                            ) : (
-                              <span className="text-[11px] font-bold text-slate-400">Price on request</span>
-                            )}
-                            <Link to={`/service/${service.id || service.slug}`} className="text-xs font-bold text-accent inline-flex items-center gap-0.5 hover:underline">
-                              View Details <ChevronRight size={12} />
-                            </Link>
-                          </div>
-                       </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-           </div>
+                <>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {currentServices.map((service: any) => (
+                      <div key={service.id} className="group flex flex-col sm:flex-row gap-5 bg-white border border-slate-100 rounded-none p-5 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-accent/30 transition-all duration-300">
+                         <div className="w-full sm:w-28 h-40 sm:h-28 flex-shrink-0 bg-slate-50 rounded-none overflow-hidden relative">
+                            <img src={service.image || 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=300'} alt={service.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                            <div className="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-colors"></div>
+                         </div>
+                         <div className="flex-1 text-left flex flex-col justify-between">
+                            <div>
+                              <span className="text-[11px] font-bold text-accent uppercase tracking-wider">{service.category_name}</span>
+                              <h3 className="font-bold text-primary text-[17px] mb-1 group-hover:text-accent transition-colors mt-0.5">
+                                <Link to={`/service/${service.id || service.slug}`}>{service.title}</Link>
+                              </h3>
+                              <p className="text-xs text-slate-500 line-clamp-2 mb-3 leading-relaxed">{service.description}</p>
+                            </div>
+                            <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-50">
+                              {service.price ? (
+                                <span className="text-xs font-bold text-slate-700">₹ {service.price} / {service.price_unit || 'Piece'}</span>
+                              ) : (
+                                <span className="text-[11px] font-bold text-slate-400">Price on request</span>
+                              )}
+                              <Link to={`/service/${service.id || service.slug}`} className="text-xs font-bold text-accent inline-flex items-center gap-0.5 hover:underline">
+                                View Details <ChevronRight size={12} />
+                              </Link>
+                            </div>
+                         </div>
+                      </div>
+                    ))}
+                  </div>
 
-        </div>
+                  {totalPages > 1 && (
+                    <div className="mt-12 flex justify-center items-center gap-2">
+                      <button
+                        onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                        disabled={currentPage === 1}
+                        className="px-4 py-2 bg-white border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors rounded-none"
+                      >
+                        Previous
+                      </button>
+                      <div className="flex gap-1">
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                          <button
+                            key={page}
+                            onClick={() => handlePageChange(page)}
+                            className={`w-10 h-10 flex items-center justify-center text-sm font-bold transition-colors rounded-none ${
+                              currentPage === page
+                                ? 'bg-accent text-white border-accent'
+                                : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                            }`}
+                          >
+                            {page}
+                          </button>
+                        ))}
+                      </div>
+                      <button
+                        onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                        disabled={currentPage === totalPages}
+                        className="px-4 py-2 bg-white border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors rounded-none"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
       </section>
 
       {/* 2. HOW IT WORKS SECTION */}

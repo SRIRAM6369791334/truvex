@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { ShieldCheck, PackageCheck, BadgeCheck } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import AnimatedIcon from '../AnimatedIcon';
+import { submitRFQ } from '../../../services/leadService';
+import apiClient from '../../../apiClient';
 
 import {
   CategoryCard,
@@ -27,40 +29,108 @@ const metrics = [
 ];
 
 function MiniRFQForm() {
+  const [product, setProduct] = useState('');
+  const [quantity, setQuantity] = useState('');
+  const [city, setCity] = useState('');
+  const [mobile, setMobile] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    // Validate mobile number: must be exactly 10 digits
+    if (mobile.length !== 10) {
+      setError('Mobile number must be exactly 10 digits.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await submitRFQ({
+        product_name: product,
+        quantity,
+        delivery_city: city,
+        mobile,
+      });
+      setSuccess(true);
+      setProduct('');
+      setQuantity('');
+      setCity('');
+      setMobile('');
+    } catch (err: any) {
+      console.error(err);
+      setError(err.response?.data?.message || 'Failed to submit. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (success) {
+    return (
+      <div className="rounded-none border border-accent/50 p-6 text-center text-white shadow-2xl bg-gradient-to-br from-accent/15 via-white/[0.03] to-white/[0.01] backdrop-blur-xl">
+        <div className="text-4xl mb-3">✅</div>
+        <h3 className="font-bold text-lg text-white mb-1">RFQ Submitted!</h3>
+        <p className="text-sm text-white/70">Our team will connect you with verified suppliers shortly.</p>
+        <button onClick={() => setSuccess(false)} className="mt-4 text-xs text-accent underline">Submit another</button>
+      </div>
+    );
+  }
+
   return (
-    <form className="rounded-none border p-5 text-white shadow-2xl border-accent/50 bg-gradient-to-br from-accent/15 via-white/[0.03] to-white/[0.01] shadow-accent/5 backdrop-blur-xl">
+    <form onSubmit={handleSubmit} className="rounded-none border p-5 text-white shadow-2xl border-accent/50 bg-gradient-to-br from-accent/15 via-white/[0.03] to-white/[0.01] shadow-accent/5 backdrop-blur-xl">
       <div className="mb-4 flex items-center justify-between gap-3 border-b border-white/10 pb-3">
         <div className="flex items-center gap-2">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-none bg-accent opacity-75"></span>
             <span className="relative inline-flex rounded-none h-2 w-2 bg-accent"></span>
           </span>
-          <h2 className="text-xs font-bold uppercase tracking-wider text-white/95">Post Buy Requirement</h2>
+          <h2 className="text-xs font-bold uppercase tracking-wider text-white/95">Request for Quotation</h2>
         </div>
-        <span className="hidden text-[10px] font-bold uppercase tracking-wider bg-accent/15 px-2.5 py-1 rounded-none text-accent sm:inline">Free for buyers</span>
+        {/* <span className="hidden text-[10px] font-bold uppercase tracking-wider bg-accent/15 px-2.5 py-1 rounded-none text-accent sm:inline">Free for buyers</span> */}
       </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.4fr_0.75fr_1fr_auto]">
+      {error && <div className="mb-3 rounded border border-red-400/40 bg-red-500/10 px-3 py-2 text-xs text-red-300">{error}</div>}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.2fr_0.6fr_0.8fr_1fr_auto]">
         <div>
           <label htmlFor="product" className="mb-1.5 block text-[12px] font-bold text-white/80 uppercase tracking-wider">Product Name <span className="text-accent">*</span></label>
-          <input id="product" required className="w-full rounded-none border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-accent/60 focus:bg-white/10 transition-all duration-300" placeholder="e.g. Steel pipes" />
+          <input id="product" required value={product} onChange={(e) => setProduct(e.target.value)} className="w-full rounded-none border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-accent/60 focus:bg-white/10 transition-all duration-300" placeholder="e.g. Steel pipes" />
         </div>
         <div>
           <label htmlFor="quantity" className="mb-1.5 block text-[12px] font-bold text-white/80 uppercase tracking-wider">Quantity <span className="text-accent">*</span></label>
-          <input id="quantity" required className="w-full rounded-none border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-accent/60 focus:bg-white/10 transition-all duration-300" placeholder="500 pcs" />
+          <input id="quantity" required value={quantity} onChange={(e) => setQuantity(e.target.value)} className="w-full rounded-none border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-accent/60 focus:bg-white/10 transition-all duration-300" placeholder="500 pcs" />
+        </div>
+        <div>
+          <label htmlFor="city" className="mb-1.5 block text-[12px] font-bold text-white/80 uppercase tracking-wider">City <span className="text-accent">*</span></label>
+          <input id="city" required value={city} onChange={(e) => setCity(e.target.value)} className="w-full rounded-none border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-accent/60 focus:bg-white/10 transition-all duration-300" placeholder="e.g. Chennai" />
         </div>
         <div>
           <label htmlFor="mobile" className="mb-1.5 block text-[12px] font-bold text-white/80 uppercase tracking-wider">
             Mobile Number <span className="text-accent">*</span>
             <span className="ml-1.5 cursor-help text-white/40 hover:text-white" title="Why we need this: suppliers respond fastest by phone or WhatsApp.">?</span>
           </label>
-          <input id="mobile" required className="w-full rounded-none border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-accent/60 focus:bg-white/10 transition-all duration-300" placeholder="+91 mobile" />
+          <input
+            id="mobile"
+            required
+            type="text"
+            value={mobile}
+            onChange={(e) => {
+              const value = e.target.value.replace(/\D/g, ''); // only allow digits
+              if (value.length <= 10) {
+                setMobile(value);
+              }
+            }}
+            className="w-full rounded-none border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-accent/60 focus:bg-white/10 transition-all duration-300"
+            placeholder="e.g. 9876543210"
+          />
         </div>
-        <button type="submit" className="market-button hidden self-end bg-accent px-6 py-2.5 text-sm font-bold text-white hover:bg-accent/90 lg:block rounded-none min-h-11 shadow-lg shadow-accent/20">
-          Submit RFQ
+        <button type="submit" disabled={loading} className="market-button hidden self-end bg-accent px-6 py-2.5 text-sm font-bold text-white hover:bg-accent/90 lg:block rounded-none min-h-11 shadow-lg shadow-accent/20 disabled:opacity-60">
+          {loading ? '...' : 'Submit RFQ'}
         </button>
       </div>
-      <button type="submit" className="market-button mt-4 w-full bg-accent px-5 py-2.5 text-sm font-bold text-white hover:bg-accent/90 lg:hidden rounded-none min-h-11 shadow-lg shadow-accent/20">
-        Submit RFQ
+      <button type="submit" disabled={loading} className="market-button mt-4 w-full bg-accent px-5 py-2.5 text-sm font-bold text-white hover:bg-accent/90 lg:hidden rounded-none min-h-11 shadow-lg shadow-accent/20 disabled:opacity-60">
+        {loading ? 'Submitting...' : 'Submit RFQ'}
       </button>
     </form>
   );
@@ -171,6 +241,45 @@ function BannerAnimation() {
 }
 
 export default function HomePage() {
+  const [banners, setBanners] = useState<string[]>([
+    "https://images.unsplash.com/photo-1494412651409-8963ce7935a7?w=1600&q=80",
+    "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1600&q=80",
+    "https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=1600&q=80"
+  ]);
+  const [currentIdx, setCurrentIdx] = useState(0);
+
+  useEffect(() => {
+    const loadBanners = async () => {
+      try {
+        const res = await apiClient.get('/settings');
+        if (res.data?.success && res.data.data?.homepage_banner_images?.length > 0) {
+          setBanners(res.data.data.homepage_banner_images);
+        } else if (res.data?.data?.homepage_banner_images?.length > 0) {
+          setBanners(res.data.data.homepage_banner_images);
+        }
+      } catch (err) {
+        console.error('Failed to load dynamic banners:', err);
+      }
+    };
+    loadBanners();
+  }, []);
+
+  useEffect(() => {
+    if (banners.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentIdx((prev) => (prev + 1) % banners.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [banners]);
+
+  const resolveBannerUrl = (url: string) => {
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    const rootUrl = apiClient.defaults.baseURL?.replace(/\/api$/, '') || 'http://localhost:5001';
+    return `${rootUrl}${url}`;
+  };
+
   return (
     <div className="bg-background">
       {/* ─── Promo Banner ─── */}
@@ -214,13 +323,20 @@ export default function HomePage() {
       </div>
 
       <section className="w-full relative py-32 flex flex-col items-center justify-center min-h-[500px] overflow-hidden border-b border-border">
-        {/* Shipping Background Image */}
+        {/* Shipping Background Images Carousel */}
         <div className="absolute inset-0 z-0">
-          <img 
-            src="https://images.unsplash.com/photo-1494412651409-8963ce7935a7?w=1600&q=80" 
-            alt="Global Shipping Logistics" 
-            className="w-full h-full object-cover"
-          />
+          <AnimatePresence mode="popLayout">
+            <motion.img 
+              key={currentIdx}
+              src={resolveBannerUrl(banners[currentIdx])} 
+              alt="Global Shipping Logistics" 
+              className="absolute inset-0 w-full h-full object-cover"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.2, ease: "easeInOut" }}
+            />
+          </AnimatePresence>
         </div>
         
         {/* Frosted Glass Overlay (Glassmorphism) */}
@@ -307,8 +423,8 @@ export default function HomePage() {
                     <div className={isHighlighted ? "animate-pulse" : ""}>
                       <AnimatedIcon icon={metric.iconName as any} size={32} />
                     </div>
-                    {isHighlighted && <span className="h-1.5 w-1.5 rounded-none absolute right-6 top-6 bg-accent animate-ping" />}
-                    <span className={`h-1.5 w-1.5 rounded-none absolute right-6 top-6 ${isHighlighted ? "bg-accent" : "bg-white/20"}`} />
+                    {/* {isHighlighted && <span className="h-1.5 w-1.5 rounded-none absolute right-6 top-6 bg-accent animate-ping" />} */}
+                    {/* <span className={`h-1.5 w-1.5 rounded-none absolute right-6 top-6 ${isHighlighted ? "bg-accent" : "bg-white/20"}`} /> */}
                   </div>
                   <div className="mt-5 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">{metric.value}</div>
                   <div className={`mt-1.5 break-words text-[10px] font-bold uppercase tracking-wider ${isHighlighted ? 'text-accent' : 'text-white/50'}`}>{metric.label}</div>
@@ -450,7 +566,7 @@ export default function HomePage() {
       {/* <SupplierNetworkInteractive /> */}
 
       {/* <TestimonialCarousel /> */}
-      <SupplierBuyerCTA />
+      {/* <SupplierBuyerCTA /> */}
       {/* <IndustryInsightsBlog /> */}
       <TrustedByBrands />
       {/* <MiniFAQ /> */}
@@ -477,7 +593,7 @@ export default function HomePage() {
             <p className="mt-1 text-sm text-muted-foreground">Send your requirement and get matched with verified suppliers by phone or WhatsApp.</p>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row">
-            <Link to="/contact" className="market-button bg-accent px-5 py-3 text-center text-sm font-bold text-white">Post Buy Requirement</Link>
+            <Link to="/contact" className="market-button bg-accent px-5 py-3 text-center text-sm font-bold text-white">Request for Quotation</Link>
             <Link to="/services" className="market-button border border-primary px-5 py-3 text-center text-sm font-bold text-primary">Find Supplier</Link>
           </div>
         </div>

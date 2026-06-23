@@ -12,6 +12,7 @@ const buyerRoutes = require('./routes/buyerRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
 const supplierRoutes = require('./routes/supplierRoutes');
 const { createFormRouter } = require('./routes/formRoutes');
+const settingsRoutes = require('./routes/settingsRoutes');
 
 const FORM_ROUTES = {
   contacts: {
@@ -66,7 +67,9 @@ function createApp(options = {}) {
   app.locals.db = options.db || database;
   app.locals.rateLimiters = options.rateLimiters || buildRateLimiters();
 
-  app.use(helmet());
+  app.use(helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" }
+  }));
   app.use(cors({ origin: parseAllowedOrigins(process.env.FRONTEND_URL), credentials: true }));
   app.use(express.json({ limit: '1mb' }));
   app.use(express.urlencoded({ extended: true }));
@@ -76,6 +79,7 @@ function createApp(options = {}) {
   }
 
   app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+  app.use('/uploads', express.static(path.join(__dirname, '..', 'Adminpanel', 'uploads')));
   app.use('/api', app.locals.rateLimiters.api);
 
   app.get('/health', (_req, res) => {
@@ -87,6 +91,7 @@ function createApp(options = {}) {
   app.use('/api/services', serviceRoutes);
   app.use('/api/buyers', buyerRoutes);
   app.use('/api/suppliers', supplierRoutes);
+  app.use('/api/settings', settingsRoutes);
 
   Object.entries(FORM_ROUTES).forEach(([route, config]) => {
     app.use(`/api/${route}`, createFormRouter(config));

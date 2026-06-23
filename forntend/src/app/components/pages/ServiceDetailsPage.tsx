@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router';
-import { ChevronRight, ShieldCheck, CheckCircle2, Truck, ArrowRight } from 'lucide-react';
+import { ChevronRight, ShieldCheck, CheckCircle2, Truck, ArrowRight, TrendingUp, ListChecks } from 'lucide-react';
 import { CategoryCard, categories } from '../MarketplaceComponents';
 import { getServiceById, getServices } from '../../../services/serviceService';
 import { submitServiceLead } from '../../../services/leadService';
@@ -64,8 +64,8 @@ export default function ServiceDetailsPage() {
       setFormError('Full Name and Mobile Number are required.');
       return;
     }
-    if (!/^[6-9]\d{9}$/.test(mobile)) {
-      setFormError('Mobile number must be a valid 10-digit Indian number.');
+    if (mobile.length !== 10) {
+      setFormError('Mobile number must be exactly 10 digits.');
       return;
     }
     
@@ -118,13 +118,43 @@ export default function ServiceDetailsPage() {
     );
   }
 
-  // Handle images gallery
-  const galleryImages = Array.isArray(service.images) && service.images.length > 0
-    ? service.images
-    : [service.image || 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800'];
+  // Handle images gallery (combine main image and gallery images, ensuring unique values)
+  const galleryImages = Array.from(
+    new Set([
+      service.image,
+      ...(Array.isArray(service.images) ? service.images : []),
+    ])
+  ).filter(Boolean);
 
-  // Handle specifications
-  const specsList = Array.isArray(service.specs) ? service.specs : [];
+  // Fallback to placeholder if no images at all
+  if (galleryImages.length === 0) {
+    galleryImages.push('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800');
+  }
+
+  // Handle conditional data
+  const rawSpecs = Array.isArray(service.specs)
+    ? service.specs
+    : service.specs && typeof service.specs === 'object'
+    ? Object.entries(service.specs).map(([key, value]) => ({ key, value }))
+    : [];
+
+  const validSpecs = rawSpecs.filter((spec: any) => {
+    if (typeof spec === 'string') return spec.trim() !== '';
+    if (spec && typeof spec === 'object') return (spec.label || spec.name || spec.key || spec.value || spec.val);
+    return false;
+  });
+
+  const validStats = Array.isArray(service.stats) ? service.stats.filter((stat: any) => {
+    if (typeof stat === 'string') return stat.trim() !== '';
+    if (stat && typeof stat === 'object') return (stat.label || stat.name || stat.key || stat.value || stat.val);
+    return false;
+  }) : [];
+
+  const validFeatures = Array.isArray(service.features) ? service.features.filter((f: any) => typeof f === 'string' && f.trim() !== '') : [];
+  const validBenefits = Array.isArray(service.benefits) ? service.benefits.filter((b: any) => typeof b === 'string' && b.trim() !== '') : [];
+  const validProcessSteps = Array.isArray(service.process_steps) ? service.process_steps.filter((s: any) => typeof s === 'string' && s.trim() !== '') : [];
+
+  const hasDescription = !!(service.long_description?.trim() || service.description?.trim());
 
   return (
     <div className="bg-[#f0f2f5] min-h-screen pb-20">
@@ -143,111 +173,232 @@ export default function ServiceDetailsPage() {
 
       <div className="mx-auto max-w-7xl px-4 py-8">
         <div className="grid lg:grid-cols-3 gap-8">
-          
+
           {/* LEFT COLUMN: Main Product Details */}
           <div className="lg:col-span-2 space-y-6">
-            
-            {/* Main Product Card */}
-            <div className="bg-white rounded-none border border-border shadow-sm p-5 md:p-8">
-              <h1 className="font-serif text-2xl md:text-3xl font-bold text-primary mb-2">{service.title}</h1>
-              
-              <div className="flex items-center gap-4 mb-6 pb-6 border-b border-border/50 text-sm font-medium">
-                <span className="text-[#c68c3e] text-xl md:text-2xl font-bold">
-                  {service.price ? `₹ ${service.price} ` : 'Price on Request'}
-                  {service.price && <span className="text-sm font-normal text-slate-500">/ {service.price_unit || 'Piece'}</span>}
-                </span>
-                <span className="h-4 w-px bg-border"></span>
-                <span className="text-teal-600 flex items-center gap-1">
-                  <CheckCircle2 size={16} /> {service.in_stock ? 'Available' : 'Contact for Sourcing'}
-                </span>
+
+            {/* ── TOP CARD: Image + Info stacked on mobile, side-by-side on desktop ── */}
+            <div className="bg-white rounded-none border border-border shadow-sm overflow-hidden">
+
+              {/* Mobile: full-width image at top */}
+              <div className="md:hidden">
+                <div className="bg-slate-50 w-full aspect-square flex items-center justify-center overflow-hidden">
+                  <img src={activeImage || galleryImages[0]} alt={service.title} className="w-full h-full object-contain" />
+                </div>
+                {galleryImages.length > 1 && (
+                  <div className="grid grid-cols-5 gap-1.5 p-3 border-b border-border/30">
+                    {galleryImages.map((img: string, idx: number) => (
+                      <button key={idx} onClick={() => setActiveImage(img)}
+                        className={`aspect-square border rounded-none overflow-hidden ${activeImage === img ? 'border-accent ring-2 ring-accent/20' : 'border-border/50'} transition-all`}>
+                        <img src={img} alt={`Thumb ${idx}`} className="w-full h-full object-cover" />
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
-              <div className="grid md:grid-cols-2 gap-8">
-                {/* Image Gallery */}
-                <div className="space-y-4">
-                  <div className="border border-border/50 rounded-none bg-slate-50 aspect-square flex items-center justify-center overflow-hidden">
-                    <img src={activeImage || galleryImages[0]} alt={service.title} className="w-full h-full object-contain" />
+              {/* Info section (shown below image on mobile, right side on desktop) */}
+              <div className="flex flex-col md:flex-row">
+
+                {/* Desktop-only left image column */}
+                <div className="hidden md:flex md:w-1/2 flex-col gap-3 p-6 border-r border-border/30">
+                  <div className="bg-slate-50 w-full aspect-square flex items-center justify-center overflow-hidden border border-border/30">
+                    <img src={activeImage || galleryImages[0]} alt={service.title} className="w-full h-full object-contain transition-transform duration-500 hover:scale-105" />
                   </div>
                   {galleryImages.length > 1 && (
                     <div className="grid grid-cols-4 gap-2">
                       {galleryImages.map((img: string, idx: number) => (
-                        <button 
-                          key={idx} 
-                          onClick={() => setActiveImage(img)}
-                          className={`aspect-square border rounded-none overflow-hidden ${activeImage === img ? 'border-accent ring-2 ring-accent/20' : 'border-border/50 hover:border-primary/30'} transition-all`}
-                        >
-                          <img src={img} alt={`Thumbnail ${idx}`} className="w-full h-full object-cover" />
+                        <button key={idx} onClick={() => setActiveImage(img)}
+                          className={`aspect-square border rounded-none overflow-hidden ${activeImage === img ? 'border-accent ring-2 ring-accent/20' : 'border-border/50 hover:border-primary/30'} transition-all`}>
+                          <img src={img} alt={`Thumb ${idx}`} className="w-full h-full object-cover" />
                         </button>
                       ))}
                     </div>
                   )}
                 </div>
 
-                {/* Specs Overview */}
-                <div>
-                  <h3 className="font-bold text-primary mb-4 text-sm uppercase tracking-wider border-b border-border pb-2">Product Specifications</h3>
-                  {specsList.length > 0 ? (
-                    <table className="w-full text-sm">
-                      <tbody>
-                        {specsList.map((spec: any, idx: number) => {
-                          const label = spec.label || spec.name || spec.key || '';
-                          const val = spec.value || spec.val || '';
-                          return (
-                            <tr key={idx} className="border-b border-border/30 last:border-0">
-                              <td className="py-2.5 text-muted-foreground font-medium w-1/2">{label}</td>
-                              <td className="py-2.5 text-primary font-semibold">{val}</td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">Contact us for custom specifications and sourcing details.</p>
-                  )}
-                  
-                  <div className="mt-6 space-y-3 border-t border-border/50 pt-5 text-left">
-                    <div className="flex items-start gap-2 text-sm text-slate-600">
-                      <Truck size={18} className="text-accent shrink-0 mt-0.5" />
-                      <span>{service.delivery_info || 'Delivery all over India. Fast turnaround and transit support.'}</span>
-                    </div>
-                    <div className="flex items-start gap-2 text-sm text-slate-600">
-                      <ShieldCheck size={18} className="text-teal-600 shrink-0 mt-0.5" />
-                      <span>100% Quality Checked before dispatch. MOQ: {service.moq || 1} units.</span>
-                    </div>
+                {/* Product info: badges → title → price → specs/delivery */}
+                <div className="flex-1 p-5 md:p-6 flex flex-col gap-4">
+
+                  {/* Badges */}
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-[11px] font-bold uppercase tracking-wider bg-accent/10 px-2.5 py-1 text-accent">
+                      {service.category_name || 'Industrial Service'}
+                    </span>
+                    <span className="text-[11px] font-bold uppercase tracking-wider bg-teal-50 px-2.5 py-1 text-teal-600">
+                      Verified Sourcing
+                    </span>
                   </div>
+
+                  {/* Title */}
+                  <h1 className="font-serif text-xl md:text-2xl font-bold text-primary leading-tight">{service.title}</h1>
+
+                  {/* Price + Availability */}
+                  <div className="flex flex-wrap items-center gap-3 pb-4 border-b border-border/40">
+                    <span className="text-[#c68c3e] text-lg md:text-xl font-bold">
+                      {service.price ? `₹ ${service.price}` : 'Price on Request'}
+                      {service.price && <span className="text-sm font-normal text-slate-500 ml-1">/ {service.price_unit || 'Piece'}</span>}
+                    </span>
+                    <span className="h-4 w-px bg-border hidden sm:block"></span>
+                    <span className="text-teal-600 flex items-center gap-1 text-sm font-semibold">
+                      <CheckCircle2 size={15} /> {service.in_stock ? 'Available' : 'Contact for Sourcing'}
+                    </span>
+                  </div>
+
+                  {/* Technical Specifications (inside card, desktop right col) */}
+                  {validSpecs.length > 0 && (
+                    <div>
+                      <h3 className="font-bold text-primary mb-3 text-xs uppercase tracking-wider border-b border-border pb-1.5">Technical Specifications</h3>
+                      <div className="border border-border/40 rounded-none overflow-hidden">
+                        <table className="w-full text-sm">
+                          <tbody>
+                            {validSpecs.map((spec: any, idx: number) => {
+                              let label = '';
+                              let val = '';
+                              if (typeof spec === 'string') { label = spec; }
+                              else if (spec) {
+                                label = spec.label || spec.name || spec.key || '';
+                                val = spec.value || spec.val || '';
+                              }
+                              if (!label && !val) return null;
+                              return (
+                                <tr key={idx} className="border-b border-border/30 last:border-0 odd:bg-slate-50/50">
+                                  <td className="py-2 px-3 text-muted-foreground font-semibold text-xs w-1/2 break-words">{label}</td>
+                                  {val && <td className="py-2 px-3 text-primary font-bold text-xs break-words">{val}</td>}
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Delivery & MOQ */}
+                  {(service.delivery_info || service.moq) && (
+                    <div className="space-y-2 pt-2">
+                      {service.delivery_info && (
+                        <div className="flex items-start gap-2 text-sm text-slate-600">
+                          <Truck size={16} className="text-accent shrink-0 mt-0.5" />
+                          <span>{service.delivery_info}</span>
+                        </div>
+                      )}
+                      {service.moq && (
+                        <div className="flex items-start gap-2 text-sm text-slate-600">
+                          <ShieldCheck size={16} className="text-teal-600 shrink-0 mt-0.5" />
+                          <span>100% Quality Checked. MOQ: {service.moq} units.</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
 
-            {/* Detailed Description */}
-            <div className="bg-white rounded-none border border-border shadow-sm p-5 md:p-8 text-left">
-              <h3 className="font-bold text-primary mb-4 text-sm uppercase tracking-wider border-b border-border pb-2">Product Description</h3>
-              <div className="prose prose-sm max-w-none text-slate-600 space-y-4">
-                <p>{service.long_description || service.description}</p>
-                
-                {Array.isArray(service.features) && service.features.length > 0 && (
-                  <div>
-                    <p className="text-primary font-bold">Key Features:</p>
-                    <ul className="list-disc pl-5 space-y-1">
-                      {service.features.map((feat: string, idx: number) => (
-                        <li key={idx}>{feat}</li>
+            {/* ── Product Description ── */}
+            {hasDescription && (
+              <div className="bg-white rounded-none border border-border shadow-sm p-5 md:p-6 text-left">
+                <h3 className="font-bold text-primary mb-3 text-sm uppercase tracking-wider border-b border-border pb-2">Product Description</h3>
+                <div 
+                  className="prose prose-sm max-w-none text-slate-600"
+                  dangerouslySetInnerHTML={{ __html: service.long_description || service.description }}
+                />
+              </div>
+            )}
+
+            {/* ── Key Features & Value Benefits ── */}
+            {(validFeatures.length > 0 || validBenefits.length > 0) && (
+              <div className="grid sm:grid-cols-2 gap-6">
+                {validFeatures.length > 0 && (
+                  <div className="bg-white rounded-none border border-border shadow-sm p-5 text-left">
+                    <h3 className="font-bold text-primary mb-3 text-sm uppercase tracking-wider border-b border-border pb-2 flex items-center gap-2">
+                      <ShieldCheck size={16} className="text-teal-600" /> Key Features
+                    </h3>
+                    <ul className="space-y-2.5">
+                      {validFeatures.map((feat: string, idx: number) => (
+                        <li key={idx} className="flex items-start gap-2 text-sm text-slate-600">
+                          <span className="h-5 w-5 rounded-full bg-teal-50 border border-teal-100 flex items-center justify-center shrink-0 mt-0.5">
+                            <span className="text-[10px] text-teal-600">✓</span>
+                          </span>
+                          <span>{feat}</span>
+                        </li>
                       ))}
                     </ul>
                   </div>
                 )}
-
-                {Array.isArray(service.benefits) && service.benefits.length > 0 && (
-                  <div>
-                    <p className="text-primary font-bold">Benefits:</p>
-                    <ul className="list-disc pl-5 space-y-1">
-                      {service.benefits.map((benefit: string, idx: number) => (
-                        <li key={idx}>{benefit}</li>
+                {validBenefits.length > 0 && (
+                  <div className="bg-white rounded-none border border-border shadow-sm p-5 text-left">
+                    <h3 className="font-bold text-primary mb-3 text-sm uppercase tracking-wider border-b border-border pb-2 flex items-center gap-2">
+                      <TrendingUp size={16} className="text-accent" /> Value Benefits
+                    </h3>
+                    <ul className="space-y-2.5">
+                      {validBenefits.map((benefit: string, idx: number) => (
+                        <li key={idx} className="flex items-start gap-2 text-sm text-slate-600">
+                          <span className="h-5 w-5 rounded-full bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0 mt-0.5">
+                            <span className="text-[10px] text-accent">★</span>
+                          </span>
+                          <span>{benefit}</span>
+                        </li>
                       ))}
                     </ul>
                   </div>
                 )}
               </div>
-            </div>
+            )}
+
+            {/* ── Process Steps ── */}
+            {validProcessSteps.length > 0 && (
+              <div className="bg-white rounded-none border border-border shadow-sm p-5 md:p-6 text-left">
+                <h3 className="font-bold text-primary mb-5 text-sm uppercase tracking-wider border-b border-border pb-2 flex items-center gap-2">
+                  <ListChecks size={16} className="text-accent" /> Process Steps
+                </h3>
+                <div className="relative border-l border-slate-200 ml-4 pl-6 space-y-5 py-1">
+                  {validProcessSteps.map((step: string, idx: number) => (
+                    <div key={idx} className="relative">
+                      <span className="absolute -left-[35px] top-0 flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-accent to-[#b07b32] text-[10px] font-bold text-white ring-4 ring-white">
+                        {idx + 1}
+                      </span>
+                      <h4 className="text-sm font-bold text-primary mb-1">Step {idx + 1}</h4>
+                      <p className="text-sm text-slate-600">{step}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* ── Service Statistics ── */}
+            {validStats.length > 0 && (
+              <div className="bg-white rounded-none border border-border shadow-sm p-5 md:p-6 text-left">
+                <h3 className="font-bold text-primary mb-4 text-sm uppercase tracking-wider border-b border-border pb-2">Service Statistics</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                  {validStats.map((stat: any, idx: number) => {
+                    let label = '';
+                    let value = '';
+                    if (typeof stat === 'string') {
+                      const trimmed = stat.trim();
+                      const firstSpace = trimmed.indexOf(' ');
+                      if (firstSpace > 0) {
+                        value = trimmed.substring(0, firstSpace);
+                        label = trimmed.substring(firstSpace + 1);
+                      } else {
+                        value = trimmed;
+                        label = '';
+                      }
+                    } else if (stat && typeof stat === 'object') {
+                      label = stat.label || stat.name || stat.key || '';
+                      value = stat.value || stat.val || '';
+                    }
+                    if (!value && !label) return null;
+                    return (
+                      <div key={idx} className="bg-gradient-to-br from-slate-50 to-slate-100/50 border border-slate-100 p-4 rounded-none text-center shadow-sm">
+                        <div className="text-lg md:text-xl font-bold text-accent mb-0.5 break-words">{value || label}</div>
+                        {value && label && <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 break-words">{label}</div>}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
           </div>
 
@@ -297,10 +448,15 @@ export default function ServiceDetailsPage() {
                       <div className="flex">
                         <span className="inline-flex items-center px-3 border border-r-0 border-slate-200 bg-slate-100 text-sm text-slate-500 font-bold">+91</span>
                         <input 
-                          type="tel" 
+                          type="text" 
                           required
                           value={mobile}
-                          onChange={(e) => setMobile(e.target.value)}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, ''); // only allow digits
+                            if (value.length <= 10) {
+                              setMobile(value);
+                            }
+                          }}
                           placeholder="Enter Mobile Number" 
                           className="flex-1 rounded-none border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all shadow-sm" 
                         />

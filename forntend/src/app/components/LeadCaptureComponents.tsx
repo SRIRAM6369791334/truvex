@@ -1,10 +1,11 @@
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { MessageCircle, Phone, UploadCloud, X, ArrowRight, BadgeCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Lottie from 'lottie-react';
 import shieldAnimation from './lottie/Shield.json';
 import targetAnimation from './lottie/Target.json';
+import apiClient from '../../apiClient';
 
 export const serviceCategories = [
   {
@@ -178,6 +179,34 @@ export function ServiceCard({ service }: { service: (typeof serviceCategories)[n
 
 export function ServiceDynamicList() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [categories, setCategories] = useState<any[]>(serviceCategories);
+
+  useEffect(() => {
+    apiClient.get('/categories')
+      .then(res => {
+        if (res.data?.data) {
+          const trending = res.data.data.filter((c: any) => c.trending === 1 || c.trending === true).slice(0, 6);
+          if (trending.length > 0) {
+            const rootUrl = apiClient.defaults.baseURL?.replace(/\/api$/, '') || 'http://localhost:8000';
+            setCategories(trending.map((c: any, index: number) => {
+              // Find a matching default image from our predefined list by title, or fallback to an index-based one
+              const defaultMatch = serviceCategories.find(sc => sc.title.toLowerCase() === c.name.toLowerCase());
+              const fallbackImage = defaultMatch ? defaultMatch.image : serviceCategories[index % serviceCategories.length].image;
+              
+              return {
+                title: c.name,
+                desc: c.description || 'Verified suppliers ready to fulfill your bulk orders.',
+                image: c.image ? `${rootUrl}${c.image}` : fallbackImage,
+                fallbackImage: fallbackImage
+              };
+            }));
+          }
+        }
+      })
+      .catch(err => console.error("Failed to fetch trending categories", err));
+  }, []);
+
+  if (!categories || categories.length === 0) return null;
 
   return (
     <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_1.2fr] lg:gap-16 items-start">
@@ -186,8 +215,14 @@ export function ServiceDynamicList() {
         <AnimatePresence mode="wait">
           <motion.img
             key={activeIndex}
-            src={serviceCategories[activeIndex].image}
-            alt={serviceCategories[activeIndex].title}
+            src={categories[activeIndex]?.image}
+            alt={categories[activeIndex]?.title}
+            onError={(e) => {
+              const fb = categories[activeIndex]?.fallbackImage;
+              if (fb && e.currentTarget.src !== fb) {
+                e.currentTarget.src = fb;
+              }
+            }}
             initial={{ opacity: 0, scale: 1.05 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
@@ -200,7 +235,7 @@ export function ServiceDynamicList() {
 
       {/* Right: Dynamic List */}
       <div className="flex flex-col gap-3">
-        {serviceCategories.map((service, index) => {
+        {categories.map((service, index) => {
           const isActive = index === activeIndex;
           return (
             <div
@@ -261,7 +296,61 @@ export function EnquiryPopup({
   open: boolean;
   onClose: () => void;
 }) {
+  const [productService, setProductService] = useState('');
+  const [quantityBudget, setQuantityBudget] = useState('');
+  const [mobile, setMobile] = useState('');
+  const [requirementDetails, setRequirementDetails] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   if (!open) return null;
+
+  const resetForm = () => {
+    setProductService('');
+    setQuantityBudget('');
+    setMobile('');
+    setRequirementDetails('');
+    setSuccess(false);
+    setError(null);
+  };
+
+  const handleClose = () => {
+    onClose();
+    setTimeout(resetForm, 300);
+  };
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setError(null);
+
+    // Validate mobile number: must be exactly 10 digits
+    if (mobile.length !== 10) {
+      setError('Mobile number must be exactly 10 digits.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { submitEnquiry } = await import('../../services/leadService');
+      await submitEnquiry({
+        product_service: productService,
+        quantity_budget: quantityBudget,
+        mobile,
+        requirement_details: requirementDetails || undefined,
+        source_page: window.location.pathname,
+      });
+      setSuccess(true);
+      setTimeout(() => {
+        handleClose();
+      }, 2000);
+    } catch (err: any) {
+      console.error(err);
+      setError(err.response?.data?.message || 'Failed to generate lead. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-[85] flex items-center justify-center bg-primary/70 p-4 backdrop-blur-md">
@@ -272,25 +361,65 @@ export function EnquiryPopup({
             <h2 className="font-serif text-2xl font-bold text-primary">Submit Requirement</h2>
             <p className="mt-1 text-sm text-muted-foreground">Share basic details. Truvex will route this to the right supplier category.</p>
           </div>
-          <button type="button" onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-full border border-border text-primary">
+          <button type="button" onClick={handleClose} className="flex h-10 w-10 items-center justify-center rounded-full border border-border text-primary hover:bg-muted">
             <X size={18} />
           </button>
         </div>
-        <form
-          className="mt-5 grid gap-3"
-          onSubmit={(event) => {
-            event.preventDefault();
-            onClose();
-          }}
-        >
-          <input required className="min-h-12 rounded-xl border border-border px-4 py-3 text-base outline-none focus:border-accent" placeholder="Product or service required" />
-          <div className="grid gap-3 sm:grid-cols-2">
-            <input required className="min-h-12 rounded-xl border border-border px-4 py-3 text-base outline-none focus:border-accent" placeholder="Quantity / budget" />
-            <input required className="min-h-12 rounded-xl border border-border px-4 py-3 text-base outline-none focus:border-accent" placeholder="+91 mobile number" />
+        
+        {success ? (
+          <div className="py-10 text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-teal-100 text-2xl font-bold text-teal-700">✓</div>
+            <h3 className="font-serif text-2xl font-bold text-primary">Enquiry Submitted!</h3>
+            <p className="mx-auto mt-2 text-sm text-muted-foreground">Our team will connect you with suppliers shortly.</p>
           </div>
-          <textarea rows={3} className="rounded-xl border border-border px-4 py-3 text-base outline-none focus:border-accent" placeholder="Requirement details" />
-          <button className="market-button min-h-12 rounded-xl bg-accent px-5 py-3 text-sm font-bold text-white">Generate Lead</button>
-        </form>
+        ) : (
+          <form className="mt-5 grid gap-3" onSubmit={handleSubmit}>
+            {error && <div className="rounded border border-red-300 bg-red-50 p-2 text-sm text-red-600">{error}</div>}
+            <input 
+              required 
+              value={productService}
+              onChange={(e) => setProductService(e.target.value)}
+              className="min-h-12 rounded-xl border border-border px-4 py-3 text-base outline-none focus:border-accent" 
+              placeholder="Product or service required" 
+            />
+            <div className="grid gap-3 sm:grid-cols-2">
+              <input 
+                required 
+                value={quantityBudget}
+                onChange={(e) => setQuantityBudget(e.target.value)}
+                className="min-h-12 rounded-xl border border-border px-4 py-3 text-base outline-none focus:border-accent" 
+                placeholder="Quantity / budget" 
+              />
+              <input 
+                required 
+                type="text"
+                value={mobile}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, ''); // only allow digits
+                  if (value.length <= 10) {
+                    setMobile(value);
+                  }
+                }}
+                className="min-h-12 rounded-xl border border-border px-4 py-3 text-base outline-none focus:border-accent" 
+                placeholder="10-digit mobile number" 
+              />
+            </div>
+            <textarea 
+              rows={3} 
+              value={requirementDetails}
+              onChange={(e) => setRequirementDetails(e.target.value)}
+              className="rounded-xl border border-border px-4 py-3 text-base outline-none focus:border-accent" 
+              placeholder="Requirement details" 
+            />
+            <button 
+              type="submit"
+              disabled={loading}
+              className="market-button min-h-12 rounded-xl bg-accent px-5 py-3 text-sm font-bold text-white disabled:opacity-50"
+            >
+              {loading ? 'Submitting...' : 'Generate Lead'}
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );

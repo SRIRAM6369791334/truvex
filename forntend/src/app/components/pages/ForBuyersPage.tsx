@@ -111,7 +111,7 @@ export default function ForBuyersPage() {
             <h2 className="font-serif text-2xl font-bold text-white">Post one RFQ. Get supplier callbacks.</h2>
             <p className="mt-1 text-sm text-white/70">Best for industrial products, bulk orders, repeat procurement, and city-specific sourcing.</p>
           </div>
-          <Link to="/contact" className="market-button bg-accent px-5 py-3 text-center text-sm font-bold text-white">Post Buy Requirement</Link>
+          <Link to="/contact" className="market-button bg-accent px-5 py-3 text-center text-sm font-bold text-white">Request for Quotation</Link>
         </div>
       </section>
     </div>

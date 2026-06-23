@@ -71,12 +71,12 @@ export const popularSearches = [
 ];
 
 export const suppliers = [
-  { name: 'Apex Industrial Traders', city: 'Mumbai', category: 'Steel & Fabrication', initials: 'AI', logo: 'https://ui-avatars.com/api/?name=Apex+Industrial&background=0B1F3A&color=C9973A&size=128', cover: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600' },
-  { name: 'Coimbatore Motor Works', city: 'Coimbatore', category: 'Industrial Motors', initials: 'CM', logo: 'https://ui-avatars.com/api/?name=Coimbatore+Motor&background=0B1F3A&color=C9973A&size=128', cover: 'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=600' },
-  { name: 'Surat Packline LLP', city: 'Surat', category: 'Packaging Materials', initials: 'SP', logo: 'https://ui-avatars.com/api/?name=Surat+Packline&background=0B1F3A&color=C9973A&size=128', cover: 'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=600' },
-  { name: 'Noida Control Systems', city: 'Noida', category: 'Electrical Panels', initials: 'NC', logo: 'https://ui-avatars.com/api/?name=Noida+Controls&background=0B1F3A&color=C9973A&size=128', cover: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600' },
-  { name: 'Pune CNC Components', city: 'Pune', category: 'Precision Parts', initials: 'PC', logo: 'https://ui-avatars.com/api/?name=Pune+CNC&background=0B1F3A&color=C9973A&size=128', cover: 'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=600' },
-  { name: 'Ahmedabad Safety Hub', city: 'Ahmedabad', category: 'PPE & Safety', initials: 'AS', logo: 'https://ui-avatars.com/api/?name=Ahmedabad+Safety&background=0B1F3A&color=C9973A&size=128', cover: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=600' },
+  { name: 'Apex Industrial Traders', city: 'Mumbai', category: 'Steel & Fabrication', initials: 'AI', logo: 'https://ui-avatars.com/api/?name=Apex+Industrial&background=0B1F3A&color=0D9488&size=128', cover: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600' },
+  { name: 'Coimbatore Motor Works', city: 'Coimbatore', category: 'Industrial Motors', initials: 'CM', logo: 'https://ui-avatars.com/api/?name=Coimbatore+Motor&background=0B1F3A&color=0D9488&size=128', cover: 'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=600' },
+  { name: 'Surat Packline LLP', city: 'Surat', category: 'Packaging Materials', initials: 'SP', logo: 'https://ui-avatars.com/api/?name=Surat+Packline&background=0B1F3A&color=0D9488&size=128', cover: 'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=600' },
+  { name: 'Noida Control Systems', city: 'Noida', category: 'Electrical Panels', initials: 'NC', logo: 'https://ui-avatars.com/api/?name=Noida+Controls&background=0B1F3A&color=0D9488&size=128', cover: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600' },
+  { name: 'Pune CNC Components', city: 'Pune', category: 'Precision Parts', initials: 'PC', logo: 'https://ui-avatars.com/api/?name=Pune+CNC&background=0B1F3A&color=0D9488&size=128', cover: 'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=600' },
+  { name: 'Ahmedabad Safety Hub', city: 'Ahmedabad', category: 'PPE & Safety', initials: 'AS', logo: 'https://ui-avatars.com/api/?name=Ahmedabad+Safety&background=0B1F3A&color=0D9488&size=128', cover: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=600' },
 ];
 
 export function SectionHeader({
@@ -114,16 +114,19 @@ export function TrustSignalsBar({ compact = false }: { compact?: boolean }) {
   return (
     <div className="border-y border-accent/20 bg-gradient-to-r from-[#0B1F3A] via-[#112A4F] to-[#0B1F3A] text-white shadow-inner">
       <div className={`mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-8 gap-y-3 px-4 ${compact ? 'py-3' : 'py-4'}`}>
-        {trustSignals.map((item) => (
-          <div key={item.label} className="flex items-center gap-2 text-[13px] font-medium tracking-wide text-white/90">
-            {item.iconName ? (
-              <AnimatedIcon icon={item.iconName as any} size={22} className="text-accent" />
-            ) : (
-              <item.icon size={16} className="text-accent" />
-            )}
-            {item.label}
-          </div>
-        ))}
+        {trustSignals.map((item) => {
+          const iconSize = item.iconName === 'rupee' ? 28 : (item.iconName ? 22 : 16);
+          return (
+            <div key={item.label} className="flex items-center gap-2 text-[13px] font-medium tracking-wide text-white/90">
+              {item.iconName ? (
+                <AnimatedIcon icon={item.iconName as any} size={iconSize} className="text-accent" />
+              ) : (
+                <item.icon size={iconSize} className="text-accent" />
+              )}
+              {item.label}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

@@ -7,79 +7,87 @@ interface FooterProps {
 const footerCompanyLinks = [
   { label: 'Home', path: '/' },
   { label: 'About Us', path: '/about' },
-  { label: 'Why Truvex', path: '/why-truvex' },
-  { label: 'Roadmap', path: '/roadmap' },
-  { label: 'Blog & News', path: '/blog' },
+  // { label: 'Why Truvex', path: '/why-truvex' },
+  // { label: 'Roadmap', path: '/roadmap' },
+  // { label: 'Blog & News', path: '/blog' },
   { label: 'Contact Us', path: '/contact' },
 ];
 
 const footerSourcingLinks = [
   { label: 'Sourcing Services', path: '/services' },
-  { label: 'Browse Suppliers', path: '/supplier-listing' },
+  // { label: 'Browse Suppliers', path: '/supplier-listing' },
   { label: 'Product Categories', path: '/categories' },
-  { label: 'How It Works', path: '/how-it-works' },
-  { label: 'Pricing Plans', path: '/pricing' },
+  // { label: 'How It Works', path: '/how-it-works' },
+  // { label: 'Pricing Plans', path: '/pricing' },
 ];
 
 const footerPartnerLinks = [
-  { label: 'For Buyers', path: '/for-buyers' },
-  { label: 'For Suppliers', path: '/for-suppliers' },
+  // { label: 'For Buyers', path: '/for-buyers' },
+  // { label: 'For Suppliers', path: '/for-suppliers' },
   { label: 'Post a Requirement', path: '/buyers' },
   { label: 'Supplier Registration', path: '/suppliers' },
-  { label: 'FAQ', path: '/faq' },
-  { label: 'Testimonials', path: '/testimonials' },
+  // { label: 'FAQ', path: '/faq' },
+  // { label: 'Testimonials', path: '/testimonials' },
 ];
 
 export default function Footer({ onOpenEnquiry }: FooterProps) {
   return (
-    <footer className="border-t-2 border-accent bg-primary text-white">
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-        <div>
-          <Link to="/" className="font-serif text-3xl font-bold text-accent">Truvex</Link>
-          <p className="mt-3 text-sm leading-6 text-white/70">
+    <footer className="border-t border-primary/10 bg-[#f1f5f9] text-primary">
+      <div className="mx-auto grid max-w-7xl gap-8 px-6 py-14 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 items-start text-center sm:text-left">
+        {/* Col 1: Logo & Description */}
+        <div className="flex flex-col gap-4 items-center sm:items-start">
+          <Link to="/" className="inline-block transition-all hover:opacity-95">
+            <img src="/logo.png" alt="Truvex Sourcing" className="h-16 w-auto object-contain" />
+          </Link>
+          <p className="text-sm leading-relaxed text-muted-foreground max-w-xs mx-auto sm:mx-0">
             Verified supplier discovery, RFQ routing, and managed B2B sourcing for Indian businesses.
           </p>
-          <div className="mt-4 grid grid-cols-2 gap-2 text-[12px] font-semibold text-white/80">
-            <span className="border border-white/20 px-3 py-1.5 text-[11px]">GST Registered</span>
-            <span className="border border-white/20 px-3 py-1.5 text-[11px]">Secure Platform</span>
-            <span className="border border-white/20 px-3 py-1.5 text-[11px]">India-based Team</span>
-            <span className="border border-white/20 px-3 py-1.5 text-[11px]">ISO Network</span>
+          <div className="flex flex-wrap gap-2 text-[10px] font-semibold justify-center sm:justify-start">
+            <span className="border border-primary/15 bg-white text-primary/70 px-2.5 py-1">GST Registered</span>
+            <span className="border border-primary/15 bg-white text-primary/70 px-2.5 py-1">Secure Platform</span>
           </div>
         </div>
 
+        {/* Col 2: Get to know */}
         <div>
-          <h4 className="mb-4 text-[12px] font-bold uppercase tracking-[0.16em] text-accent">Company</h4>
-          <div className="grid gap-2">
+          <h4 className="mb-4 text-sm font-bold text-primary">Get to know</h4>
+          <div className="grid gap-2.5">
             {footerCompanyLinks.map((link) => (
-              <Link key={link.path} to={link.path} className="text-sm text-white/70 hover:text-accent">{link.label}</Link>
+              <Link key={link.path} to={link.path} className="text-sm text-muted-foreground hover:text-accent transition-colors">{link.label}</Link>
             ))}
           </div>
         </div>
 
+        {/* Col 3: Customer Service */}
         <div>
-          <h4 className="mb-4 text-[12px] font-bold uppercase tracking-[0.16em] text-accent">Sourcing</h4>
-          <div className="grid gap-2">
+          <h4 className="mb-4 text-sm font-bold text-primary">Customer Service</h4>
+          <div className="grid gap-2.5">
             {footerSourcingLinks.map((link) => (
-              <Link key={link.path} to={link.path} className="text-sm text-white/70 hover:text-accent">{link.label}</Link>
+              <Link key={link.path} to={link.path} className="text-sm text-muted-foreground hover:text-accent transition-colors">{link.label}</Link>
             ))}
-          </div>
-        </div>
-
-        <div>
-          <h4 className="mb-4 text-[12px] font-bold uppercase tracking-[0.16em] text-accent">Solutions</h4>
-          <div className="grid gap-2">
             {footerPartnerLinks.map((link) => (
-              <Link key={link.path} to={link.path} className="text-sm text-white/70 hover:text-accent">{link.label}</Link>
+              <Link key={link.path} to={link.path} className="text-sm text-muted-foreground hover:text-accent transition-colors">{link.label}</Link>
             ))}
           </div>
         </div>
 
-        <div className="border border-white/15 border-t-2 border-t-accent bg-white/5 p-5 sm:col-span-2 md:col-span-3 lg:col-span-1">
-          <h4 className="text-lg font-bold text-white">Post Your Requirement</h4>
-          <p className="mt-2 text-sm text-white/70">Tell us the product, quantity, and delivery city. Get verified supplier callbacks.</p>
-          <button type="button" onClick={onOpenEnquiry} className="market-button mt-4 inline-flex bg-accent px-4 py-2 text-sm font-bold text-white hover:bg-accent/90">
-            Start RFQ
-          </button>
+        {/* Col 4: Contact Information */}
+        <div>
+          <h4 className="mb-4 text-sm font-bold text-primary">Contact Information</h4>
+          <div className="grid gap-2.5 text-sm text-muted-foreground">
+            <p className="leading-relaxed">
+              <span className="font-semibold text-primary">Address: </span>
+              Level 4, Trade Centre, BKC, Mumbai 400051, India
+            </p>
+            <p>
+              <span className="font-semibold text-primary">Call : </span>
+              <a href="tel:+919876543210" className="hover:text-accent transition-colors">+91 98765 43210</a>
+            </p>
+            <p>
+              <span className="font-semibold text-primary">Email : </span>
+              <a href="mailto:hello@truvex.in" className="hover:text-accent transition-colors">hello@truvex.in</a>
+            </p>
+          </div>
         </div>
       </div>
       {/* <section className="border-t border-white/10 bg-gradient-to-r from-primary to-secondary px-4 py-12">
@@ -101,8 +109,15 @@ export default function Footer({ onOpenEnquiry }: FooterProps) {
           <p className="mt-3 text-xs text-white/40">No spam. Unsubscribe anytime. 2,400+ subscribers.</p>
         </div>
       </section> */}
-      <div className="border-t border-white/10 px-4 py-4 text-center text-[12px] text-white/50">
-        Copyright 2026 Truvex. B2B sourcing platform, India.
+      <div className="border-t border-primary/10">
+        <div className="mx-auto max-w-7xl px-6 py-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between text-xs text-muted-foreground text-center sm:text-left">
+          <div>
+            Copyright © 2026 Truvex. All rights reserved.
+          </div>
+          <div>
+            Designed by <a href="https://saitechnosolutions.com/" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors font-medium">Sai techno solutions</a>
+          </div>
+        </div>
       </div>
     </footer>
   );

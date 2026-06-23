@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { ImageUpload, OTPModal } from '../LeadCaptureComponents';
+import { ImageUpload } from '../LeadCaptureComponents';
 import AnimatedIcon from '../AnimatedIcon';
 import { submitBuyerForm } from '../../../services/buyerService';
 
 export default function BuyerFormPage() {
-  const [otpOpen, setOtpOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   // Form states
@@ -47,13 +46,16 @@ export default function BuyerFormPage() {
       setValidationError('Requirement Details are required.');
       return;
     }
+    if (!estimatedBudget.trim()) {
+      setValidationError('Estimated Budget is required.');
+      return;
+    }
 
     // Open OTP modal if validation passes
-    setOtpOpen(true);
+    handleOTPVerify();
   };
 
   const handleOTPVerify = async () => {
-    setOtpOpen(false);
     setSubmitting(true);
     setSubmitError(null);
 
@@ -199,6 +201,7 @@ export default function BuyerFormPage() {
                   </div>
                   <Field 
                     label="Estimated Budget" 
+                    required
                     value={estimatedBudget}
                     onChange={(e) => setEstimatedBudget(e.target.value)}
                   />
@@ -212,7 +215,7 @@ export default function BuyerFormPage() {
                     disabled={submitting}
                     className="market-button mt-2 min-h-12 w-full rounded-none bg-accent px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-primary disabled:opacity-50"
                   >
-                    {submitting ? 'Submitting...' : 'Verify OTP & Post Requirement'}
+                    {submitting ? 'Submitting...' : 'Post Requirement'}
                   </button>
                 </form>
               )}
@@ -249,12 +252,6 @@ export default function BuyerFormPage() {
         </div>
       </section>
 
-      <OTPModal
-        open={otpOpen}
-        onClose={() => setOtpOpen(false)}
-        onVerify={handleOTPVerify}
-        title="Buyer OTP Verification"
-      />
     </div>
   );
 }

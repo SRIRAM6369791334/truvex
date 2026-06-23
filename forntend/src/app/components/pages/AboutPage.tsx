@@ -9,8 +9,8 @@ export default function AboutPage() {
       {/* 1. HERO SECTION */}
       <section className="relative bg-[#0A1A30] pt-32 pb-24 overflow-hidden">
         <div className="absolute inset-0 z-0">
-           <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1600" className="w-full h-full object-cover opacity-20 mix-blend-luminosity" alt="" />
-           <div className="absolute inset-0 bg-gradient-to-t from-[#0A1A30] via-[#0A1A30]/80 to-transparent" />
+          <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1600" className="w-full h-full object-cover opacity-20 mix-blend-luminosity" alt="" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0A1A30] via-[#0A1A30]/80 to-transparent" />
         </div>
         <div className="mx-auto max-w-7xl px-4 relative z-10 text-center">
           <div className="mb-6 inline-flex items-center gap-2 rounded-none border border-accent/30 bg-accent/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em] text-accent">
@@ -29,11 +29,11 @@ export default function AboutPage() {
       {/* 2. WHAT IS TRUVEX? (Overview) */}
       <section className="py-24 bg-white border-b border-border">
         <div className="mx-auto max-w-4xl px-4 text-center">
-           <h2 className="text-[11px] font-bold uppercase tracking-widest text-primary/60 mb-4 border-b-2 border-accent inline-block pb-1">About The Platform</h2>
-           <h3 className="text-3xl md:text-4xl font-serif font-bold text-primary mb-8">India's Fastest-Growing Online B2B Marketplace</h3>
-           <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-             Truvex is designed to connect verified manufacturers with bulk buyers, wholesalers, and retailers across the country. We focus on providing a seamless platform to Small & Medium Enterprises (SMEs), Large Enterprises, as well as individual entrepreneurs. By leveraging technology, we bridge the gap between supply and demand, ensuring that finding the right product or partner is never hard.
-           </p>
+          <h2 className="text-[11px] font-bold uppercase tracking-widest text-primary/60 mb-4 border-b-2 border-accent inline-block pb-1">About The Platform</h2>
+          <h3 className="text-3xl md:text-4xl font-serif font-bold text-primary mb-8">India's Fastest-Growing Online B2B Marketplace</h3>
+          <p className="text-lg md:text-xl text-muted-foreground leading-relaxed text-justify">
+            Truvex is designed to connect verified manufacturers with bulk buyers, wholesalers, and retailers across the country. We focus on providing a seamless platform to Small & Medium Enterprises (SMEs), Large Enterprises, as well as individual entrepreneurs. By leveraging technology, we bridge the gap between supply and demand, ensuring that finding the right product or partner is never hard.
+          </p>
         </div>
       </section>
 
@@ -41,7 +41,7 @@ export default function AboutPage() {
       <section className="py-24 bg-[#f4f6f8] border-b border-border">
         <div className="mx-auto max-w-7xl px-4">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
-            
+
             <div className="relative">
               <div className="absolute -inset-4 bg-white z-0 transform -skew-y-2 border border-border shadow-sm"></div>
               <img
@@ -50,7 +50,7 @@ export default function AboutPage() {
                 className="relative z-10 w-full h-[500px] object-cover rounded-none border-4 border-white shadow-2xl"
               />
               <div className="absolute -bottom-8 -right-8 z-20 bg-accent p-8 text-white max-w-xs shadow-xl hidden sm:block">
-                <p className="font-serif text-2xl italic leading-snug">
+                <p className="font-serif text-2xl italic leading-snug text-white">
                   "Because doing business should be effortless and transparent."
                 </p>
               </div>
@@ -60,7 +60,7 @@ export default function AboutPage() {
               <div className="mb-16">
                 <h2 className="text-[11px] font-bold uppercase tracking-widest text-primary/60 mb-2 border-b-2 border-accent inline-block pb-1">Our Mission</h2>
                 <h3 className="text-3xl font-serif font-bold text-primary mb-6 mt-4">To make doing business easy</h3>
-                <p className="text-lg text-muted-foreground leading-relaxed">
+                <p className="text-lg text-muted-foreground leading-relaxed text-justify">
                   We saw businesses wasting hours searching directories, getting irrelevant leads, and dealing with unverified suppliers. Our mission is to eliminate this friction by providing a highly vetted, transparent, and ultra-fast sourcing marketplace that empowers every Indian SME.
                 </p>
               </div>
@@ -68,7 +68,7 @@ export default function AboutPage() {
               <div>
                 <h2 className="text-[11px] font-bold uppercase tracking-widest text-primary/60 mb-2 border-b-2 border-accent inline-block pb-1">Our Vision</h2>
                 <h3 className="text-3xl font-serif font-bold text-primary mb-6 mt-4">The Most Trusted Distribution Network</h3>
-                <p className="text-lg text-muted-foreground leading-relaxed">
+                <p className="text-lg text-muted-foreground leading-relaxed text-justify">
                   To become the most trusted distribution network in global markets — where every partner, supplier, and client feels the difference that quality sourcing makes. We don't just deliver products; we deliver certainty.
                 </p>
               </div>
@@ -88,45 +88,45 @@ export default function AboutPage() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-             <div className="bg-white/5 border border-white/10 p-10 hover:border-accent transition-colors">
-                <h3 className="text-2xl font-bold text-accent mb-6 flex items-center gap-3">
-                  <AnimatedIcon icon="target" size={32} /> For Buyers
-                </h3>
-                <ul className="space-y-4">
-                  <li className="flex items-start gap-3">
-                    <span className="text-accent text-xl mt-1">✓</span>
-                    <span className="text-white/80 leading-relaxed"><strong>Convenience:</strong> Connect with sellers anytime, anywhere.</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-accent text-xl mt-1">✓</span>
-                    <span className="text-white/80 leading-relaxed"><strong>Wider Marketplace:</strong> Access an extensive range of products and services.</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-accent text-xl mt-1">✓</span>
-                    <span className="text-white/80 leading-relaxed"><strong>Secure Sourcing:</strong> Deal only with 100% verified and authenticated suppliers.</span>
-                  </li>
-                </ul>
-             </div>
+            <div className="bg-white/5 border border-white/10 p-10 hover:border-accent transition-colors">
+              <h3 className="text-2xl font-bold text-accent mb-6 flex items-center gap-3">
+                <AnimatedIcon icon="target" size={32} /> For Buyers
+              </h3>
+              <ul className="space-y-4">
+                <li className="flex items-start gap-3">
+                  <span className="text-accent text-xl mt-1">✓</span>
+                  <span className="text-white/80 leading-relaxed"><strong>Convenience:</strong> Connect with sellers anytime, anywhere.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-accent text-xl mt-1">✓</span>
+                  <span className="text-white/80 leading-relaxed"><strong>Wider Marketplace:</strong> Access an extensive range of products and services.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-accent text-xl mt-1">✓</span>
+                  <span className="text-white/80 leading-relaxed"><strong>Secure Sourcing:</strong> Deal only with 100% verified and authenticated suppliers.</span>
+                </li>
+              </ul>
+            </div>
 
-             <div className="bg-white/5 border border-white/10 p-10 hover:border-accent transition-colors">
-                <h3 className="text-2xl font-bold text-accent mb-6 flex items-center gap-3">
-                  <AnimatedIcon icon="trending" size={32} /> For Suppliers
-                </h3>
-                <ul className="space-y-4">
-                  <li className="flex items-start gap-3">
-                    <span className="text-accent text-xl mt-1">✓</span>
-                    <span className="text-white/80 leading-relaxed"><strong>Enhanced Visibility:</strong> Reach thousands of bulk buyers daily.</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-accent text-xl mt-1">✓</span>
-                    <span className="text-white/80 leading-relaxed"><strong>Increased Credibility:</strong> Build trust through our strict verification process.</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-accent text-xl mt-1">✓</span>
-                    <span className="text-white/80 leading-relaxed"><strong>Lead Management:</strong> Manage RFQs and close deals effortlessly on the platform.</span>
-                  </li>
-                </ul>
-             </div>
+            <div className="bg-white/5 border border-white/10 p-10 hover:border-accent transition-colors">
+              <h3 className="text-2xl font-bold text-accent mb-6 flex items-center gap-3">
+                <AnimatedIcon icon="trending" size={32} /> For Suppliers
+              </h3>
+              <ul className="space-y-4">
+                <li className="flex items-start gap-3">
+                  <span className="text-accent text-xl mt-1">✓</span>
+                  <span className="text-white/80 leading-relaxed"><strong>Enhanced Visibility:</strong> Reach thousands of bulk buyers daily.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-accent text-xl mt-1">✓</span>
+                  <span className="text-white/80 leading-relaxed"><strong>Increased Credibility:</strong> Build trust through our strict verification process.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-accent text-xl mt-1">✓</span>
+                  <span className="text-white/80 leading-relaxed"><strong>Lead Management:</strong> Manage RFQs and close deals effortlessly on the platform.</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
@@ -134,25 +134,25 @@ export default function AboutPage() {
       {/* 5. PLATFORM CAPABILITIES & REACH */}
       <section className="py-24 bg-white border-b border-border">
         <div className="mx-auto max-w-7xl px-4">
-           <div className="grid md:grid-cols-2 gap-16 items-center">
-              <div>
-                <h2 className="text-[11px] font-bold uppercase tracking-widest text-primary/60 mb-2 border-b-2 border-accent inline-block pb-1">Our Reach</h2>
-                <h3 className="text-3xl font-serif font-bold text-primary mb-6 mt-4">Connecting Tier-1 Hubs to Tier-3 Markets</h3>
-                <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-                  Our robust technological infrastructure bridges the geographical gap in Indian commerce. We enable a manufacturer in a Tier-1 industrial hub to instantly receive and fulfill bulk requirements from a retailer in a remote Tier-3 city.
-                </p>
-                <div className="flex items-center gap-4 text-primary font-bold bg-[#f4f6f8] p-4 border border-border">
-                  <div className="w-12 h-12 bg-primary flex items-center justify-center border-b-2 border-accent flex-shrink-0">
-                    <AnimatedIcon icon="users" size={32} />
-                  </div>
-                  <span>Smart Matchmaking Algorithm routing leads in real-time.</span>
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <div>
+              <h2 className="text-[11px] font-bold uppercase tracking-widest text-primary/60 mb-2 border-b-2 border-accent inline-block pb-1">Our Reach</h2>
+              <h3 className="text-3xl font-serif font-bold text-primary mb-6 mt-4">Connecting Tier-1 Hubs to Tier-3 Markets</h3>
+              <p className="text-lg text-muted-foreground leading-relaxed mb-6 text-justify">
+                Our robust technological infrastructure bridges the geographical gap in Indian commerce. We enable a manufacturer in a Tier-1 industrial hub to instantly receive and fulfill bulk requirements from a retailer in a remote Tier-3 city.
+              </p>
+              <div className="flex items-center gap-4 text-primary font-bold bg-[#f4f6f8] p-4 border border-border">
+                <div className="w-12 h-12 bg-primary flex items-center justify-center border-b-2 border-accent flex-shrink-0">
+                  <AnimatedIcon icon="users" size={32} />
                 </div>
+                <span>Smart Matchmaking Algorithm routing leads in real-time.</span>
               </div>
-              <div className="relative h-[400px]">
-                 <img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=800" className="w-full h-full object-cover rounded-none border border-border" alt="Logistics and Network" />
-                 <div className="absolute inset-0 border-8 border-white/20"></div>
-              </div>
-           </div>
+            </div>
+            <div className="relative h-[400px]">
+              <img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=800" className="w-full h-full object-cover rounded-none border border-border" alt="Logistics and Network" />
+              <div className="absolute inset-0 border-8 border-white/20"></div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -258,7 +258,7 @@ export default function AboutPage() {
                 Register as Supplier <ArrowRight size={18} />
               </Link>
             </div>
-            
+
             <div className="bg-[#0A1A30] p-12 border border-[#0A1A30] rounded-none text-center hover:shadow-2xl transition-shadow duration-500">
               <div className="w-20 h-20 bg-white/10 mx-auto flex items-center justify-center mb-8 border-b-4 border-accent">
                 <AnimatedIcon icon="target" size={44} />

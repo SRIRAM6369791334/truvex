@@ -6,6 +6,7 @@ const { useLimiter } = require('../middleware/rateLimiters');
 const { supplierFactoryUpload } = require('../middleware/upload');
 const { ok, created } = require('../utils/apiResponse');
 const { queryRows, queryResult, parseJson } = require('../utils/db');
+const { sendMail, buildHtmlTemplate } = require('../utils/emailService');
 
 const router = express.Router();
 const adminOnly = [authenticateJwt, requireRole()];
@@ -64,6 +65,66 @@ router.post('/', useLimiter('form'), supplierFactoryUpload, asyncHandler(async (
       JSON.stringify(images),
     ],
   );
+
+  // Send email notifications in the background
+  const adminEmail = process.env.ADMIN_EMAIL;
+  if (adminEmail) {
+    const adminFields = {
+      category_id: req.body.category_id || '—',
+      company_name: req.body.company_name,
+      contact_person: req.body.contact_person,
+      mobile: req.body.mobile,
+      email: req.body.email || '—',
+      core_product_segment: req.body.core_product_segment,
+      company_details: req.body.company_details,
+    };
+    if (images && images.length > 0) {
+      adminFields.factory_images = images
+        .map((img) => `${req.protocol}://${req.get('host')}${img}`)
+        .join(', ');
+    }
+
+    const adminSubject = '[Admin Alert] New Supplier Registration';
+    const adminMessage = 'A new supplier has registered on the website.';
+    const adminHtml = buildHtmlTemplate({
+      title: adminSubject,
+      message: adminMessage,
+      fields: adminFields,
+      isUser: false,
+    });
+
+    sendMail({
+      to: adminEmail,
+      subject: adminSubject,
+      html: adminHtml,
+    }).catch((err) => console.error('[BG MAIL ERROR] Admin supplier registration failed:', err));
+  }
+
+  if (req.body.email) {
+    const userFields = {
+      company_name: req.body.company_name,
+      contact_person: req.body.contact_person,
+      mobile: req.body.mobile,
+      email: req.body.email,
+      core_product_segment: req.body.core_product_segment,
+      company_details: req.body.company_details,
+    };
+
+    const userSubject = 'Supplier Registration Submitted - Truvex';
+    const userMessage = `Hello ${req.body.contact_person || 'there'},\n\nThank you for registering your company "${req.body.company_name}" as a supplier with Truvex. We have received your registration details and our team will review it shortly.`;
+    const userHtml = buildHtmlTemplate({
+      title: userSubject,
+      message: userMessage,
+      fields: userFields,
+      isUser: true,
+    });
+
+    sendMail({
+      to: req.body.email,
+      subject: userSubject,
+      html: userHtml,
+    }).catch((err) => console.error('[BG MAIL ERROR] User supplier registration failed:', err));
+  }
 
   return created(res, { id: result.insertId }, 'Supplier registration submitted successfully');
 }));

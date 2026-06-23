@@ -6,6 +6,7 @@ const { useLimiter } = require('../middleware/rateLimiters');
 const { buyerReferenceUpload } = require('../middleware/upload');
 const { ok, created } = require('../utils/apiResponse');
 const { queryRows, queryResult } = require('../utils/db');
+const { sendMail, buildHtmlTemplate } = require('../utils/emailService');
 
 const router = express.Router();
 
@@ -39,6 +40,36 @@ router.post('/', useLimiter('form'), buyerReferenceUpload, asyncHandler(async (r
       referenceImage,
     ],
   );
+
+  // Send admin notification email in the background
+  const adminEmail = process.env.ADMIN_EMAIL;
+  if (adminEmail) {
+    const fields = {
+      buyer_name: req.body.buyer_name,
+      phone: req.body.phone,
+      address: req.body.address,
+      requirement_details: req.body.requirement_details,
+      estimated_budget: req.body.estimated_budget || '—',
+    };
+    if (referenceImage) {
+      fields.reference_image = `${req.protocol}://${req.get('host')}${referenceImage}`;
+    }
+
+    const adminSubject = '[Admin Alert] New Sourcing Requirement Posted';
+    const adminMessage = 'A new buyer sourcing requirement has been posted.';
+    const adminHtml = buildHtmlTemplate({
+      title: adminSubject,
+      message: adminMessage,
+      fields,
+      isUser: false,
+    });
+
+    sendMail({
+      to: adminEmail,
+      subject: adminSubject,
+      html: adminHtml,
+    }).catch((err) => console.error('[BG MAIL ERROR] Admin buyer notification failed:', err));
+  }
 
   return created(res, { id: result.insertId }, 'Buyer requirement submitted successfully');
 }));
