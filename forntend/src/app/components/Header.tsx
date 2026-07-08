@@ -39,6 +39,19 @@ const navLinks = [
       }
     }
   },
+  {
+    label: 'Categories',
+    path: '/categories',
+    icon: Layers,
+    iconVariants: {
+      hover: {
+        y: [0, -3, 0],
+        scale: [1, 1.15, 1],
+        rotate: [0, 8, -8, 0],
+        transition: { duration: 0.6, ease: "easeOut" as any }
+      }
+    }
+  },
   { 
     label: 'Suppliers', 
     path: '/suppliers', 
@@ -198,8 +211,6 @@ export default function Header({ onOpenEnquiry }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false);
-  const [megaMenuOpen, setMegaMenuOpen] = useState(false);
-  const [activeMegaCategory, setActiveMegaCategory] = useState<number>(0);
   const [selectedCity, setSelectedCity] = useState('Mumbai');
   const [cityDropdownOpen, setCityDropdownOpen] = useState(false);
   const [categoriesData, setCategoriesData] = useState<any[]>([]);
@@ -288,7 +299,7 @@ export default function Header({ onOpenEnquiry }: HeaderProps) {
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 text-[13px]">
           <div className="min-w-0 flex items-center gap-4">
             <span className="flex items-center gap-1.5 font-semibold text-white">
-              <Phone size={14} className="text-accent" /> +91 98765 43210
+              <Phone size={14} className="text-accent" /> +91 90807 22602
             </span>
             <span className="hidden items-center gap-1.5 sm:flex text-white/90">
               <MapPin size={14} className="text-accent" /> Delivering supplier matches across India
@@ -366,52 +377,7 @@ export default function Header({ onOpenEnquiry }: HeaderProps) {
 
             {/* Desktop Navigation Links */}
             <div className="hidden items-center gap-1.5 xl:flex">
-              {navLinks.slice(0, 1).map((link) => {
-                const Icon = link.icon;
-                return (
-                  <MotionLink
-                    key={link.path}
-                    to={link.path}
-                    whileHover="hover"
-                    className={`flex items-center gap-1.5 px-3.5 py-2.5 text-[13px] font-semibold transition-all rounded-none ${
-                      isActive(link.path)
-                        ? 'bg-primary text-white shadow-md'
-                        : 'text-primary hover:bg-muted hover:text-accent'
-                    }`}
-                  >
-                    <motion.span variants={link.iconVariants} className="flex items-center">
-                      <Icon size={14} />
-                    </motion.span>
-                    {link.label}
-                  </MotionLink>
-                );
-              })}
-
-              {/* Mega Menu Categories Link */}
-              <div
-                className="relative"
-                onMouseEnter={() => setMegaMenuOpen(true)}
-                onMouseLeave={() => setMegaMenuOpen(false)}
-              >
-                <MotionLink
-                  to="/categories"
-                  whileHover="hover"
-                  className={`flex items-center gap-1.5 px-3.5 py-2.5 text-[13px] font-semibold transition-all rounded-none cursor-pointer ${
-                    megaMenuOpen ? 'bg-primary text-white shadow-md' : 'text-primary hover:bg-muted hover:text-accent'
-                  }`}
-                >
-                  <motion.span
-                    animate={megaMenuOpen ? "hover" : "normal"}
-                    variants={categoriesIconVariants}
-                    className="flex items-center"
-                  >
-                    <Layers size={14} />
-                  </motion.span>
-                  Categories <ChevronDown size={13} className={`transition-transform duration-350 ${megaMenuOpen ? 'rotate-180' : ''}`} />
-                </MotionLink>
-              </div>
-
-              {navLinks.slice(1).map((link) => {
+              {navLinks.map((link) => {
                 const Icon = link.icon;
                 return (
                   <MotionLink
@@ -467,83 +433,7 @@ export default function Header({ onOpenEnquiry }: HeaderProps) {
           </AnimatePresence>
         </div>
 
-        {/* Mega Menu Dropdown */}
-        <AnimatePresence>
-          {megaMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-              className="absolute left-0 right-0 top-full z-50 mx-auto max-w-7xl px-4"
-              onMouseEnter={() => setMegaMenuOpen(true)}
-              onMouseLeave={() => setMegaMenuOpen(false)}
-            >
-              <div className="border border-primary/10 bg-white shadow-[0_30px_70px_rgba(0,0,0,0.12)] rounded-none flex h-[500px]">
-                {/* Left Side: Categories */}
-                <div className="w-1/3 border-r border-primary/10 bg-muted/30 flex flex-col py-4 overflow-y-auto custom-scrollbar">
-                  {categoriesData.map((cat, idx) => {
-                    const Icon = cat.icon;
-                    const isActive = idx === activeMegaCategory;
-                    return (
-                      <div 
-                        key={idx}
-                        onMouseEnter={() => setActiveMegaCategory(idx)}
-                        className={`flex items-center justify-between px-6 py-3.5 cursor-pointer transition-all border-l-4 shrink-0 ${isActive ? 'border-accent bg-white shadow-sm text-primary' : 'border-transparent text-primary/70 hover:bg-white/50 hover:text-primary'}`}
-                      >
-                        <div className="flex items-center gap-3 font-semibold text-sm">
-                          <span className={`p-1.5 rounded-none ${isActive ? 'bg-accent/10 text-accent' : 'bg-primary/5 text-primary/40'}`}>
-                            <Icon size={16} />
-                          </span>
-                          {cat.title}
-                        </div>
-                        <ChevronRight size={14} className={isActive ? 'text-accent' : 'text-primary/30'} />
-                      </div>
-                    );
-                  })}
-                </div>
 
-                {/* Right Side: Subcategories */}
-                <div className="w-2/3 p-8 bg-white relative overflow-y-auto custom-scrollbar">
-                  {categoriesData[activeMegaCategory] && (
-                    <motion.div
-                      key={activeMegaCategory}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <div className="flex items-center gap-3 mb-6 border-b border-primary/5 pb-4">
-                         {(() => { const Icon = categoriesData[activeMegaCategory].icon; return <span className="bg-accent/10 p-2 text-accent rounded-none"><Icon size={20} /></span>; })()}
-                         <h3 className="font-serif text-2xl font-bold text-primary">{categoriesData[activeMegaCategory].title}</h3>
-                      </div>
-                      
-                      {categoriesData[activeMegaCategory].items.length > 0 ? (
-                        <div className="grid grid-cols-2 gap-x-8 gap-y-3">
-                          {categoriesData[activeMegaCategory].items.map((item: any, itemIdx: number) => (
-                            <Link
-                              key={itemIdx}
-                              to={item.path}
-                              onClick={() => setMegaMenuOpen(false)}
-                              className="group flex items-center justify-between p-3 rounded-none border border-transparent hover:border-accent/20 hover:bg-accent/5 hover:shadow-sm text-sm text-primary/80 hover:text-accent transition-all"
-                            >
-                              <span className="font-medium">{item.name}</span>
-                              <ChevronRight size={14} className="opacity-0 -translate-x-2 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
-                            </Link>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center justify-center py-12 text-primary/40">
-                          <Layers size={40} className="mb-3 opacity-20" />
-                          <p>No subcategories found for this category.</p>
-                        </div>
-                      )}
-                    </motion.div>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
 
       </nav>
 

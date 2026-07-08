@@ -6,6 +6,7 @@ import AnimatedIcon from '../AnimatedIcon';
 import { getServices } from '../../../services/serviceService';
 import { getCategories } from '../../../services/categoryService';
 import { submitServiceLead } from '../../../services/leadService';
+import { getImageUrl } from '../../../lib/api';
 
 export default function ServicesPage() {
   const [searchParams] = useSearchParams();
@@ -347,7 +348,7 @@ export default function ServicesPage() {
                     {currentServices.map((service: any) => (
                       <div key={service.id} className="group flex flex-col sm:flex-row gap-5 bg-white border border-slate-100 rounded-none p-5 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-accent/30 transition-all duration-300">
                          <div className="w-full sm:w-28 h-40 sm:h-28 flex-shrink-0 bg-slate-50 rounded-none overflow-hidden relative">
-                            <img src={service.image || 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=300'} alt={service.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                            <img src={getImageUrl(service.image) || 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=300'} alt={service.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                             <div className="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-colors"></div>
                          </div>
                          <div className="flex-1 text-left flex flex-col justify-between">

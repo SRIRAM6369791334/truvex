@@ -77,15 +77,15 @@ export default function Footer({ onOpenEnquiry }: FooterProps) {
           <div className="grid gap-2.5 text-sm text-muted-foreground">
             <p className="leading-relaxed">
               <span className="font-semibold text-primary">Address: </span>
-              Level 4, Trade Centre, BKC, Mumbai 400051, India
+              No.9,10 chakrapani street, Guindy, Chennai 600032
             </p>
             <p>
               <span className="font-semibold text-primary">Call : </span>
-              <a href="tel:+919876543210" className="hover:text-accent transition-colors">+91 98765 43210</a>
+              <a href="tel:+919080722602" className="hover:text-accent transition-colors">+91 90807 22602</a>
             </p>
             <p>
               <span className="font-semibold text-primary">Email : </span>
-              <a href="mailto:hello@truvex.in" className="hover:text-accent transition-colors">hello@truvex.in</a>
+              <a href="mailto:admin@truvexsourcingnetworking.com" className="hover:text-accent transition-colors">admin@truvexsourcingnetworking.com</a>
             </p>
           </div>
         </div>

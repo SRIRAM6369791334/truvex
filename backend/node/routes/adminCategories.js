@@ -2,7 +2,6 @@ const express = require('express');
 const { upload } = require('../middleware/upload');
 const { queryRows, queryResult, parseJson } = require('../utils/db');
 const { slugFrom, toBoolean, integerOrDefault } = require('../utils/forms');
-const { requireSession } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -116,7 +115,7 @@ router.get('/:id/subcategories', async (req, res, next) => {
   } catch (error) { return next(error); }
 });
 
-router.post('/', requireSession, upload.single('image_file'), async (req, res, next) => {
+router.post('/', upload.single('image_file'), async (req, res, next) => {
   try {
     const payload = categoryPayload(req.body, req.file);
     if (!payload.name) return res.status(400).json({ error: 'Name is required.', fields: { name: 'Name is required.' } });
@@ -134,7 +133,7 @@ router.post('/', requireSession, upload.single('image_file'), async (req, res, n
   } catch (error) { return next(error); }
 });
 
-router.patch('/:id', requireSession, upload.single('image_file'), async (req, res, next) => {
+router.patch('/:id', upload.single('image_file'), async (req, res, next) => {
   try {
     const payload = categoryPayload(req.body, req.file);
     if (!payload.name || !payload.slug) {
@@ -155,7 +154,7 @@ router.patch('/:id', requireSession, upload.single('image_file'), async (req, re
   } catch (error) { return next(error); }
 });
 
-router.delete('/:id', requireSession, async (req, res, next) => {
+router.delete('/:id', async (req, res, next) => {
   try {
     const result = await queryResult(req.app.locals.db, 'DELETE FROM categories WHERE id = ?', [req.params.id]);
     if (!result.affectedRows) return res.status(404).json({ error: 'Category not found.' });
@@ -163,7 +162,7 @@ router.delete('/:id', requireSession, async (req, res, next) => {
   } catch (error) { return next(error); }
 });
 
-router.post('/:id/subcategories', requireSession, upload.single('sub_image_file'), async (req, res, next) => {
+router.post('/:id/subcategories', upload.single('sub_image_file'), async (req, res, next) => {
   try {
     const name = String(req.body.name || '').trim();
     const slug = String(req.body.slug || slugFrom(name)).trim();
@@ -179,7 +178,7 @@ router.post('/:id/subcategories', requireSession, upload.single('sub_image_file'
   } catch (error) { return next(error); }
 });
 
-router.patch('/:categoryId/subcategories/:subcategoryId', requireSession, upload.single('sub_image_file'), async (req, res, next) => {
+router.patch('/:categoryId/subcategories/:subcategoryId', upload.single('sub_image_file'), async (req, res, next) => {
   try {
     const name = String(req.body.name || '').trim();
     const slug = String(req.body.slug || slugFrom(name)).trim();
@@ -201,7 +200,7 @@ router.patch('/:categoryId/subcategories/:subcategoryId', requireSession, upload
   } catch (error) { return next(error); }
 });
 
-router.delete('/:categoryId/subcategories/:subcategoryId', requireSession, async (req, res, next) => {
+router.delete('/:categoryId/subcategories/:subcategoryId', async (req, res, next) => {
   try {
     const result = await queryResult(
       req.app.locals.db,

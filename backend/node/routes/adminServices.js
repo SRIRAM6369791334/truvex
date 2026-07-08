@@ -2,7 +2,6 @@ const express = require('express');
 const { upload } = require('../middleware/upload');
 const { queryRows, queryResult, parseJson } = require('../utils/db');
 const { slugFrom, toBoolean, numberOrNull, integerOrDefault } = require('../utils/forms');
-const { requireSession } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -91,30 +90,12 @@ function validateService(payload) {
 
 router.get('/', async (req, res, next) => {
   try {
-    const { category, search } = req.query;
-    let whereClause = '1=1';
-    const params = [];
-
-    if (category && category !== 'All') {
-      whereClause += ' AND (c.id = ? OR c.slug = ? OR c.name = ?)';
-      params.push(category, category, category);
-    }
-
-    if (search) {
-      whereClause += ' AND (s.title LIKE ? OR s.description LIKE ? OR sub.name LIKE ?)';
-      const searchStr = `%${search}%`;
-      params.push(searchStr, searchStr, searchStr);
-    }
-
     const rows = await queryRows(
       req.app.locals.db,
-      `SELECT s.*, c.name AS category_name, sub.name AS subcategory_name
+      `SELECT s.*, c.name AS category_name
        FROM services s
        LEFT JOIN categories c ON c.id = s.category_id
-       LEFT JOIN subcategories sub ON sub.id = s.subcategory_id
-       WHERE ${whereClause}
        ORDER BY s.sort_order ASC, s.title ASC`,
-      params
     );
     return res.json({ data: rows.map(normalizeService) });
   } catch (error) { return next(error); }
@@ -135,7 +116,7 @@ router.get('/:id', async (req, res, next) => {
   } catch (error) { return next(error); }
 });
 
-router.post('/', requireSession, serviceUpload, async (req, res, next) => {
+router.post('/', serviceUpload, async (req, res, next) => {
   try {
     const payload = servicePayload(req.body);
     applyFiles(payload, req.files);
@@ -153,7 +134,7 @@ router.post('/', requireSession, serviceUpload, async (req, res, next) => {
   } catch (error) { return next(error); }
 });
 
-router.patch('/:id', requireSession, serviceUpload, async (req, res, next) => {
+router.patch('/:id', serviceUpload, async (req, res, next) => {
   try {
     const payload = servicePayload(req.body);
     applyFiles(payload, req.files);
@@ -172,7 +153,7 @@ router.patch('/:id', requireSession, serviceUpload, async (req, res, next) => {
   } catch (error) { return next(error); }
 });
 
-router.delete('/:id', requireSession, async (req, res, next) => {
+router.delete('/:id', async (req, res, next) => {
   try {
     const result = await queryResult(req.app.locals.db, 'DELETE FROM services WHERE id = ?', [req.params.id]);
     if (!result.affectedRows) return res.status(404).json({ error: 'Service not found.' });

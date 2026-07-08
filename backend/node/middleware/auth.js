@@ -3,6 +3,11 @@ const { fail } = require('../utils/apiResponse');
 
 const ADMIN_ROLES = ['super_admin', 'admin', 'moderator'];
 
+function requireSession(req, res, next) {
+  if (req.session?.user) return next();
+  return res.status(401).json({ error: 'Authentication required.' });
+}
+
 function authenticateJwt(req, res, next) {
   const header = req.get('authorization') || '';
   const [scheme, token] = header.split(' ');
@@ -31,4 +36,4 @@ function requireRole(roles = ADMIN_ROLES) {
 
 const requireAdmin = [authenticateJwt, requireRole()];
 
-module.exports = { ADMIN_ROLES, authenticateJwt, requireRole, requireAdmin };
+module.exports = { ADMIN_ROLES, authenticateJwt, requireRole, requireAdmin, requireSession };

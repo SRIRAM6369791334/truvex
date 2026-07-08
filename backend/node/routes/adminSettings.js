@@ -25,7 +25,7 @@ router.get('/', async (req, res, next) => {
   } catch (error) { next(error); }
 });
 
-router.post('/banner', requireSession, upload.single('image'), async (req, res, next) => {
+router.post('/banner', upload.single('image'), async (req, res, next) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'Please upload an image file.' });
 
@@ -45,7 +45,7 @@ router.post('/banner', requireSession, upload.single('image'), async (req, res, 
   } catch (error) { next(error); }
 });
 
-router.post('/banner/delete', requireSession, async (req, res, next) => {
+router.post('/banner/delete', async (req, res, next) => {
   try {
     const { imagePath } = req.body;
     if (!imagePath) return res.status(400).json({ error: 'imagePath is required.' });

@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import AnimatedIcon from '../AnimatedIcon';
 import { submitRFQ } from '../../../services/leadService';
 import apiClient from '../../../apiClient';
+import { getImageUrl } from '../../../lib/api';
 
 import {
   CategoryCard,
@@ -92,7 +93,7 @@ function MiniRFQForm() {
         {/* <span className="hidden text-[10px] font-bold uppercase tracking-wider bg-accent/15 px-2.5 py-1 rounded-none text-accent sm:inline">Free for buyers</span> */}
       </div>
       {error && <div className="mb-3 rounded border border-red-400/40 bg-red-500/10 px-3 py-2 text-xs text-red-300">{error}</div>}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.2fr_0.6fr_0.8fr_1fr_auto]">
+      <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-[1.2fr_0.6fr_0.8fr_1fr_auto]">
         <div>
           <label htmlFor="product" className="mb-1.5 block text-[12px] font-bold text-white/80 uppercase tracking-wider">Product Name <span className="text-accent">*</span></label>
           <input id="product" required value={product} onChange={(e) => setProduct(e.target.value)} className="w-full rounded-none border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-accent/60 focus:bg-white/10 transition-all duration-300" placeholder="e.g. Steel pipes" />
@@ -125,11 +126,11 @@ function MiniRFQForm() {
             placeholder="e.g. 9876543210"
           />
         </div>
-        <button type="submit" disabled={loading} className="market-button hidden self-end bg-accent px-6 py-2.5 text-sm font-bold text-white hover:bg-accent/90 lg:block rounded-none min-h-11 shadow-lg shadow-accent/20 disabled:opacity-60">
+        <button type="submit" disabled={loading} className="market-button hidden self-end bg-accent px-6 py-2.5 text-sm font-bold text-white hover:bg-accent/90 2xl:block rounded-none min-h-11 shadow-lg shadow-accent/20 disabled:opacity-60">
           {loading ? '...' : 'Submit RFQ'}
         </button>
       </div>
-      <button type="submit" disabled={loading} className="market-button mt-4 w-full bg-accent px-5 py-2.5 text-sm font-bold text-white hover:bg-accent/90 lg:hidden rounded-none min-h-11 shadow-lg shadow-accent/20 disabled:opacity-60">
+      <button type="submit" disabled={loading} className="market-button mt-4 w-full bg-accent px-5 py-2.5 text-sm font-bold text-white hover:bg-accent/90 2xl:hidden rounded-none min-h-11 shadow-lg shadow-accent/20 disabled:opacity-60">
         {loading ? 'Submitting...' : 'Submit RFQ'}
       </button>
     </form>
@@ -273,11 +274,7 @@ export default function HomePage() {
   }, [banners]);
 
   const resolveBannerUrl = (url: string) => {
-    if (url.startsWith('http://') || url.startsWith('https://')) {
-      return url;
-    }
-    const rootUrl = apiClient.defaults.baseURL?.replace(/\/api$/, '') || 'http://localhost:5001';
-    return `${rootUrl}${url}`;
+    return getImageUrl(url) as string;
   };
 
   return (

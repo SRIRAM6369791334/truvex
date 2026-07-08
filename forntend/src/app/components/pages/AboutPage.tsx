@@ -223,15 +223,14 @@ export default function AboutPage() {
             <p className="mt-6 text-muted-foreground max-w-2xl mx-auto">The industry veterans and technical innovators driving the Truvex vision forward.</p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="grid sm:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {[
-              { name: 'Sriram', role: 'Founder & CEO', img: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400' },
-              { name: 'Aditi Sharma', role: 'Chief Operations Officer', img: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400' },
-              { name: 'Rahul Verma', role: 'Head of Product', img: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400' }
+              { name: 'Leadership', role: 'Founder & Managing Director', img: '/founder & Managing director.jpeg' },
+              { name: 'Leadership', role: 'Co-Founder & Director', img: '/Co founder & director.jpeg' }
             ].map((leader, i) => (
               <div key={i} className="group relative overflow-hidden border border-border">
                 <div className="aspect-[4/5] bg-[#f0f2f5] overflow-hidden relative">
-                  <img src={leader.img} alt={leader.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 grayscale group-hover:grayscale-0" />
+                  <img src={leader.img} alt={leader.name} className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105 grayscale group-hover:grayscale-0" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0A1A30]/90 via-transparent to-transparent opacity-0 group-hover:opacity-50 transition-opacity duration-300 pointer-events-none" />
                 </div>
                 <div className="p-6 bg-white group-hover:bg-[#0A1A30] transition-colors duration-300">

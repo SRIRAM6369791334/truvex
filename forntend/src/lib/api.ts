@@ -30,6 +30,7 @@ interface ApiFetchOptions extends Omit<RequestInit, 'body'> {
 }
 
 export const API_BASE_URL = normalizeApiBase(import.meta.env.VITE_API_URL);
+export const IMAGE_API_URL = normalizeApiBase(import.meta.env.VITE_IMAGE_API_URL || import.meta.env.VITE_API_URL?.replace('/api', '') || '');
 
 function normalizeApiBase(value?: string) {
   const trimmed = value?.trim().replace(/\/+$/, '');
@@ -41,6 +42,13 @@ export function apiUrl(endpoint: string) {
 
   const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
   return `${API_BASE_URL}${normalizedEndpoint}`;
+}
+
+export function getImageUrl(endpoint: string | undefined | null) {
+  if (!endpoint) return '';
+  if (/^https?:\/\//i.test(endpoint) || endpoint.startsWith('data:')) return endpoint;
+  const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  return `${IMAGE_API_URL}${normalizedEndpoint}`;
 }
 
 export async function apiFetch<T>(endpoint: string, options: ApiFetchOptions = {}) {

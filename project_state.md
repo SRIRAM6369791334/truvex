@@ -20,6 +20,8 @@ The project has successfully integrated the official B2B sourcing platform logo 
 - [x] Remove icon name field and picker display from the Category and Service CRUD forms, making them optional.
 - [x] Refine Service CRUD form validation requirements and fix frontend/backend multiple gallery image uploads.
 - [x] Set all Service fields as required on frontend and backend validations, and remove strict 800x600 px image dimensions check.
+- [x] Fix iPad Pro RFQ form squishing and responsiveness issue by adjusting grid columns breakpoint from lg to xl.
+- [x] Add smooth scroll behavior to Categories page on category selection and pagination change.
 
 ## Milestone Status
 - **Milestone 1: Exploration & Analysis** — Completed
@@ -31,3 +33,5 @@ The project has successfully integrated the official B2B sourcing platform logo 
 - **Milestone 7: Color Scheme & Admin Branding** — Completed
 - **Milestone 8: Search Bar Layout Polish** — Completed
 - **Milestone 9: Footer Grid Alignment & Polish** — Completed
+- **Milestone 10: RFQ Form iPad Pro Responsiveness** — Completed
+- **Milestone 11: Categories Scroll Behavior Polish** — Completed

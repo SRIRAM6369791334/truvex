@@ -4,6 +4,7 @@ import { ChevronRight, ShieldCheck, CheckCircle2, Truck, ArrowRight, TrendingUp,
 import { CategoryCard, categories } from '../MarketplaceComponents';
 import { getServiceById, getServices } from '../../../services/serviceService';
 import { submitServiceLead } from '../../../services/leadService';
+import { getImageUrl } from '../../../lib/api';
 
 export default function ServiceDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -34,9 +35,9 @@ export default function ServiceDetailsPage() {
         const data = res.data;
         setService(data);
         if (data.image) {
-          setActiveImage(data.image);
+          setActiveImage(getImageUrl(data.image) as string);
         } else if (Array.isArray(data.images) && data.images.length > 0) {
-          setActiveImage(data.images[0]);
+          setActiveImage(getImageUrl(data.images[0]) as string);
         }
 
         if (data.category_id) {
@@ -124,7 +125,7 @@ export default function ServiceDetailsPage() {
       service.image,
       ...(Array.isArray(service.images) ? service.images : []),
     ])
-  ).filter(Boolean);
+  ).filter(Boolean).map(img => getImageUrl(img as string) as string);
 
   // Fallback to placeholder if no images at all
   if (galleryImages.length === 0) {
@@ -549,7 +550,7 @@ export default function ServiceDetailsPage() {
             {similarServices.map((simService) => (
               <div key={simService.id} className="group flex flex-col bg-white border border-slate-100 rounded-none shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-accent/30 transition-all duration-300">
                 <div className="w-full h-48 bg-slate-50 rounded-none overflow-hidden relative">
-                  <img src={simService.image || 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=300'} alt={simService.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <img src={getImageUrl(simService.image) || 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=300'} alt={simService.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                   <div className="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-colors"></div>
                 </div>
                 <div className="p-5 text-left flex flex-col justify-between flex-1">

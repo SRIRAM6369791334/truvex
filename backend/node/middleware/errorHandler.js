@@ -21,9 +21,15 @@ function errorHandler(error, _req, res, _next) {
   const statusCode = error.statusCode || (error.name === 'MulterError' ? 400 : 500);
   const message = statusCode >= 500 ? 'Internal server error' : error.message;
 
+  // Always log full error to server console for debugging
+  console.error('[ErrorHandler]', error);
+
   res.status(statusCode).json({
     success: false,
     message,
+    // TEMP: expose real error for debugging — remove after fix confirmed
+    detail: error.message,
+    code: error.code,
     ...(error.errors ? { errors: error.errors } : {}),
   });
 }

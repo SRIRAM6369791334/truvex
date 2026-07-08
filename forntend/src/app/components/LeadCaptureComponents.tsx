@@ -227,7 +227,7 @@ export function ServiceDynamicList() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4, ease: "easeInOut" }}
-            className="absolute inset-0 h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-fill"
           />
         </AnimatePresence>
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-80" />
@@ -470,7 +470,7 @@ export function WhatsAppFloatingButton() {
       
       {/* Button */}
       <motion.a
-        href="https://wa.me/919876543210?text=Hello%20Truvex%2C%20I%20want%20to%20submit%20a%20requirement"
+        href="https://wa.me/919080722602?text=Hello%20Truvex%2C%20I%20want%20to%20submit%20a%20requirement"
         target="_blank"
         rel="noreferrer"
         initial={{ scale: 0, opacity: 0 }}
@@ -538,7 +538,7 @@ export function CallFloatingButton() {
       
       {/* Button */}
       <motion.a
-        href="tel:+919876543210"
+        href="tel:+919080722602"
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 1.4, type: 'spring' }}

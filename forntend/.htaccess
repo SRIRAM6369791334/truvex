@@ -1,0 +1,29 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Redirect trailing slashes
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.+)/$ /$1 [L,R=301]
+
+  # SPA: serve index.html for all non-file, non-directory routes
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# Cache static assets
+<FilesMatch "\.(js|css|png|jpg|jpeg|webp|svg|ico|woff2?)$">
+  <IfModule mod_expires.c>
+    ExpiresActive on
+    ExpiresDefault "access plus 1 year"
+  </IfModule>
+  FileETag MTime Size
+</FilesMatch>
+
+# Service worker must NOT be cached
+<FilesMatch "sw\.js$">
+  <IfModule mod_expires.c>
+    ExpiresActive off
+  </IfModule>
+  Header set Cache-Control "no-cache, no-store, must-revalidate"
+</FilesMatch>
